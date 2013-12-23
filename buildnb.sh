@@ -1,13 +1,17 @@
 #!/bin/sh
 
-# Just a script to run the handful of commands required for a
-# bootable domU image.  This is mostly to document the commands
-# required, and is not pretending to be fancy.
+# modified version of buildxen.sh from https://github.com/anttikantee/xen-nblibc
+
+# Just a script to run the handful of commands required to build NetBSD libc, headers
 
 STDJ='-j4'
 
-# the buildxen.sh is not as forgiving as I am
 set -e
+
+# We force -fPIC so we can link into a shared library
+export BUILDRUMP_CFLAGS=-fPIC
+export BUILDRUMP_AFLAGS=-fPIC
+export BUILDRUMP_LDFLAGS=-fPIC
 
 if [ "${1}" != 'nocheckout' ]; then
 	git submodule update --init --recursive
@@ -20,11 +24,12 @@ if [ "${1}" != 'nocheckout' ]; then
 fi
 
 # build tools
-./buildrump.sh/buildrump.sh -${BUILDXEN_QUIET:-q} ${STDJ} -k \
+./buildrump.sh/buildrump.sh -${BUILD_QUIET:-q} ${STDJ} -k \
     -s rumpsrc -T rumptools -o rumpobj -N -V RUMP_KERNEL_IS_LIBC=1 tools
 ./buildrump.sh/buildrump.sh -k -s rumpsrc -T rumptools -o rumpobj setupdest
 # FIXME to be able to specify this as part of previous cmdline
-#echo 'CPPFLAGS+=-DMAXPHYS=32768' >> rumptools/mk.conf
+# I think this was a Xen restriction, default is 64k
+# echo 'CPPFLAGS+=-DMAXPHYS=32768' >> rumptools/mk.conf
 
 RMAKE=`pwd`/rumptools/rumpmake
 
@@ -90,5 +95,5 @@ makeuserlib ()
 makeuserlib libc
 makeuserlib libm
 
-
-#make
+# then make whatever needs making
+make
