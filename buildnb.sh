@@ -1,11 +1,12 @@
 #!/bin/sh
 
-# modified version of buildxen.sh from https://github.com/anttikantee/xen-nblibc
-
-# Just a script to run the handful of commands required to build NetBSD libc, headers
+# Just a script to run the handful of commands required for a
+# bootable domU image.  This is mostly to document the commands
+# required, and is not pretending to be fancy.
 
 STDJ='-j4'
 
+# the buildxen.sh is not as forgiving as I am
 set -e
 
 if [ "${1}" != 'nocheckout' ]; then
@@ -19,12 +20,11 @@ if [ "${1}" != 'nocheckout' ]; then
 fi
 
 # build tools
-./buildrump.sh/buildrump.sh -${BUILD_QUIET:-q} ${STDJ} -k \
+./buildrump.sh/buildrump.sh -${BUILDXEN_QUIET:-q} ${STDJ} -k \
     -s rumpsrc -T rumptools -o rumpobj -N -V RUMP_KERNEL_IS_LIBC=1 tools
 ./buildrump.sh/buildrump.sh -k -s rumpsrc -T rumptools -o rumpobj setupdest
 # FIXME to be able to specify this as part of previous cmdline
-# I think this was a Xen restriction, default is 64k
-# echo 'CPPFLAGS+=-DMAXPHYS=32768' >> rumptools/mk.conf
+#echo 'CPPFLAGS+=-DMAXPHYS=32768' >> rumptools/mk.conf
 
 RMAKE=`pwd`/rumptools/rumpmake
 
@@ -90,5 +90,5 @@ makeuserlib ()
 makeuserlib libc
 makeuserlib libm
 
-# then make whatever needs making
-make
+
+#make
