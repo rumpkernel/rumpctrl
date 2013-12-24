@@ -38,10 +38,10 @@ emul_gettimeofday(struct _netbsd_timeval *ntv, void *ntz)
 #define _NETBSD_MAP_STACK        0x2000
 
 /* note that the PROT_ constants in NetBSD are the same as corresponding ones in Linux and FreeBSD at least, so no conversion */
-int
+void *
 emul_mmap(void *addr, size_t length, int prot, int nflags, int fd, _netbsd_off_t offset)
 {
-	int ok;
+	void *ok;
         int flags = 0;
         if (nflags & _NETBSD_MAP_SHARED) flags |= MAP_SHARED;
         if (nflags & _NETBSD_MAP_PRIVATE) flags |= MAP_PRIVATE;
