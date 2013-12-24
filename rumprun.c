@@ -21,7 +21,11 @@ die(const char *fmt, ...)
         exit(1);
 }
 
-
+int
+runprog(int (*dlmain)(int, char **), int argc, char *argv[])
+{
+  return (*dlmain)(argc - 1, argv + 1);
+}
 
 
 int
@@ -33,14 +37,14 @@ main(int argc, char *argv[])
 
 	if (argc == 1)
 		die("supply a program to load");
-	dl = dlopen(argv[1], RTLD_LAZY);
+	dl = dlopen(argv[1], RTLD_NOW | RTLD_DEEPBIND);
 	if (! dl)
 		die("could not open library");
 	dlmain = dlsym(dl, "main");
 	if (! dlmain)
 		die("could not find main() in library");
 	rump_init();
-	ret = (*dlmain)(argc - 1, argv + 1);	
+	ret = runprog(dlmain, argc - 1, argv + 1);	
 	rump_sys_reboot(0, NULL);
 	return ret;
 }
