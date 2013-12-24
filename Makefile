@@ -1,14 +1,15 @@
 CFLAGS=-nostdinc -nostdlib -fno-builtin-execve -I rump/include -O2 -g -Wall -fPIC
-HOSTCFLAGS=-O2 -g -Wall
+HOSTCFLAGS=-O2 -g -Wall -I rump/include
+RUMPLIBS=-Lrumpdyn/lib -lrump -lrumpuser -lrumpvfs -lrumpfs_kernfs
 
-all:		example.so
+all:		example.so rumprun
 
 example.o:	example.c
 
 stub.o:		stub.c
 
 rumprun:	rumprun.c
-		${CC} ${HOSTCFLAGS} $< -o $@
+		${CC} $< -o $@ ${HOSTCFLAGS} ${RUMPLIBS} -lc 
 
 emul.o:		emul.c
 		${CC} -O2 -g -Wall -fPIC -D_FILE_OFFSET_BITS=64 -c $< -o $@
@@ -32,4 +33,4 @@ clean:
 		rm -f *.o *.so *~ rump.map
 
 cleanrump:	clean
-		rm -rf obj rump rumpobj rumpsrc rumptools
+		rm -rf obj rump rumpobj rumpsrc rumptools rumpdyn

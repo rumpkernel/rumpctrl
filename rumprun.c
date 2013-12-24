@@ -6,6 +6,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include <rump/rump.h>
+#include <rump/rump_syscalls.h>
+
 static void
 die(const char *fmt, ...)
 {

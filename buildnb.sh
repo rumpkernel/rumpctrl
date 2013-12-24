@@ -8,11 +8,6 @@ STDJ='-j4'
 
 set -e
 
-# We force -fPIC so we can link into a shared library
-export BUILDRUMP_CFLAGS=-fPIC
-export BUILDRUMP_AFLAGS=-fPIC
-export BUILDRUMP_LDFLAGS=-fPIC
-
 if [ "${1}" != 'nocheckout' ]; then
 	git submodule update --init --recursive
 	./buildrump.sh/buildrump.sh -s rumpsrc checkout
@@ -22,6 +17,20 @@ if [ "${1}" != 'nocheckout' ]; then
 		ln -sf ../../libexec/ld.elf_so/rtldenv.h lib/libc
 	)
 fi
+
+# Build dynamic libs
+
+./buildrump.sh/buildrump.sh -${BUILD_QUIET:-q} ${STDJ} \
+    -s rumpsrc -T rumptools -o rumpobj -d rumpdyn fullbuild
+
+# Now build a static but -fPIC libc.
+
+rm -rf rumptools rumpobj
+
+# We force -fPIC so we can link into a shared library
+export BUILDRUMP_CFLAGS=-fPIC
+export BUILDRUMP_AFLAGS=-fPIC
+export BUILDRUMP_LDFLAGS=-fPIC
 
 # build tools
 ./buildrump.sh/buildrump.sh -${BUILD_QUIET:-q} ${STDJ} -k \
