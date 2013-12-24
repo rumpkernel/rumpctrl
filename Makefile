@@ -1,15 +1,20 @@
-CFLAGS=-nostdinc -nostdlib -fno-builtin-execve -I rump/include -O2 -g -Wall -fPIC
-HOSTCFLAGS=-O2 -g -Wall -I rump/include
-RUMPLIBS=-Lrumpdyn/lib -lrump -lrumpuser -lrumpvfs -lrumpfs_kernfs
+NBCFLAGS=-nostdinc -nostdlib -fno-builtin-execve -Irump/include -O2 -g -Wall -fPIC
+HOSTCFLAGS=-O2 -g -Wall -Irumpdyn/include
+RUMPLIBS=-Lrumpdyn/lib -Wl,--whole-archive -lrumpvfs -lrumpfs_kernfs -lrump -Wl,--no-whole-archive -lrumpuser
 
 all:		example.so rumprun
 
 example.o:	example.c
+		${CC} ${NBCFLAGS} -c $< -o $@
 
 stub.o:		stub.c
+		${CC} ${NBCFLAGS} -c $< -o $@
 
-rumprun:	rumprun.c
-		${CC} $< -o $@ ${HOSTCFLAGS} ${RUMPLIBS} -lc 
+rumprun.o:	rumprun.c
+		${CC} ${HOSTCFLAGS} -c $< -o $@
+
+rumprun:	rumprun.o
+		${CC} $< -o $@ ${RUMPLIBS} -lc
 
 emul.o:		emul.c
 		${CC} -O2 -g -Wall -fPIC -D_FILE_OFFSET_BITS=64 -c $< -o $@
@@ -25,7 +30,7 @@ rump/lib/libc.a:
 		./buildnb.sh
 
 example.so:	example.o emul.o stub.o rump.map rump/lib/libc.a
-		${CC} $< rump/lib/libc.a emul.o stub.o -nostdlib -shared -Wl,-soname,example.so -o $@
+		${CC} -nostdlib $< emul.o stub.o rump/lib/libc.a -shared -Wl,-soname,example.so -o $@
 		objcopy --redefine-syms=extra.map $@
 		objcopy --redefine-syms=rump.map $@
 
