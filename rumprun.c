@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <dlfcn.h>
 
 #include <rump/rump.h>
 #include <rump/rump_syscalls.h>
@@ -24,14 +25,23 @@ die(const char *fmt, ...)
 
 
 int
-main(int argc, char **argv)
+main(int argc, char *argv[])
 {
+	void *dl;
+	int (*dlmain)(int, char **);
+	int ret;
+
 	if (argc == 1)
 		die("supply a program to load");
-
+	dl = dlopen(argv[1], RTLD_LAZY);
+	if (! dl)
+		die("could not open library");
+	dlmain = dlsym(dl, "main");
+	if (! dlmain)
+		die("could not find main() in library");
 	rump_init();
-	// run main()
+	ret = (*dlmain)(argc - 1, argv + 1);	
 	rump_sys_reboot(0, NULL);
-	return 0;
+	return ret;
 }
 

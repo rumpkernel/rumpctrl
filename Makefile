@@ -14,7 +14,7 @@ rumprun.o:	rumprun.c
 		${CC} ${HOSTCFLAGS} -c $< -o $@
 
 rumprun:	rumprun.o
-		${CC} $< -o $@ ${RUMPLIBS} -lc
+		${CC} $< -o $@ ${RUMPLIBS} -lc -ldl
 
 emul.o:		emul.c
 		${CC} -O2 -g -Wall -fPIC -D_FILE_OFFSET_BITS=64 -c $< -o $@
