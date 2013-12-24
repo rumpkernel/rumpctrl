@@ -4,3 +4,6 @@
 [submodule "nblibs"]
 	path = nblibs
 	url = git@github.com:anttikantee/xen-nblibc.git
+[submodule "xen-nblibc"]
+	path = xen-nblibc
+	url = https://github.com/anttikantee/xen-nblibc.git
