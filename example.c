@@ -18,6 +18,7 @@ die(const char *fmt, ...)
         va_start(va, fmt);
         vfprintf(stderr, fmt, va);
         va_end(va);
+	fprintf(stderr, "error %d\n", errno);
 	return 1;
 }
 
@@ -28,14 +29,14 @@ main()
         int fd;
 
         if (mkdir("/kern", 0755) == -1)
-                return die("mkdir /kern");
+                return die("error mkdir /kern\n");
         if (mount("kernfs", "/kern", 0, NULL, 0) == -1)
-                return die("mount kernfs");
+                return die("error mount kernfs\n");
         if ((fd = open("/kern/version", O_RDONLY)) == -1)
-                return die("open /kern/version");
+                return die("error open /kern/version\n");
         printf("\nReading version info from /kern:\n");
         if (read(fd, buf, sizeof(buf)) <= 0)
-                return die("read version");
+                return die("error read version\n");
         printf("\n%s", buf);
 
         return 0;

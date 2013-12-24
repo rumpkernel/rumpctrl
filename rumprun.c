@@ -37,7 +37,7 @@ main(int argc, char *argv[])
 
 	if (argc == 1)
 		die("supply a program to load");
-	dl = dlopen(argv[1], RTLD_NOW | RTLD_DEEPBIND);
+	dl = dlopen(argv[1], RTLD_LAZY | RTLD_DEEPBIND);
 	if (! dl)
 		die("could not open library");
 	dlmain = dlsym(dl, "main");

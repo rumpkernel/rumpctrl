@@ -29,10 +29,13 @@ rump.map:
 rump/lib/libc.a:	
 		./buildnb.sh
 
-example.so:	example.o emul.o stub.o rump.map rump/lib/libc.a
-		${CC} -nostdlib $< emul.o stub.o rump/lib/libc.a -shared -Wl,-soname,example.so -o $@
+munged.o:	example.o emul.o stub.o rump.map rump/lib/libc.a
+		${CC} -Wl,-r -nostdlib $< emul.o stub.o rump/lib/libc.a -o $@
 		objcopy --redefine-syms=extra.map $@
 		objcopy --redefine-syms=rump.map $@
+
+example.so:	munged.o
+		${CC} $< -nostdlib -shared -Wl,-soname,example.so -o $@
 
 clean:		
 		rm -f *.o *.so *~ rump.map

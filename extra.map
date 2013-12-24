@@ -1,4 +1,4 @@
 # these have different names so need to map by hand
 _read	read
 _lseek	lseek
-__errno	errno
+__errno	__errno_location
