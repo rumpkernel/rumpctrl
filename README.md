@@ -7,7 +7,7 @@ It takes a NetBSD program, example.com as set up now, and compiles it using the 
 To build: 
 ````
 make
-export LD\_LIBRARY\_PATH=.:rumpdyn/lib
+export LD_LIBRARY_PATH=.:rumpdyn/lib
 ./rumprun example.so
 ````
 
