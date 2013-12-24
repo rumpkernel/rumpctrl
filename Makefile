@@ -2,7 +2,7 @@ NBCFLAGS=-nostdinc -nostdlib -fno-builtin-execve -Irump/include -O2 -g -Wall -fP
 HOSTCFLAGS=-O2 -g -Wall -Irumpdyn/include
 RUMPLIBS=-Lrumpdyn/lib -Wl,--no-as-needed -lrumpvfs -lrumpfs_kernfs -lrump -lrumpuser
 
-all:		example.so rumprun
+all:		rump/lib/libc.a example.so rumprun
 
 example.o:	example.c
 		${CC} ${NBCFLAGS} -c $< -o $@
