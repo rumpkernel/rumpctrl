@@ -95,5 +95,3 @@ makeuserlib ()
 makeuserlib libc
 makeuserlib libm
 
-# then make whatever needs making
-make
