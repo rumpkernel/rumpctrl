@@ -1,0 +1,2 @@
+emul_gettimeofday	__gettimeofday50
+emul_mmap		_mmap
