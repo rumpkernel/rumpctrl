@@ -7,3 +7,6 @@
 [submodule "xen-nblibc"]
 	path = xen-nblibc
 	url = https://github.com/anttikantee/xen-nblibc.git
+[submodule "nblib"]
+	path = nblib
+	url = https://github.com/anttikantee/xen-nblibc.git

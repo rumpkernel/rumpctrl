@@ -11,7 +11,7 @@ set -e
 if [ "${1}" != 'nocheckout' ]; then
 	git submodule update --init --recursive
 	./buildrump.sh/buildrump.sh -s rumpsrc checkout
-	( cd nblibs
+	( cd nblib
 		ln -sf ../rumpsrc/common
 		ln -sf ../../libexec/ld.elf_so/rtld.h lib/libc
 		ln -sf ../../libexec/ld.elf_so/rtldenv.h lib/libc
@@ -68,8 +68,8 @@ echo '>> Installing headers.  please wait (may take a while) ...'
 ( cd rumpsrc/include && ${RMAKE} -k includes > /dev/null 2>&1)
 
 # other lossage
-( cd nblibs/lib/libc && ${RMAKE} includes >/dev/null 2>&1)
-( cd nblibs/lib/libpthread && ${RMAKE} includes >/dev/null 2>&1)
+( cd nblib/lib/libc && ${RMAKE} includes >/dev/null 2>&1)
+( cd nblib/lib/libpthread && ${RMAKE} includes >/dev/null 2>&1)
 
 echo '>> done with headers'
 
@@ -93,7 +93,7 @@ makeuserlib ()
 	lib=$1
 
 	OBJS=`pwd`/rumpobj/lib/$1
-	( cd nblibs/lib/$1
+	( cd nblib/lib/$1
 		${RMAKE} MAKEOBJDIR=${OBJS} obj
 		${RMAKE} MKMAN=no MKLINT=no MKPROFILE=no MKYP=no \
 		    NOGCCERROR=1 MAKEOBJDIR=${OBJS} ${STDJ} dependall
