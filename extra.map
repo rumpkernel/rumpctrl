@@ -1,4 +1,3 @@
 # these have different names so need to map by hand
-_read	read
-_lseek	lseek
-__errno	__errno_location
+_read	rump___sysimpl_read
+_lseek	rump___sysimpl_lseek

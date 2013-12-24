@@ -4,6 +4,13 @@
 #include <stddef.h>
 #include <sys/time.h>
 #include <sys/mman.h>
+#include <errno.h>
+
+int *
+__errno(void)
+{
+        return __errno_location();
+}
 
 typedef int64_t _netbsd_time_t;
 typedef int _netbsd_suseconds_t;

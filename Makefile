@@ -1,6 +1,6 @@
 NBCFLAGS=-nostdinc -nostdlib -fno-builtin-execve -Irump/include -O2 -g -Wall -fPIC
 HOSTCFLAGS=-O2 -g -Wall -Irumpdyn/include
-RUMPLIBS=-Lrumpdyn/lib -Wl,--no-as-needed -lrumpuser -lrump -lrumpvfs -lrumpfs_kernfs
+RUMPLIBS=-Lrumpdyn/lib -Wl,--no-as-needed -lrumpvfs -lrumpfs_kernfs -lrump -lrumpuser
 
 all:		example.so rumprun
 

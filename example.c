@@ -28,6 +28,7 @@ main()
         char buf[8192];
         int fd;
 
+	printf("pid is %d\n", getpid());
         if (mkdir("/kern", 0755) == -1)
                 return die("error mkdir /kern\n");
         if (mount("kernfs", "/kern", 0, NULL, 0) == -1)
