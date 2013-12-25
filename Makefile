@@ -1,4 +1,4 @@
-NBCFLAGS=-nostdinc -nostdlib -fno-builtin-execve -Irump/include -O2 -g -Wall -fPIC
+NBCFLAGS=-nostdinc -nostdlib -Irump/include -O2 -g -Wall -fPIC
 HOSTCFLAGS=-O2 -g -Wall -Irumpdyn/include
 RUMPLIBS=-Lrumpdyn/lib -Wl,--no-as-needed -lrumpvfs -lrumpfs_kernfs -lrump -lrumpuser
 
@@ -8,7 +8,7 @@ example.o:	example.c
 		${CC} ${NBCFLAGS} -c $< -o $@
 
 stub.o:		stub.c
-		${CC} ${NBCFLAGS} -c $< -o $@
+		${CC} ${NBCFLAGS} -fno-builtin-execve -c $< -o $@
 
 rumprun.o:	rumprun.c
 		${CC} ${HOSTCFLAGS} -c $< -o $@
