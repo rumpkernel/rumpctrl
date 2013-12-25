@@ -24,7 +24,7 @@ rump.map:
 		cat ./rumpsrc/sys/rump/librump/rumpkern/rump_syscalls.c | \
 			grep rsys_aliases | grep -v -- '#define' | \
 			sed -e 's/rsys_aliases(//g' -e 's/);//g' -e 's/\(.*\),\(.*\)/\1@\2/g' | \
-			awk '{gsub("@","\t",$0); print;}' > $@
+			awk '{gsub("@","\t"); print;}' > $@
 
 munged.o:	example.o emul.o stub.o rump.map rump/lib/libc.a
 		${CC} -Wl,-r -nostdlib $< emul.o stub.o rump/lib/libc.a -o $@
