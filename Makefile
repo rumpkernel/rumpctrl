@@ -23,8 +23,8 @@ emul.o:		emul.c
 rump.map:	
 		cat ./rumpsrc/sys/rump/librump/rumpkern/rump_syscalls.c | \
 			grep rsys_aliases | grep -v -- '#define' | \
-			sed -e 's/rsys_aliases(//g' -e 's/);//g' -e 's/\(.*\),\(.*\)/\1\t\t\2/g' \
-			> $@
+			sed -e 's/rsys_aliases(//g' -e 's/);//g' -e 's/\(.*\),\(.*\)/\1@\2/g' | \
+			awk '{gsub("@","\t",$0); print;}' > $@
 
 rump/lib/libc.a:	
 		./buildnb.sh
