@@ -5,9 +5,6 @@ RUMPLIBS=-Lrumpdyn/lib -Wl,--no-as-needed -lrumpvfs -lrumpfs_kernfs -lrump -lrum
 
 all:		example.so rumprun
 
-example.o:	example.c
-		${CC} ${NBCFLAGS} -c $< -o $@
-
 stub.o:		stub.c
 		${CC} ${NBCFLAGS} -fno-builtin-execve -c $< -o $@
 
@@ -19,7 +16,6 @@ rumprun:	rumprun.o
 
 emul.o:		emul.c
 		${CC} -O2 -g -Wall -fPIC -D_FILE_OFFSET_BITS=64 -c $< -o $@
-		objcopy --redefine-syms=emul.map emul.o
 
 rump.map:	
 		cat ./rumpsrc/sys/rump/librump/rumpkern/rump_syscalls.c | \
@@ -27,15 +23,17 @@ rump.map:
 			sed -e 's/rsys_aliases(//g' -e 's/);//g' -e 's/\(.*\),\(.*\)/\1@\2/g' | \
 			awk '{gsub("@","\t"); print;}' > $@
 
-munged.o:	example.o emul.o stub.o rump.map rump/lib/libc.a
-		${CC} -Wl,-r -nostdlib $< emul.o stub.o rump/lib/libc.a -o $@
-		objcopy --redefine-syms=extra.map $@
-		objcopy --redefine-syms=rump.map $@
-		# note that undefined symbols won't be localised
+example.o:	example.c emul.o stub.o rump.map rump/lib/libc.a
+		${CC} ${NBCFLAGS} -c $< -o tmp1.o
+		${CC} -Wl,-r -nostdlib tmp1.o rump/lib/libc.a -o tmp2.o
+		objcopy --redefine-syms=extra.map tmp2.o
+		objcopy --redefine-syms=emul.map tmp2.o
+		objcopy --redefine-syms=rump.map tmp2.o
+		${CC} -Wl,-r -nostdlib tmp2.o emul.o stub.o -o $@
 		objcopy -w -L '*' $@
 		objcopy --globalize-symbol=main $@
 
-example.so:	munged.o
+example.so:	example.o
 		${CC} $< -nostdlib -shared -Wl,-soname,example.so -o $@
 
 clean:		

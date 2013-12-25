@@ -5,6 +5,10 @@
 #include <sys/time.h>
 #include <sys/mman.h>
 #include <errno.h>
+#include <sys/types.h>
+#include <signal.h>
+
+#define _NETBSD_NOSYS 78
 
 int *
 __errno(void)
@@ -59,4 +63,5 @@ emul_mmap(void *addr, size_t length, int prot, int nflags, int fd, _netbsd_off_t
 	/* convert errors */
 	return ok;
 }
+
 

@@ -21,4 +21,5 @@ STUB(__wait450);
 STUB(__fork);
 STUB(__vfork14);
 STUB(execve);
+STUB(kill);
 
