@@ -14,5 +14,5 @@ export LD_LIBRARY_PATH=.:rumpdyn/lib
 ./rumprun example.so
 ````
 
-Currently only works on Linux, as it uses ```RTLD_DEEPBIND``` but this will be fixed.
+Currently tested on Linux and FreeBSD, so should be generally portable. (FreeBSD needs a few tweaks to Makefile).
 
