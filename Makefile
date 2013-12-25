@@ -4,10 +4,10 @@ RUMPLIBS=-Lrumpdyn/lib -Wl,--no-as-needed -lrumpvfs -lrumpfs_kernfs -lrump -lrum
 
 all:		rump/lib/libc.a example.so rumprun
 
-example.o:	example.c
+example.o:	example.c rump/lib/libc.a
 		${CC} ${NBCFLAGS} -c $< -o $@
 
-stub.o:		stub.c
+stub.o:		stub.c rump/lib/libc.a
 		${CC} ${NBCFLAGS} -c $< -o $@
 
 rumprun.o:	rumprun.c
