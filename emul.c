@@ -64,4 +64,11 @@ emul_mmap(void *addr, size_t length, int prot, int nflags, int fd, _netbsd_off_t
 	return ok;
 }
 
+int
+emul_madvise(void *addr, size_t length, int advice)
+{
+	/* thanks for the advice */
+	return 0;
+}
+
 

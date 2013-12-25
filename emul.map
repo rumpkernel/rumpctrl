@@ -1,2 +1,3 @@
 __gettimeofday50	emul_gettimeofday
 _mmap			emul_mmap
+madvise			emul_madvise
