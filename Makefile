@@ -33,6 +33,9 @@ munged.o:	example.o emul.o stub.o rump.map rump/lib/libc.a
 		${CC} -Wl,-r -nostdlib $< emul.o stub.o rump/lib/libc.a -o $@
 		objcopy --redefine-syms=extra.map $@
 		objcopy --redefine-syms=rump.map $@
+		# note that undefined symbols won't be localised
+		objcopy -w -L '*' $@
+		objcopy --globalize-symbol=main $@
 
 example.so:	munged.o
 		${CC} $< -nostdlib -shared -Wl,-soname,example.so -o $@

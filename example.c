@@ -27,6 +27,7 @@ main()
 {
         char buf[8192];
         int fd;
+	struct stat st;
 
 	printf("pid is %d\n", getpid());
         if (mkdir("/kern", 0755) == -1)
@@ -38,6 +39,8 @@ main()
         printf("\nReading version info from /kern:\n");
         if (read(fd, buf, sizeof(buf)) <= 0)
                 return die("error read version\n");
+	if (stat("/dev/zero", &st) == -1)
+		return die("error stat");
         printf("\n%s", buf);
 
         return 0;
