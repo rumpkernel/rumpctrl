@@ -2,12 +2,12 @@ NBCFLAGS=-nostdinc -nostdlib -fno-builtin-execve -Irump/include -O2 -g -Wall -fP
 HOSTCFLAGS=-O2 -g -Wall -Irumpdyn/include
 RUMPLIBS=-Lrumpdyn/lib -Wl,--no-as-needed -lrumpvfs -lrumpfs_kernfs -lrump -lrumpuser
 
-all:		rump/lib/libc.a example.so rumprun
+all:		example.so rumprun
 
-example.o:	example.c rump/lib/libc.a
+example.o:	example.c
 		${CC} ${NBCFLAGS} -c $< -o $@
 
-stub.o:		stub.c rump/lib/libc.a
+stub.o:		stub.c
 		${CC} ${NBCFLAGS} -c $< -o $@
 
 rumprun.o:	rumprun.c
@@ -25,9 +25,6 @@ rump.map:
 			grep rsys_aliases | grep -v -- '#define' | \
 			sed -e 's/rsys_aliases(//g' -e 's/);//g' -e 's/\(.*\),\(.*\)/\1@\2/g' | \
 			awk '{gsub("@","\t",$0); print;}' > $@
-
-rump/lib/libc.a:	
-		./buildnb.sh
 
 munged.o:	example.o emul.o stub.o rump.map rump/lib/libc.a
 		${CC} -Wl,-r -nostdlib $< emul.o stub.o rump/lib/libc.a -o $@
