@@ -8,6 +8,7 @@ It takes a NetBSD program, example.com as set up now, and compiles it using the 
 
 To build: 
 ````
+./buildnb.sh
 make
 export LD_LIBRARY_PATH=.:rumpdyn/lib
 ./rumprun example.so
