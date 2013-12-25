@@ -1,0 +1,11 @@
+language: c
+
+before_install:
+ - git submodule update --init --recursive
+
+env:
+  - LD_LIBRARY_PATH=.:rumpdyn/lib
+
+script:
+  - make
+  - ./rumprun example.so
