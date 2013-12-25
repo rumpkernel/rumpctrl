@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/justincormack/rumprun.png)](https://travis-ci.org/justincormack/rumprun)
+
 This is a small experimental wrapper for running programs that were written for a normal POSIX (NetBSD) system to run them under rump kernel.
 
 For more information about the rump kernel see [https://www.netbsd.org/docs/rump/](https://www.netbsd.org/docs/rump/).
