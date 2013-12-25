@@ -28,6 +28,7 @@ example.o:	example.c
 
 example.so:	example.o emul.o stub.o rump.map rump/lib/libc.a
 		${CC} -Wl,-r -nostdlib example.o rump/lib/libc.a -o tmp1.o
+		objcopy --redefine-sym mmap=emul_mmap tmp1.o
 		objcopy --redefine-syms=extra.map tmp1.o
 		objcopy --redefine-syms=emul.map tmp1.o
 		objcopy --redefine-syms=rump.map tmp1.o
