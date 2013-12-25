@@ -71,4 +71,9 @@ emul_madvise(void *addr, size_t length, int advice)
 	return 0;
 }
 
+int
+setpriority(int which, int who, int prio) {
+	/* don't prioritise */
+	return 0;
+}
 
