@@ -2,8 +2,9 @@ DEFUNDEF=-D__NetBSD__ -U__FreeBSD__ -Ulinux -U__linux -U__linux__ -U__gnu_linux_
 NBCFLAGS=-nostdinc -nostdlib -Irump/include -O2 -g -Wall -fPIC  ${DEFUNDEF}
 HOSTCFLAGS=-O2 -g -Wall -Irumpdyn/include
 RUMPLIBS=-Lrumpdyn/lib -Wl,--no-as-needed -lrumpvfs -lrumpfs_kernfs -lrumpdev -lrumpnet_local -lrumpnet_netinet -lrumpnet_net -lrumpnet -lrump -lrumpuser
+RUMPCLIENT=-Lrumpdyn/lib -lrumpclient
 
-all:		example.so rumprun
+all:		example.so rumprun rumpremote
 
 stub.o:		stub.c
 		${CC} ${NBCFLAGS} -fno-builtin-execve -c $< -o $@
@@ -13,6 +14,12 @@ rumprun.o:	rumprun.c
 
 rumprun:	rumprun.o
 		${CC} $< -o $@ ${RUMPLIBS} -lc -ldl
+
+rumpremote.o:	rumpremote.c
+		${CC} ${HOSTCFLAGS} -c $< -o $@
+
+rumpremote:	rumpremote.o
+		${CC} $< -o $@ ${RUMPCLIENT} -lc -ldl
 
 emul.o:		emul.c
 		${CC} -O2 -g -Wall -fPIC -D_FILE_OFFSET_BITS=64 -c $< -o $@
