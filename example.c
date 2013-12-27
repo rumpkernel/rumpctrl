@@ -32,7 +32,7 @@ main()
 	printf("pid is %d\n", getpid());
         if (mkdir("/kern", 0755) == -1)
                 return die("error mkdir /kern\n");
-        if (mount("kernfs", "/kern", 0, NULL, 0) == -1)
+        if (mount(MOUNT_KERNFS, "/kern", 0, NULL, 0) == -1)
                 return die("error mount kernfs\n");
         if ((fd = open("/kern/version", O_RDONLY)) == -1)
                 return die("error open /kern/version\n");
