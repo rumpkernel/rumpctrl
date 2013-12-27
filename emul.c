@@ -8,7 +8,7 @@
 #include <sys/types.h>
 #include <signal.h>
 
-#define _NETBSD_NOSYS 78
+#define _NETBSD_ENOSYS 78
 
 int *
 __errno(void)
@@ -54,6 +54,11 @@ emul_mmap(void *addr, size_t length, int prot, int nflags, int fd, _netbsd_off_t
 {
 	void *ok;
         int flags = 0;
+
+	if (fd != -1) {
+		errno = _NETBSD_ENOSYS;
+		return MAP_FAILED;
+	}
         if (nflags & _NETBSD_MAP_SHARED) flags |= MAP_SHARED;
         if (nflags & _NETBSD_MAP_PRIVATE) flags |= MAP_PRIVATE;
         if (nflags & _NETBSD_MAP_ANON) flags |= MAP_ANON;
