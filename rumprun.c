@@ -24,7 +24,7 @@ die(const char *fmt, ...)
 int
 runprog(int (*dlmain)(int, char **), int argc, char *argv[])
 {
-  return (*dlmain)(argc - 1, argv + 1);
+  return (*dlmain)(argc, argv);
 }
 
 
