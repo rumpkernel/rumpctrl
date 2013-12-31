@@ -18,13 +18,16 @@ ffi.cdef "int rump_init(void);"
 ffi.C.rump_init()
 
 function register(lib)
-  local handle = ffi.load("./" .. lib .. ".so") -- TODO luajit wants these named libexample.so to find from LD_LIBRARY_PATH
-  if not handle then print "failed to load library"; return end
   _G[lib] = function(...)
+    local handle = ffi.load("./" .. lib .. ".so") -- TODO luajit wants these named libexample.so to find from LD_LIBRARY_PATH
+    if not handle then print "failed to load library"; return end
     local argc = select('#', ...)
     local argv = ffi.new("char *[?]", argc)
     for i, v in ipairs{...} do argv[i - 1] = ffi.cast("char *", v) end
-    return handle.main(argc, argv)
+    local ret = handle.main(argc, argv)
+    handle = nil
+    collectgarbage("collect") -- force unload lib
+    return ret
   end
 end
 
