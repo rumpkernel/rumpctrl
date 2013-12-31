@@ -45,5 +45,9 @@ function register(lib)
     collectgarbage("collect") -- force unload lib
     return ret
   end
+  return _G[lib]
 end
+
+setmetatable(_G, {__index = function(_, k) return register(k) end})
+
 
