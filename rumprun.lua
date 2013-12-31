@@ -14,8 +14,21 @@ for _, v in ipairs(loadlibs) do __libs[#__libs + 1] = ffi.load("rump" .. v, true
 
 ffi.cdef "int main(int argc, char *argv[])"
 
-ffi.cdef "int rump_init(void);"
+ffi.cdef [[
+typedef int32_t pid_t;
+
+int rump_init(void);
+int rump_pub_lwproc_rfork(int);
+int rump_pub_lwproc_newlwp(pid_t);
+void rump_pub_lwproc_switch(struct lwp *);
+void rump_pub_lwproc_releaselwp(void);
+struct lwp * rump_pub_lwproc_curlwp(void);
+]]
+
 ffi.C.rump_init()
+
+ffi.C.rump_pub_lwproc_newlwp(1)
+local origlwp = ffi.C.rump_pub_lwproc_curlwp()
 
 function register(lib)
   _G[lib] = function(...)
@@ -24,7 +37,10 @@ function register(lib)
     local argc = select('#', ...)
     local argv = ffi.new("char *[?]", argc)
     for i, v in ipairs{...} do argv[i - 1] = ffi.cast("char *", v) end
+    ffi.C.rump_pub_lwproc_rfork(0x01) -- RUMP_RFFDG
     local ret = handle.main(argc, argv)
+    ffi.C.rump_pub_lwproc_releaselwp() -- exit this process
+    ffi.C.rump_pub_lwproc_switch(origlwp)
     handle = nil
     collectgarbage("collect") -- force unload lib
     return ret
