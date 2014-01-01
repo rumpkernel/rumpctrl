@@ -12,7 +12,7 @@ local loadlibs = {"user", "", "vfs", "kern_tty", "dev", "net", "fs_tmpfs", "fs_k
                   "net_net", "net_local", "net_netinet", "net_shmif"}
 for _, v in ipairs(loadlibs) do __libs[#__libs + 1] = ffi.load("rump" .. v, true) end
 
-ffi.cdef "int main(int argc, char *argv[])"
+ffi.cdef "int main(int argc, const char *argv[])"
 
 ffi.cdef [[
 typedef int32_t pid_t;
@@ -34,9 +34,9 @@ function register(lib)
   _G[lib] = function(...)
     local handle = ffi.load("./" .. lib .. ".so") -- TODO luajit wants these named libexample.so to find from LD_LIBRARY_PATH
     if not handle then print "failed to load library"; return end
-    local argc = select('#', ...)
-    local argv = ffi.new("char *[?]", argc)
-    for i, v in ipairs{...} do argv[i - 1] = ffi.cast("char *", v) end
+    local argc = select('#', ...) + 1
+    local av = {lib, ...}
+    local argv = ffi.new("const char *[?]", argc, av)
     ffi.C.rump_pub_lwproc_rfork(0x01) -- RUMP_RFFDG
     local ret = handle.main(argc, argv)
     ffi.C.rump_pub_lwproc_releaselwp() -- exit this process
