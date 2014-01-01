@@ -10,6 +10,11 @@
 #include <rump/rump.h>
 #include <rump/rump_syscalls.h>
 
+extern void *_netbsd_environ;
+extern const char *__progname;
+
+static char *the_env[1] = { NULL } ;
+
 static void
 die(const char *fmt, ...)
 {
@@ -22,18 +27,12 @@ die(const char *fmt, ...)
 }
 
 int
-runprog(int (*dlmain)(int, char **), int argc, char *argv[])
-{
-  return (*dlmain)(argc, argv);
-}
-
-
-int
 main(int argc, char *argv[])
 {
 	void *dl;
 	int (*dlmain)(int, char **);
 	int ret;
+        char ***env;
 
 	if (argc == 1)
 		die("supply a program to load");
@@ -44,7 +43,10 @@ main(int argc, char *argv[])
 	dlmain = dlsym(dl, "main");
 	if (! dlmain)
 		die("could not find main() in library");
-	ret = runprog(dlmain, argc - 1, argv + 1);	
+        __progname = argv[1];
+        env = dlsym(dl, "_netbsd_environ");
+        *env = the_env;
+	ret = (*dlmain)(argc - 1, argv + 1);	
 	rump_sys_reboot(0, NULL);
 	return ret;
 }

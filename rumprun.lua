@@ -14,7 +14,6 @@ for _, v in ipairs(loadlibs) do __libs[#__libs + 1] = ffi.load("rump" .. v, true
 
 ffi.cdef [[
 extern void *_netbsd_environ;
-void _libc_init(void);
 extern const char *__progname;
 ]]
 
