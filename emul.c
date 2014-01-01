@@ -7,6 +7,8 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <signal.h>
+#include <unistd.h>
+#include <setjmp.h>
 
 #define _NETBSD_ENOSYS 78
 
@@ -88,4 +90,27 @@ emul_setpriority(int which, int who, int prio) {
 	/* don't prioritise */
 	return 0;
 }
+
+static int jmp_configured = 0;
+static jmp_buf buf;
+
+int
+emul_exit_wrapper(int argc, char **argv)
+{
+	int ret;
+
+	jmp_configured = 1;
+	if (! (ret = setjmp(buf))) {
+        	return main(argc, argv);
+	}
+	return ret;
+}
+
+int
+emul_exit(int status)
+{
+	if (! jmp_configured) _exit(status);
+	longjmp(buf, status);
+}
+
 

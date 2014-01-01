@@ -40,9 +40,9 @@ main(int argc, char *argv[])
 	dl = dlopen(argv[1], RTLD_LAZY | RTLD_LOCAL);
 	if (! dl)
 		die("could not open library");
-	dlmain = dlsym(dl, "main");
+	dlmain = dlsym(dl, "emul_exit_wrapper");
 	if (! dlmain)
-		die("could not find main() in library");
+		die("could not find exit wrapper in library");
         __progname = argv[1];
         env = dlsym(dl, "_netbsd_environ");
         *env = the_env;

@@ -17,7 +17,10 @@ extern void *_netbsd_environ;
 extern const char *__progname;
 ]]
 
-ffi.cdef "int main(int argc, const char *argv[])"
+ffi.cdef [[
+int emul_exit_wrapper(int argc, const char *argv[]);
+int main(int argc, const char *argv[]);
+]]
 
 ffi.cdef [[
 typedef int32_t pid_t;
@@ -47,7 +50,7 @@ function register(lib)
     ffi.C.rump_pub_lwproc_rfork(0x01) -- RUMP_RFFDG
     handle._netbsd_environ = the_env
     ffi.C.__progname = lib
-    local ret = handle.main(argc, argv)
+    local ret = handle.emul_exit_wrapper(argc, argv)
     ffi.C.rump_pub_lwproc_releaselwp() -- exit this process
     ffi.C.rump_pub_lwproc_switch(origlwp)
     handle = nil

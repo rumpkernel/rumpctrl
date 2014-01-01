@@ -41,8 +41,8 @@ example.so:	example.o emul.o stub.o rump.map rump/lib/libc.a
 		objcopy --redefine-sym environ=_netbsd_environ tmp1.o
 		${CC} -Wl,-r -nostdlib tmp1.o emul.o stub.o -o tmp2.o
 		objcopy -w -L '*' tmp2.o
-		objcopy --globalize-symbol=main tmp2.o
-		${CC} tmp2.o -nostdlib -shared -Wl,-soname,example.so -o example.so
+		objcopy --globalize-symbol=emul_exit_wrapper tmp2.o
+		${CC} tmp2.o -nostdlib -shared -Wl,-soname,example.so -o $@
 
 clean:		
 		rm -f *.o *.so *~ rump.map
