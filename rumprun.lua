@@ -12,6 +12,12 @@ local loadlibs = {"user", "", "vfs", "kern_tty", "dev", "net", "fs_tmpfs", "fs_k
                   "net_net", "net_local", "net_netinet", "net_shmif"}
 for _, v in ipairs(loadlibs) do __libs[#__libs + 1] = ffi.load("rump" .. v, true) end
 
+ffi.cdef [[
+extern void *_netbsd_environ;
+void _libc_init(void);
+extern const char *__progname;
+]]
+
 ffi.cdef "int main(int argc, const char *argv[])"
 
 ffi.cdef [[
@@ -30,6 +36,8 @@ ffi.C.rump_init()
 ffi.C.rump_pub_lwproc_newlwp(1)
 local origlwp = ffi.C.rump_pub_lwproc_curlwp()
 
+local the_env = ffi.new("char *[1]", nil)
+
 function register(lib)
   _G[lib] = function(...)
     local handle = ffi.load("./" .. lib .. ".so") -- TODO luajit wants these named libexample.so to find from LD_LIBRARY_PATH
@@ -38,6 +46,8 @@ function register(lib)
     local av = {lib, ...}
     local argv = ffi.new("const char *[?]", argc, av)
     ffi.C.rump_pub_lwproc_rfork(0x01) -- RUMP_RFFDG
+    handle._netbsd_environ = the_env
+    ffi.C.__progname = lib
     local ret = handle.main(argc, argv)
     ffi.C.rump_pub_lwproc_releaselwp() -- exit this process
     ffi.C.rump_pub_lwproc_switch(origlwp)
