@@ -78,7 +78,7 @@ int
 munmap(void *addr, size_t len)
 {
 	rumpuser_free(addr, len);
-	return 1; /* rumpuser_free is void */
+	return 0; /* rumpuser_free is void */
 }
 
 int
