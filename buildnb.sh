@@ -20,7 +20,7 @@ fi
 
 # Build rump kernel
 ./buildrump.sh/buildrump.sh -${BUILD_QUIET:-q} ${STDJ} \
-    -s rumpsrc -T rumptools -o rumpdynobj -d rumpdyn fullbuild
+    -s rumpsrc -T rumptools -o rumpdynobj -d rumpdyn -V MKSTATICLIB=no fullbuild
 
 # Now build a static but -fPIC libc.
 # We force -fPIC so we can link into a shared library
