@@ -18,25 +18,22 @@ if [ "${1}" != 'nocheckout' ]; then
 	)
 fi
 
-# Build dynamic libs
-
+# Build rump kernel
 ./buildrump.sh/buildrump.sh -${BUILD_QUIET:-q} ${STDJ} \
-    -s rumpsrc -T rumptools -o rumpobj -d rumpdyn fullbuild
+    -s rumpsrc -T rumptools -o rumpdynobj -d rumpdyn fullbuild
 
 # Now build a static but -fPIC libc.
-
-rm -rf rumptools rumpobj
-
 # We force -fPIC so we can link into a shared library
 export BUILDRUMP_CFLAGS=-fPIC
 export BUILDRUMP_AFLAGS=-fPIC
 export BUILDRUMP_LDFLAGS=-fPIC
 
 # build tools
-./buildrump.sh/buildrump.sh -${BUILD_QUIET:-q} ${STDJ} -k -s rumpsrc \
-    -T rumptools -o rumpobj -N -V RUMP_KERNEL_IS_LIBC=1 -V MKPIC=no tools
+./buildrump.sh/buildrump.sh -${BUILD_QUIET:-q} ${STDJ} -s rumpsrc \
+    -T rumptools -o rumpobj -N -k -V MKPIC=no tools
 
 RMAKE=`pwd`/rumptools/rumpmake
+RMAKE_INST=`pwd`/rumptools/_buildrumpsh-rumpmake
 
 #
 # install full set of headers.
@@ -69,21 +66,6 @@ echo '>> Installing headers.  please wait (may take a while) ...'
 
 echo '>> done with headers'
 
-# build rump kernel
-./buildrump.sh/buildrump.sh -k -s rumpsrc -T rumptools -o rumpobj build install
-
-makekernlib ()
-{
-	lib=$1
-	OBJS=`pwd`/rumpobj/$lib
-	mkdir -p ${OBJS}
-	( cd ${lib}
-		${RMAKE} MAKEOBJDIRPREFIX=${OBJS} obj
-		${RMAKE} MAKEOBJDIRPREFIX=${OBJS} dependall
-		${RMAKE} MAKEOBJDIRPREFIX=${OBJS} install
-	)
-}
-
 makeuserlib ()
 {
 	lib=$1
@@ -93,10 +75,12 @@ makeuserlib ()
 		${RMAKE} MAKEOBJDIR=${OBJS} obj
 		${RMAKE} MKMAN=no MKLINT=no MKPROFILE=no MKYP=no \
 		    NOGCCERROR=1 MAKEOBJDIR=${OBJS} ${STDJ} dependall
-		${RMAKE} MKMAN=no MKLINT=no MKPROFILE=no MKYP=no \
+		${RMAKE_INST} MKMAN=no MKLINT=no MKPROFILE=no MKYP=no \
 		    MAKEOBJDIR=${OBJS} install
 	)
 }
 makeuserlib libc
 makeuserlib libm
 
+./buildrump.sh/buildrump.sh -${BUILD_QUIET:-q} \
+    -s rumpsrc -T rumptools -o rumpobj install
