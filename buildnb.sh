@@ -33,8 +33,8 @@ export BUILDRUMP_AFLAGS=-fPIC
 export BUILDRUMP_LDFLAGS=-fPIC
 
 # build tools
-./buildrump.sh/buildrump.sh -${BUILD_QUIET:-q} ${STDJ} -k \
-    -s rumpsrc -T rumptools -o rumpobj -N -V RUMP_KERNEL_IS_LIBC=1 tools
+./buildrump.sh/buildrump.sh -${BUILD_QUIET:-q} ${STDJ} -k -s rumpsrc \
+    -T rumptools -o rumpobj -N -V RUMP_KERNEL_IS_LIBC=1 -V MKPIC=no tools
 
 RMAKE=`pwd`/rumptools/rumpmake
 
