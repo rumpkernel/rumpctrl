@@ -35,10 +35,6 @@ export BUILDRUMP_LDFLAGS=-fPIC
 # build tools
 ./buildrump.sh/buildrump.sh -${BUILD_QUIET:-q} ${STDJ} -k \
     -s rumpsrc -T rumptools -o rumpobj -N -V RUMP_KERNEL_IS_LIBC=1 tools
-./buildrump.sh/buildrump.sh -k -s rumpsrc -T rumptools -o rumpobj setupdest
-# FIXME to be able to specify this as part of previous cmdline
-# I think this was a Xen restriction, default is 64k
-# echo 'CPPFLAGS+=-DMAXPHYS=32768' >> rumptools/mk.conf
 
 RMAKE=`pwd`/rumptools/rumpmake
 
