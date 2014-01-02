@@ -14,11 +14,12 @@ static int
 die(const char *fmt, ...)
 {
         va_list va;
+	int e = errno;
 
         va_start(va, fmt);
         vfprintf(stderr, fmt, va);
         va_end(va);
-	fprintf(stderr, "error %d\n", errno);
+	fprintf(stderr, "error %d\n", e);
 	return 1;
 }
 
