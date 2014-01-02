@@ -7,6 +7,6 @@ env:
   - LD_LIBRARY_PATH=.:rumpdyn/lib
 
 script:
-  - ./buildnb.sh
+  - BUILD_QUIET=qq ./buildnb.sh
   - make
   - ./rumprun example.so
