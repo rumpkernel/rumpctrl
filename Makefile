@@ -22,7 +22,10 @@ rumpremote:	rumpremote.o
 		${CC} $< -o $@ ${RUMPCLIENT} -lc -ldl
 
 emul.o:		emul.c
-		${CC} -O2 -g -Wall -fPIC -D_FILE_OFFSET_BITS=64 -c $< -o $@
+		${CC} ${NBCFLAGS} -c $< -o $@
+
+exit.o:		exit.c
+		${CC} ${HOSTCFLAGS} -fPIC -c $< -o $@
 
 rump.map:	
 		cat ./rumpsrc/sys/rump/librump/rumpkern/rump_syscalls.c | \
@@ -33,13 +36,12 @@ rump.map:
 example.o:	example.c
 		${CC} ${NBCFLAGS} -c $< -o $@
 
-example.so:	example.o emul.o stub.o rump.map rump/lib/libc.a
+example.so:	example.o emul.o exit.o stub.o rump.map rump/lib/libc.a
 		${CC} -Wl,-r -nostdlib example.o rump/lib/libc.a -o tmp1.o
 		objcopy --redefine-syms=extra.map tmp1.o
-		objcopy --redefine-syms=emul.map tmp1.o
 		objcopy --redefine-syms=rump.map tmp1.o
 		objcopy --redefine-sym environ=_netbsd_environ tmp1.o
-		${CC} -Wl,-r -nostdlib tmp1.o emul.o stub.o -o tmp2.o
+		${CC} -Wl,-r -nostdlib tmp1.o emul.o exit.o stub.o -o tmp2.o
 		objcopy -w -L '*' tmp2.o
 		objcopy --globalize-symbol=emul_main_wrapper tmp2.o
 		${CC} tmp2.o -shared -Wl,-soname,example.so -o $@

@@ -1,16 +1,15 @@
 /* convert to host format as necessary */
 
 #include <stdint.h>
-#include <stddef.h>
-#include <sys/time.h>
-#include <sys/mman.h>
-#include <errno.h>
-#include <sys/types.h>
-#include <signal.h>
-#include <unistd.h>
-#include <setjmp.h>
+
+#define LIBRUMPUSER
+#include <rump/rump.h>
+#include <rump/rumpuser.h>
 
 #define _NETBSD_ENOSYS 78
+
+/* host definition, might need fixing for other OS */
+int * __errno_location(void);
 
 int *
 __errno(void)
@@ -30,10 +29,11 @@ struct _netbsd_timeval {
 int
 emul_gettimeofday(struct _netbsd_timeval *ntv, void *ntz)
 {
-	struct timeval tv;
-	int ok = gettimeofday(&tv, NULL);
-	ntv->tv_sec = tv.tv_sec;
-	ntv->tv_usec = tv.tv_usec;
+	int64_t sec;
+        long nsec;
+	int ok = rumpuser_clock_gettime(RUMPUSER_CLOCK_RELWALL, &sec, &nsec);
+	ntv->tv_sec = sec;
+	ntv->tv_usec = nsec / 1000;
 	return ok;
 }
 
@@ -50,69 +50,47 @@ emul_gettimeofday(struct _netbsd_timeval *ntv, void *ntz)
 #define _NETBSD_MAP_ANON         0x1000
 #define _NETBSD_MAP_STACK        0x2000
 
-/* note that the PROT_ constants in NetBSD are the same as corresponding ones in Linux and FreeBSD at least, so no conversion */
 void *
-emul_mmap(void *addr, size_t length, int prot, int nflags, int fd, _netbsd_off_t offset)
+mmap(void *addr, size_t length, int prot, int nflags, int fd, _netbsd_off_t offset)
 {
-	void *ok;
-        int flags = 0;
+	void *memp;
+        int ret;
 
-	if (fd != -1) {
-		errno = _NETBSD_ENOSYS;
-		return MAP_FAILED;
+	if (! (fd == -1 && nflags & _NETBSD_MAP_ANON)) {
+		rumpuser_seterrno(_NETBSD_ENOSYS);
+		return (void *) -1;
 	}
-        if (nflags & _NETBSD_MAP_SHARED) flags |= MAP_SHARED;
-        if (nflags & _NETBSD_MAP_PRIVATE) flags |= MAP_PRIVATE;
-        if (nflags & _NETBSD_MAP_ANON) flags |= MAP_ANON;
-        if (nflags & _NETBSD_MAP_STACK) flags |= MAP_STACK;
 
-	ok = mmap(addr, length, prot, flags, fd, offset);
-	/* convert errors */
-	return ok;
+	ret = rumpuser_malloc(length, 4096, &memp);
+	if (! ret) return (void *) -1;
+
+	return memp;
 }
 
 /* not sure why we have both, may need to fix */
 void *
-emul__mmap(void *addr, size_t length, int prot, int nflags, int fd, _netbsd_off_t offset)
+_mmap(void *addr, size_t length, int prot, int nflags, int fd, _netbsd_off_t offset)
 {
-	return emul_mmap(addr, length, prot, nflags, fd, offset);
+	return mmap(addr, length, prot, nflags, fd, offset);
 }
 
 int
-emul_madvise(void *addr, size_t length, int advice)
+munmap(void *addr, size_t len)
+{
+	rumpuser_free(addr, len);
+	return 1; /* rumpuser_free is void */
+}
+
+int
+madvise(void *addr, size_t length, int advice)
 {
 	/* thanks for the advice */
 	return 0;
 }
 
 int
-emul_setpriority(int which, int who, int prio) {
+setpriority(int which, int who, int prio) {
 	/* don't prioritise */
 	return 0;
 }
-
-static int jmp_configured = 0;
-static jmp_buf buf;
-
-int main(int argc, char **argv);
-
-int
-emul_main_wrapper(int argc, char **argv)
-{
-	int ret;
-
-	jmp_configured = 1;
-	if (! (ret = setjmp(buf))) {
-        	return main(argc, argv);
-	}
-	return ret;
-}
-
-int
-emul_exit(int status)
-{
-	if (! jmp_configured) _exit(status);
-	longjmp(buf, status);
-}
-
 

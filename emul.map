@@ -1,6 +1,0 @@
-__gettimeofday50	emul_gettimeofday
-mmap			emul_mmap
-_mmap			emul__mmap
-madvise			emul_madvise
-setpriority		emul_setpriority
-_exit			emul_exit
