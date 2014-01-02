@@ -27,7 +27,7 @@ struct _netbsd_timeval {
 };
 
 int
-emul_gettimeofday(struct _netbsd_timeval *ntv, void *ntz)
+__gettimeofday50(struct _netbsd_timeval *ntv, void *ntz)
 {
 	int64_t sec;
         long nsec;
