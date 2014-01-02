@@ -94,8 +94,10 @@ emul_setpriority(int which, int who, int prio) {
 static int jmp_configured = 0;
 static jmp_buf buf;
 
+int main(int argc, char **argv);
+
 int
-emul_exit_wrapper(int argc, char **argv)
+emul_main_wrapper(int argc, char **argv)
 {
 	int ret;
 

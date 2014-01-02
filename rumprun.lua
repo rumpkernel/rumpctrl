@@ -18,7 +18,7 @@ extern const char *__progname;
 ]]
 
 ffi.cdef [[
-int emul_exit_wrapper(int argc, const char *argv[]);
+int emul_main_wrapper(int argc, const char *argv[]);
 int main(int argc, const char *argv[]);
 ]]
 
@@ -43,14 +43,16 @@ local the_env = ffi.new("char *[1]", nil)
 function register(lib)
   _G[lib] = function(...)
     local handle = ffi.load("./" .. lib .. ".so") -- TODO luajit wants these named libexample.so to find from LD_LIBRARY_PATH
-    if not handle then print "failed to load library"; return end
+    if not handle then error "failed to load library" end
     local argc = select('#', ...) + 1
     local av = {lib, ...}
     local argv = ffi.new("const char *[?]", argc, av)
     ffi.C.rump_pub_lwproc_rfork(0x01) -- RUMP_RFFDG
     handle._netbsd_environ = the_env
     ffi.C.__progname = lib
-    local ret = handle.emul_exit_wrapper(argc, argv)
+    local main = handle.emul_main_wrapper
+    if not main then error "cannot find main" end
+    local ret = main(argc, argv)
     ffi.C.rump_pub_lwproc_releaselwp() -- exit this process
     ffi.C.rump_pub_lwproc_switch(origlwp)
     handle = nil
