@@ -10,3 +10,4 @@ script:
   - BUILD_QUIET=qq ./buildnb.sh
   - make
   - ./rumprun example.so
+  - ./rumprun ifconfig.so
