@@ -11,3 +11,4 @@ script:
   - make
   - ./rumprun example.so
   - ./rumprun ifconfig.so
+  - ./rumprun sysctl.so kern.hostname
