@@ -4,6 +4,8 @@
 
 # Just a script to run the handful of commands required to build NetBSD libc, headers
 
+LIBS="c pthread prop util"
+
 STDJ='-j4'
 : ${BUILD_QUIET:=-q}
 
@@ -62,14 +64,14 @@ echo '>> Installing headers.  please wait (may take a while) ...'
 ( cd rumpsrc/include && ${RMAKE} -k includes > /dev/null 2>&1)
 
 # other lossage
-( cd nblib/lib/libc && ${RMAKE} includes >/dev/null 2>&1)
-( cd nblib/lib/libpthread && ${RMAKE} includes >/dev/null 2>&1)
+for lib in ${LIBS}; do
+	( cd nblib/lib/lib${lib} && ${RMAKE} includes >/dev/null 2>&1)
+done
 
 echo '>> done with headers'
 
 makeuserlib ()
 {
-	lib=$1
 
 	OBJS=`pwd`/rumpobj/lib/$1
 	( cd nblib/lib/$1
@@ -80,8 +82,9 @@ makeuserlib ()
 		    MAKEOBJDIR=${OBJS} install
 	)
 }
-makeuserlib libc
-makeuserlib libm
+for lib in ${LIBS}; do
+	makeuserlib lib${lib}
+done
 
 ./buildrump.sh/buildrump.sh ${BUILD_QUIET} \
     -s rumpsrc -T rumptools -o rumpobj install
