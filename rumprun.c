@@ -23,6 +23,7 @@ die(const char *fmt, ...)
         va_start(va, fmt);
         vfprintf(stderr, fmt, va);
         va_end(va);
+        fputs("\n", stderr);
         exit(1);
 }
 
