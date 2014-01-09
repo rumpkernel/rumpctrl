@@ -5,6 +5,7 @@
 # Just a script to run the handful of commands required to build NetBSD libc, headers
 
 STDJ='-j4'
+: ${BUILD_QUIET:=-q}
 
 set -e
 
@@ -19,7 +20,7 @@ if [ "${1}" != 'nocheckout' ]; then
 fi
 
 # Build rump kernel
-./buildrump.sh/buildrump.sh -${BUILD_QUIET:-q} ${STDJ} \
+./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${STDJ} \
     -s rumpsrc -T rumptools -o rumpdynobj -d rumpdyn -V MKSTATICLIB=no fullbuild
 
 # Now build a static but -fPIC libc.
@@ -29,7 +30,7 @@ export BUILDRUMP_AFLAGS=-fPIC
 export BUILDRUMP_LDFLAGS=-fPIC
 
 # build tools
-./buildrump.sh/buildrump.sh -${BUILD_QUIET:-q} ${STDJ} -s rumpsrc \
+./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${STDJ} -s rumpsrc \
     -T rumptools -o rumpobj -N -k -V MKPIC=no tools
 
 RMAKE=`pwd`/rumptools/rumpmake
@@ -82,5 +83,5 @@ makeuserlib ()
 makeuserlib libc
 makeuserlib libm
 
-./buildrump.sh/buildrump.sh -${BUILD_QUIET:-q} \
+./buildrump.sh/buildrump.sh ${BUILD_QUIET} \
     -s rumpsrc -T rumptools -o rumpobj install
