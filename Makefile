@@ -4,7 +4,7 @@ HOSTCFLAGS=-O2 -g -Wall -Irumpdyn/include
 RUMPLIBS=-Lrumpdyn/lib -Wl,--no-as-needed -lrumpvfs -lrumpfs_kernfs -lrumpdev -lrumpnet_local -lrumpnet_netinet -lrumpnet_net -lrumpnet -lrump -lrumpuser
 RUMPCLIENT=-Lrumpdyn/lib -lrumpclient
 
-all:		example.so ifconfig.so rumprun rumpremote
+all:		example.so ifconfig.so sysctl.so rumprun rumpremote
 
 stub.o:		stub.c
 		${CC} ${NBCFLAGS} -fno-builtin-execve -c $< -o $@
@@ -53,6 +53,22 @@ ifall.o:        ifconfig/ifall.o
 		cp ifconfig/ifall.o $@
 
 ifconfig.so:    ifall.o emul.o exit.o stub.o rump.map rump/lib/libc.a
+		${CC} -Wl,-r -nostdlib $< rump/lib/libc.a -o tmp1.o
+		objcopy --redefine-syms=extra.map tmp1.o
+		objcopy --redefine-syms=rump.map tmp1.o
+		objcopy --redefine-sym environ=_netbsd_environ tmp1.o
+		${CC} -Wl,-r -nostdlib tmp1.o emul.o exit.o stub.o -o tmp2.o
+		objcopy -w -L '*' tmp2.o
+		objcopy --globalize-symbol=emul_main_wrapper tmp2.o
+		${CC} tmp2.o -nostdlib -shared -Wl,-soname,example.so -o $@
+
+sysctl/sysctlall.o:       
+		cd sysctl && make && cd ..
+
+sysctlall.o:	sysctl/sysctlall.o
+		cp sysctl/sysctlall.o $@
+
+sysctl.so:	sysctlall.o emul.o exit.o stub.o rump.map rump/lib/libc.a
 		${CC} -Wl,-r -nostdlib $< rump/lib/libc.a -o tmp1.o
 		objcopy --redefine-syms=extra.map tmp1.o
 		objcopy --redefine-syms=rump.map tmp1.o
