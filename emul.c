@@ -1,6 +1,7 @@
 /* convert to host format as necessary */
 
 #include <stdint.h>
+#include <errno.h>
 
 #define LIBRUMPUSER
 #include <rump/rump.h>
@@ -20,10 +21,16 @@ __errno(void)
 typedef int64_t _netbsd_time_t;
 typedef int _netbsd_suseconds_t;
 typedef int64_t _netbsd_off_t;
+typedef int _netbsd_clockid_t;
 
 struct _netbsd_timeval {
 	_netbsd_time_t tv_sec;
 	_netbsd_suseconds_t tv_usec;
+};
+
+struct _netbsd_timespec {
+	_netbsd_time_t tv_sec;
+	long   tv_nsec;
 };
 
 int
@@ -35,6 +42,30 @@ __gettimeofday50(struct _netbsd_timeval *ntv, void *ntz)
 	ntv->tv_sec = sec;
 	ntv->tv_usec = nsec / 1000;
 	return ok;
+}
+
+static int clockmap[4] = {
+  RUMPUSER_CLOCK_RELWALL,	/* CLOCK_REALTIME */
+  -1,				/* CLOCK_VIRTUAL */
+  -1,				/* CLOCK_PROF */
+  RUMPUSER_CLOCK_ABSMONO,	/* CLOCK_MONOTONIC */
+};
+
+int
+clock_gettime(_netbsd_clockid_t clock_id, struct _netbsd_timespec *res)
+{
+	int rump_clock_id = clockmap[clock_id];
+        int64_t sec;
+	long nsec;
+	int rv;
+	if (rump_clock_id == -1) {
+		errno = _NETBSD_ENOSYS;
+		return -1;
+	}
+	rv = rumpuser_clock_gettime(rump_clock_id, &sec, &nsec);
+	res->tv_sec = sec;
+	res->tv_nsec = nsec;
+	return rv;
 }
 
 #define _NETBSD_MAP_SHARED       0x0001
