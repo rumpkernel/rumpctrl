@@ -13,10 +13,11 @@ NBSRCDIR.sysctl=	sbin/sysctl
 NBLIBS.sysctl=
 
 NBUTILS= ifconfig sysctl
+NBUTILSSO=$(NBUTILS:%=%.so)
 
 PROGS=rumprun rumpremote
 
-all:		example.so ifconfig.so sysctl.so ${PROGS}
+all:		example.so ${NBUTILSSO} ${PROGS}
 
 stub.o:		stub.c
 		${CC} ${NBCFLAGS} -fno-builtin-execve -c $< -o $@
