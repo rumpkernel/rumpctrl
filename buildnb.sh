@@ -67,6 +67,7 @@ echo '>> Installing headers.  please wait (may take a while) ...'
 for lib in ${LIBS}; do
 	( cd nblib/lib/lib${lib} && ${RMAKE} includes >/dev/null 2>&1)
 done
+( cd rumpsrc/lib/librumpclient && ${RMAKE} includes >/dev/null 2>&1)
 
 echo '>> done with headers'
 
