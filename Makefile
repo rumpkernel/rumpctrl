@@ -60,13 +60,13 @@ example.so:	example.o emul.o exit.o stub.o rump.map rump/lib/libc.a
 		${CC} tmp2.o -nostdlib -shared -Wl,-soname,example.so -o $@
 
 define NBUTIL_templ
-nblib/$${NBSRCDIR.${1}}/${1}.ro:
-	( cd nblib/$${NBSRCDIR.${1}} && \
+rumpsrc/$${NBSRCDIR.${1}}/${1}.ro:
+	( cd rumpsrc/$${NBSRCDIR.${1}} && \
 	    ${RUMPMAKE} LIBCRT0= BUILDRUMP_CFLAGS='-fPIC -std=gnu99' ${1}.ro )
 
 LIBS.${1}= rump/lib/libc.a $${NBLIBS.${1}}
-${1}.so: nblib/$${NBSRCDIR.${1}}/${1}.ro emul.o exit.o stub.o rump.map $${LIBS.${1}}
-	${CC} -Wl,-r -nostdlib nblib/$${NBSRCDIR.${1}}/${1}.ro $${LIBS.${1}} -o tmp1.o
+${1}.so: rumpsrc/$${NBSRCDIR.${1}}/${1}.ro emul.o exit.o stub.o rump.map $${LIBS.${1}}
+	${CC} -Wl,-r -nostdlib rumpsrc/$${NBSRCDIR.${1}}/${1}.ro $${LIBS.${1}} -o tmp1.o
 	objcopy --redefine-syms=extra.map tmp1.o
 	objcopy --redefine-syms=rump.map tmp1.o
 	objcopy --redefine-sym environ=_netbsd_environ tmp1.o
@@ -76,7 +76,7 @@ ${1}.so: nblib/$${NBSRCDIR.${1}}/${1}.ro emul.o exit.o stub.o rump.map $${LIBS.$
 	${CC} tmp2.o -nostdlib -shared -Wl,-soname,${1}.so -o ${1}.so
 
 clean_${1}:
-	( cd nblib/$${NBSRCDIR.${1}} && ${RUMPMAKE} cleandir && rm -f ${1}.ro )
+	( cd rumpsrc/$${NBSRCDIR.${1}} && ${RUMPMAKE} cleandir && rm -f ${1}.ro )
 endef
 $(foreach util,${NBUTILS},$(eval $(call NBUTIL_templ,${util})))
 
