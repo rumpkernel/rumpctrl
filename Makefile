@@ -9,11 +9,11 @@ RUMPMAKE:=$(shell echo `pwd`/rumptools/rumpmake)
 NBSRCDIR.ifconfig=	sbin/ifconfig
 NBLIBS.ifconfig=	rump/lib/libprop.a rump/lib/libutil.a
 
-NBSRCDIR.sysctl=	sbin/sysctl
-NBLIBS.sysctl=
-
 NBSRCDIR.ping=		sbin/ping
 NBLIBS.ping=		rump/lib/libm.a rump/lib/libipsec.a
+
+NBSRCDIR.sysctl=	sbin/sysctl
+NBLIBS.sysctl=
 
 NBUTILS= ifconfig ping sysctl
 NBUTILSSO=$(NBUTILS:%=%.so)
