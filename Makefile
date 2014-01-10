@@ -4,7 +4,19 @@ HOSTCFLAGS=-O2 -g -Wall -Irumpdyn/include
 RUMPLIBS=-Lrumpdyn/lib -Wl,--no-as-needed -lrumpvfs -lrumpfs_kernfs -lrumpdev -lrumpnet_local -lrumpnet_netinet -lrumpnet_net -lrumpnet -lrump -lrumpuser
 RUMPCLIENT=-Lrumpdyn/lib -lrumpclient
 
-all:		example.so ifconfig.so sysctl.so rumprun rumpremote
+RUMPMAKE:=$(shell echo `pwd`/rumptools/rumpmake)
+
+NBSRCDIR.ifconfig=	sbin/ifconfig
+NBLIBS.ifconfig=	rump/lib/libprop.a rump/lib/libutil.a
+
+NBSRCDIR.sysctl=	sbin/sysctl
+NBLIBS.sysctl=
+
+NBUTILS= ifconfig sysctl
+
+PROGS=rumprun rumpremote
+
+all:		example.so ifconfig.so sysctl.so ${PROGS}
 
 stub.o:		stub.c
 		${CC} ${NBCFLAGS} -fno-builtin-execve -c $< -o $@
@@ -46,40 +58,29 @@ example.so:	example.o emul.o exit.o stub.o rump.map rump/lib/libc.a
 		objcopy --globalize-symbol=emul_main_wrapper tmp2.o
 		${CC} tmp2.o -nostdlib -shared -Wl,-soname,example.so -o $@
 
-ifconfig/ifall.o:       
-		cd ifconfig && make && cd ..
+define NBUTIL_templ
+nblib/$${NBSRCDIR.${1}}/${1}.ro:
+	( cd nblib/$${NBSRCDIR.${1}} && \
+	    ${RUMPMAKE} LIBCRT0= BUILDRUMP_CFLAGS='-fPIC -std=gnu99' ${1}.ro )
 
-ifall.o:        ifconfig/ifall.o
-		cp ifconfig/ifall.o $@
+LIBS.${1}= rump/lib/libc.a $${NBLIBS.${1}}
+${1}.so: nblib/$${NBSRCDIR.${1}}/${1}.ro emul.o exit.o stub.o rump.map $${LIBS.${1}}
+	${CC} -Wl,-r -nostdlib nblib/$${NBSRCDIR.${1}}/${1}.ro $${LIBS.${1}} -o tmp1.o
+	objcopy --redefine-syms=extra.map tmp1.o
+	objcopy --redefine-syms=rump.map tmp1.o
+	objcopy --redefine-sym environ=_netbsd_environ tmp1.o
+	${CC} -Wl,-r -nostdlib tmp1.o emul.o exit.o stub.o -o tmp2.o
+	objcopy -w -L '*' tmp2.o
+	objcopy --globalize-symbol=emul_main_wrapper tmp2.o
+	${CC} tmp2.o -nostdlib -shared -Wl,-soname,${1}.so -o ${1}.so
 
-ifconfig.so:    ifall.o emul.o exit.o stub.o rump.map rump/lib/libc.a
-		${CC} -Wl,-r -nostdlib $< rump/lib/libc.a -o tmp1.o
-		objcopy --redefine-syms=extra.map tmp1.o
-		objcopy --redefine-syms=rump.map tmp1.o
-		objcopy --redefine-sym environ=_netbsd_environ tmp1.o
-		${CC} -Wl,-r -nostdlib tmp1.o emul.o exit.o stub.o -o tmp2.o
-		objcopy -w -L '*' tmp2.o
-		objcopy --globalize-symbol=emul_main_wrapper tmp2.o
-		${CC} tmp2.o -nostdlib -shared -Wl,-soname,example.so -o $@
+clean_${1}:
+	( cd nblib/$${NBSRCDIR.${1}} && ${RUMPMAKE} cleandir && rm -f ${1}.ro )
+endef
+$(foreach util,${NBUTILS},$(eval $(call NBUTIL_templ,${util})))
 
-sysctl/sysctlall.o:       
-		cd sysctl && make && cd ..
-
-sysctlall.o:	sysctl/sysctlall.o
-		cp sysctl/sysctlall.o $@
-
-sysctl.so:	sysctlall.o emul.o exit.o stub.o rump.map rump/lib/libc.a
-		${CC} -Wl,-r -nostdlib $< rump/lib/libc.a -o tmp1.o
-		objcopy --redefine-syms=extra.map tmp1.o
-		objcopy --redefine-syms=rump.map tmp1.o
-		objcopy --redefine-sym environ=_netbsd_environ tmp1.o
-		${CC} -Wl,-r -nostdlib tmp1.o emul.o exit.o stub.o -o tmp2.o
-		objcopy -w -L '*' tmp2.o
-		objcopy --globalize-symbol=emul_main_wrapper tmp2.o
-		${CC} tmp2.o -nostdlib -shared -Wl,-soname,example.so -o $@
-
-clean:		
-		rm -f *.o *.so *~ rump.map
+clean: $(foreach util,${NBUTILS},clean_${util})
+		rm -f *.o *.so *~ rump.map ${PROGS}
 
 cleanrump:	clean
 		rm -rf obj rump rumpobj rumpsrc rumptools rumpdyn rumpdynobj
