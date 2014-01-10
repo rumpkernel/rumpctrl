@@ -34,7 +34,6 @@ main(int argc, char *argv[])
 	int (*dlmain)(int, char **);
 	int ret;
         char ***env;
-	void (*libcinit)(void);
 
 	if (argc == 1)
 		die("supply a program to load");
@@ -46,9 +45,6 @@ main(int argc, char *argv[])
 	if (! dlmain)
 		die("could not find main wrapper in library");
         __progname = argv[1];
-        if ((libcinit = dlsym(dl, "_netbsd_libc_init")) == NULL)
-		die("no libc?");
-	libcinit();
         env = dlsym(dl, "_netbsd_environ");
         *env = the_env;
 	ret = (*dlmain)(argc - 1, argv + 1);	
