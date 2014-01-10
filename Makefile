@@ -12,10 +12,13 @@ NBLIBS.ifconfig=	rump/lib/libprop.a rump/lib/libutil.a
 NBSRCDIR.ping=		sbin/ping
 NBLIBS.ping=		rump/lib/libm.a rump/lib/libipsec.a
 
+NBSRCDIR.route=		sbin/route
+NBLIBS.route=
+
 NBSRCDIR.sysctl=	sbin/sysctl
 NBLIBS.sysctl=
 
-NBUTILS= ifconfig ping sysctl
+NBUTILS= ifconfig ping route sysctl
 NBUTILSSO=$(NBUTILS:%=%.so)
 
 PROGS=rumprun rumpremote
