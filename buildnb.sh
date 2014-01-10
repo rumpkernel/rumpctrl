@@ -11,14 +11,15 @@ STDJ='-j4'
 
 set -e
 
-if [ "${1}" != 'nocheckout' ]; then
+# ok, urgh, we need just one tree due to how build systems work (or
+# don't work).  So here's what we'll do for now.  Checkout rumpsrc,
+# checkout nblib, and copy nblib over rumpsrc.  Obviously, we cannot
+# update rumpsrc except manually after the copy operation, but that's
+# a price we're just going to be paying for now.
+if [ ! -d rumpsrc ]; then
 	git submodule update --init --recursive
 	./buildrump.sh/buildrump.sh -s rumpsrc checkout
-	( cd nblib
-		ln -sf ../rumpsrc/common
-		ln -sf ../../libexec/ld.elf_so/rtld.h lib/libc
-		ln -sf ../../libexec/ld.elf_so/rtldenv.h lib/libc
-	)
+	cp -Rp nblib/* rumpsrc/
 fi
 
 # Build rump kernel
@@ -65,7 +66,7 @@ echo '>> Installing headers.  please wait (may take a while) ...'
 
 # other lossage
 for lib in ${LIBS}; do
-	( cd nblib/lib/lib${lib} && ${RMAKE} includes >/dev/null 2>&1)
+	( cd rumpsrc/lib/lib${lib} && ${RMAKE} includes >/dev/null 2>&1)
 done
 ( cd rumpsrc/lib/librumpclient && ${RMAKE} includes >/dev/null 2>&1)
 
@@ -74,13 +75,11 @@ echo '>> done with headers'
 makeuserlib ()
 {
 
-	OBJS=`pwd`/rumpobj/lib/$1
-	( cd nblib/lib/$1
-		${RMAKE} MAKEOBJDIR=${OBJS} obj
+	( cd rumpsrc/lib/$1
+		${RMAKE} obj
 		${RMAKE} MKMAN=no MKLINT=no MKPROFILE=no MKYP=no \
-		    NOGCCERROR=1 MAKEOBJDIR=${OBJS} ${STDJ} dependall
-		${RMAKE_INST} MKMAN=no MKLINT=no MKPROFILE=no MKYP=no \
-		    MAKEOBJDIR=${OBJS} install
+		    NOGCCERROR=1 ${STDJ} dependall
+		${RMAKE_INST} MKMAN=no MKLINT=no MKPROFILE=no MKYP=no install
 	)
 }
 for lib in ${LIBS}; do
