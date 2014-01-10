@@ -73,10 +73,11 @@ ${1}.so: rumpsrc/$${NBSRCDIR.${1}}/${1}.ro emul.o exit.o stub.o rump.map $${LIBS
 	objcopy --redefine-syms=extra.map tmp1.o
 	objcopy --redefine-syms=rump.map tmp1.o
 	objcopy --redefine-sym environ=_netbsd_environ tmp1.o
-	${CC} -Wl,-r -nostdlib tmp1.o emul.o exit.o stub.o -o tmp2.o
+	${CC} -Wl,-r -nostdlib -Wl,-dc tmp1.o emul.o exit.o stub.o -o tmp2.o
 	objcopy -w -L '*' tmp2.o
-	objcopy --globalize-symbol=emul_main_wrapper tmp2.o
-	${CC} tmp2.o -nostdlib -shared -Wl,-soname,${1}.so -o ${1}.so
+	objcopy --globalize-symbol=emul_main_wrapper \
+	    --globalize-symbol=_netbsd_environ tmp2.o
+	${CC} tmp2.o -nostdlib -shared -Wl,-dc -Wl,-soname,${1}.so -o ${1}.so
 
 clean_${1}:
 	( cd rumpsrc/$${NBSRCDIR.${1}} && ${RUMPMAKE} cleandir && rm -f ${1}.ro )
