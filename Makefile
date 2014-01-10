@@ -13,7 +13,7 @@ NBSRCDIR.sysctl=	sbin/sysctl
 NBLIBS.sysctl=
 
 NBSRCDIR.ping=		sbin/ping
-NBLIBS.ping=		rump/lib/libm.a rump/lib/libipsec.c
+NBLIBS.ping=		rump/lib/libm.a rump/lib/libipsec.a
 
 NBUTILS= ifconfig ping sysctl
 NBUTILSSO=$(NBUTILS:%=%.so)
