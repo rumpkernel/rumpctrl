@@ -52,7 +52,7 @@ static int clockmap[4] = {
 };
 
 int
-clock_gettime(_netbsd_clockid_t clock_id, struct _netbsd_timespec *res)
+__clock_gettime50(_netbsd_clockid_t clock_id, struct _netbsd_timespec *res)
 {
 	int rump_clock_id = clockmap[clock_id];
         int64_t sec;
