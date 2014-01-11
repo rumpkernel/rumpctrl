@@ -83,7 +83,7 @@ ${1}.so: rumpsrc/$${NBSRCDIR.${1}}/${1}.ro emul.o exit.o stub.o rump.map $${LIBS
 	${CC} tmp2.o -nostdlib -shared -Wl,-dc -Wl,-soname,${1}.so -o ${1}.so
 
 clean_${1}:
-	( cd rumpsrc/$${NBSRCDIR.${1}} && ${RUMPMAKE} cleandir && rm -f ${1}.ro )
+	( [ ! -f rumpsrc/$${NBSRCDIR.${1}} ] || ( cd rumpsrc/$${NBSRCDIR.${1}} && ${RUMPMAKE} cleandir && rm -f ${1}.ro ) )
 endef
 $(foreach util,${NBUTILS},$(eval $(call NBUTIL_templ,${util})))
 
