@@ -46,11 +46,14 @@ emul.o:		emul.c
 exit.o:		exit.c
 		${CC} ${HOSTCFLAGS} -fPIC -c $< -o $@
 
+readwrite.o:	readwrite.c
+		${CC} ${HOSTCFLAGS} -fPIC -c $< -o $@
+
 rump.map:	
 		cat ./rumpsrc/sys/rump/librump/rumpkern/rump_syscalls.c | \
 			grep rsys_aliases | grep -v -- '#define' | \
 			sed -e 's/rsys_aliases(//g' -e 's/);//g' -e 's/\(.*\),\(.*\)/\1@\2/g' | \
-			awk '{gsub("@","\t"); print;}' > $@
+			awk -F @ '$$1 ~ /^read|write$$/{$$2="rumprun_" $$1 "_wrapper"}{printf "%s\t%s\n", $$1, $$2}' > $@
 
 define NBUTIL_templ
 rumpsrc/$${NBSRCDIR.${1}}/${1}.ro:
@@ -58,12 +61,12 @@ rumpsrc/$${NBSRCDIR.${1}}/${1}.ro:
 	    ${RUMPMAKE} LIBCRT0= BUILDRUMP_CFLAGS='-fPIC -std=gnu99' ${1}.ro )
 
 LIBS.${1}= rump/lib/libc.a $${NBLIBS.${1}}
-${1}.so: rumpsrc/$${NBSRCDIR.${1}}/${1}.ro emul.o exit.o stub.o rump.map $${LIBS.${1}}
+${1}.so: rumpsrc/$${NBSRCDIR.${1}}/${1}.ro emul.o exit.o readwrite.o stub.o rump.map $${LIBS.${1}}
 	${CC} -Wl,-r -nostdlib rumpsrc/$${NBSRCDIR.${1}}/${1}.ro $${LIBS.${1}} -o tmp1_${1}.o
 	objcopy --redefine-syms=extra.map tmp1_${1}.o
 	objcopy --redefine-syms=rump.map tmp1_${1}.o
 	objcopy --redefine-sym environ=_netbsd_environ tmp1_${1}.o
-	${CC} -Wl,-r -nostdlib -Wl,-dc tmp1_${1}.o emul.o exit.o stub.o -o tmp2_${1}.o
+	${CC} -Wl,-r -nostdlib -Wl,-dc tmp1_${1}.o emul.o exit.o readwrite.o stub.o -o tmp2_${1}.o
 	objcopy -w -L '*' tmp2_${1}.o
 	objcopy --globalize-symbol=emul_main_wrapper \
 	    --globalize-symbol=_netbsd_environ tmp2_${1}.o
