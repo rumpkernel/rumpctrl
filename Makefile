@@ -23,7 +23,7 @@ NBUTILSSO=$(NBUTILS:%=%.so)
 
 PROGS=rumprun rumpremote
 
-all:		example.so ${NBUTILSSO} ${PROGS}
+all:		${NBUTILSSO} ${PROGS}
 
 stub.o:		stub.c
 		${CC} ${NBCFLAGS} -fno-builtin-execve -c $< -o $@
@@ -51,19 +51,6 @@ rump.map:
 			grep rsys_aliases | grep -v -- '#define' | \
 			sed -e 's/rsys_aliases(//g' -e 's/);//g' -e 's/\(.*\),\(.*\)/\1@\2/g' | \
 			awk '{gsub("@","\t"); print;}' > $@
-
-example.o:	example.c
-		${CC} ${NBCFLAGS} -c $< -o $@
-
-example.so:	example.o emul.o exit.o stub.o rump.map rump/lib/libc.a
-		${CC} -Wl,-r -nostdlib $< rump/lib/libc.a -o tmp1.o
-		objcopy --redefine-syms=extra.map tmp1.o
-		objcopy --redefine-syms=rump.map tmp1.o
-		objcopy --redefine-sym environ=_netbsd_environ tmp1.o
-		${CC} -Wl,-r -nostdlib tmp1.o emul.o exit.o stub.o -o tmp2.o
-		objcopy -w -L '*' tmp2.o
-		objcopy --globalize-symbol=emul_main_wrapper tmp2.o
-		${CC} tmp2.o -nostdlib -shared -Wl,-soname,example.so -o $@
 
 define NBUTIL_templ
 rumpsrc/$${NBSRCDIR.${1}}/${1}.ro:
