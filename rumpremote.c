@@ -50,7 +50,7 @@ main(int argc, char *argv[])
 	dl = dlopen(argv[1], RTLD_LAZY | RTLD_LOCAL);
 	if (! dl)
 		die("could not open library");
-	dlmain = dlsym(dl, "main");
+	dlmain = dlsym(dl, "emul_main_wrapper");
 	if (! dlmain)
 		die("could not find main() in library");
 	return runprog(dlmain, argc - 1, argv + 1);	
