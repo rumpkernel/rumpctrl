@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdio.h>
 #include <setjmp.h>
 
 static jmp_buf buf;
@@ -21,5 +22,3 @@ _exit(int status)
 {
 	longjmp(buf, status);
 }
-
-

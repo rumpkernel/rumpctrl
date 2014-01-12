@@ -17,5 +17,7 @@ main(int argc, char *argv[])
 	ret = rumpclient_init();
 	if (ret != 0)
 		die("rumpclient init failed");
-	return rumprun_so(argc, argv);
+	rumprun_so(argc, argv);
+	/* NOTREACHED */
+	return 0;
 }

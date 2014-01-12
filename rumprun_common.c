@@ -31,7 +31,9 @@ rumprun_so(int argc, char *argv[])
 {
 	void *dl;
 	int (*dlmain)(int, char **);
+	void (*dlexit)(int);
         char ***env;
+	int ret;
 
 	if (argc == 1)
 		die("supply a program to load");
@@ -44,5 +46,8 @@ rumprun_so(int argc, char *argv[])
         __progname = argv[1];
         env = dlsym(dl, "_netbsd_environ");
         *env = the_env;
-	return (*dlmain)(argc - 1, argv + 1);	
+	ret = (*dlmain)(argc - 1, argv + 1);	
+	dlexit = dlsym(dl, "_netbsd_exit");
+	dlexit(ret);
+	return ret;
 }

@@ -66,10 +66,12 @@ ${1}.so: rumpsrc/$${NBSRCDIR.${1}}/${1}.ro emul.o exit.o readwrite.o stub.o rump
 	objcopy --redefine-syms=extra.map tmp1_${1}.o
 	objcopy --redefine-syms=rump.map tmp1_${1}.o
 	objcopy --redefine-sym environ=_netbsd_environ tmp1_${1}.o
+	objcopy --redefine-sym exit=_netbsd_exit tmp1_${1}.o
 	${CC} -Wl,-r -nostdlib -Wl,-dc tmp1_${1}.o emul.o exit.o readwrite.o stub.o -o tmp2_${1}.o
 	objcopy -w -L '*' tmp2_${1}.o
 	objcopy --globalize-symbol=emul_main_wrapper \
-	    --globalize-symbol=_netbsd_environ tmp2_${1}.o
+	    --globalize-symbol=_netbsd_environ \
+	    --globalize-symbol=_netbsd_exit tmp2_${1}.o
 	${CC} tmp2_${1}.o -nostdlib -shared -Wl,-dc -Wl,-soname,${1}.so -o ${1}.so
 
 clean_${1}:
