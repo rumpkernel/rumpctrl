@@ -6,19 +6,22 @@ RUMPCLIENT=-Lrumpdyn/lib -lrumpclient
 
 RUMPMAKE:=$(shell echo `pwd`/rumptools/rumpmake)
 
+NBUTILS+=		ifconfig
 NBSRCDIR.ifconfig=	sbin/ifconfig
 NBLIBS.ifconfig=	rump/lib/libprop.a rump/lib/libutil.a
 
+NBUTILS+=		ping
 NBSRCDIR.ping=		sbin/ping
 NBLIBS.ping=		rump/lib/libm.a rump/lib/libipsec.a
 
+NBUTILS+=		route
 NBSRCDIR.route=		sbin/route
 NBLIBS.route=
 
+NBUTILS+=		sysctl
 NBSRCDIR.sysctl=	sbin/sysctl
 NBLIBS.sysctl=
 
-NBUTILS= ifconfig ping route sysctl
 NBUTILSSO=$(NBUTILS:%=%.so)
 
 PROGS=rumprun rumpremote
