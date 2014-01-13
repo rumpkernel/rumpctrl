@@ -10,6 +10,10 @@ NBUTILS+=		ifconfig
 NBSRCDIR.ifconfig=	sbin/ifconfig
 NBLIBS.ifconfig=	rump/lib/libprop.a rump/lib/libutil.a
 
+NBUTILS+=		mount_ffs
+NBSRCDIR.mount_ffs=	sbin/mount_ffs
+NBLIBS.mount_ffs=	rump/lib/libutil.a
+
 NBUTILS+=		ping
 NBSRCDIR.ping=		sbin/ping
 NBLIBS.ping=		rump/lib/libm.a rump/lib/libipsec.a
