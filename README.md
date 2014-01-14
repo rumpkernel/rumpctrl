@@ -17,12 +17,16 @@ export LD_LIBRARY_PATH=.:rumpdyn/lib
 Currently tested on Linux and FreeBSD, so should be generally portable. (FreeBSD needs a few tweaks to Makefile).
 
 Binaries currently built:
+* ```cat.so```
 * ```ifconfig.so```
 * ```ls.so```
+* ```mkdir.so```
 * ```mount_ffs.so```
 * ```mount.so``` mount -vv will not work as it forks
+* ```mv.so```
 * ```ping.so``` [needs patches for random number support](https://github.com/anttikantee/buildrump.sh/issues/61)
 * ```ping6.so``` ditto, and another issue
+* ```rm.so```
 * ```route.so```
 * ```sysctl.so```
 

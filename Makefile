@@ -6,6 +6,10 @@ RUMPCLIENT=-Lrumpdyn/lib -lrumpclient
 
 RUMPMAKE:=$(shell echo `pwd`/rumptools/rumpmake)
 
+NBUTILS+=		cat
+NBSRCDIR.cat=		bin/cat
+NBLIBS.cat=
+
 NBUTILS+=		ifconfig
 NBSRCDIR.ifconfig=	sbin/ifconfig
 NBLIBS.ifconfig=	rump/lib/libprop.a rump/lib/libutil.a
@@ -22,6 +26,14 @@ NBUTILS+=		mount_ffs
 NBSRCDIR.mount_ffs=	sbin/mount_ffs
 NBLIBS.mount_ffs=	rump/lib/libutil.a
 
+NBUTILS+=		mkdir
+NBSRCDIR.mkdir=		bin/mkdir
+NBLIBS.mkdir=
+
+NBUTILS+=		mv
+NBSRCDIR.mv=		bin/mv
+NBLIBS.mv=
+
 NBUTILS+=		ping
 NBSRCDIR.ping=		sbin/ping
 NBLIBS.ping=		rump/lib/libm.a rump/lib/libipsec.a
@@ -29,6 +41,10 @@ NBLIBS.ping=		rump/lib/libm.a rump/lib/libipsec.a
 NBUTILS+=		ping6
 NBSRCDIR.ping6=		sbin/ping6
 NBLIBS.ping6=		rump/lib/libm.a rump/lib/libipsec.a
+
+NBUTILS+=		rm
+NBSRCDIR.rm=		bin/rm
+NBLIBS.rm=
 
 NBUTILS+=		route
 NBSRCDIR.route=		sbin/route
