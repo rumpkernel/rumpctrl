@@ -31,6 +31,7 @@ Binaries currently built:
 * ```rm```
 * ```route```
 * ```sysctl```
+* ```vnconfig```
 
 There is also a LuaJIT interactive shell which runs libraries in the program directory:
 

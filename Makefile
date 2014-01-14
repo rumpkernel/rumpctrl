@@ -17,10 +17,13 @@ NBUTILS+=		bin/rm
 NBUTILS+=		sbin/ifconfig
 NBUTILS+=		sbin/mount
 NBUTILS+=		sbin/mount_ffs
+#NBUTILS+=		sbin/newfs
 NBUTILS+=		sbin/ping
 NBUTILS+=		sbin/ping6
 NBUTILS+=		sbin/route
 NBUTILS+=		sbin/sysctl
+
+NBUTILS+=		usr.sbin/vnconfig
 
 NBUTILS_BASE= $(notdir ${NBUTILS})
 NBUTILSSO=$(NBUTILS_BASE:%=%.so)
