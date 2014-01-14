@@ -10,6 +10,10 @@ NBUTILS+=		cat
 NBSRCDIR.cat=		bin/cat
 NBLIBS.cat=
 
+NBUTILS+=		df
+NBSRCDIR.df=		bin/df
+NBLIBS.df=		rump/lib/libutil.a
+
 NBUTILS+=		ifconfig
 NBSRCDIR.ifconfig=	sbin/ifconfig
 NBLIBS.ifconfig=	rump/lib/libprop.a rump/lib/libutil.a
