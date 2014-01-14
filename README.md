@@ -11,25 +11,25 @@ To build & run, e.g.:
 ./buildnb.sh
 make
 export LD_LIBRARY_PATH=.:rumpdyn/lib
-./rumprun ifconfig.so -a
+./rumprun ifconfig -a
 ````
 
 Currently tested on Linux and FreeBSD, so should be generally portable. (FreeBSD needs a few tweaks to Makefile).
 
 Binaries currently built:
-* ```cat.so```
-* ```df.so```
-* ```ifconfig.so```
-* ```ls.so```
-* ```mkdir.so```
-* ```mount_ffs.so```
-* ```mount.so``` mount -vv will not work as it forks
-* ```mv.so```
-* ```ping.so``` [needs patches for random number support](https://github.com/anttikantee/buildrump.sh/issues/61)
-* ```ping6.so``` ditto, and another issue
-* ```rm.so```
-* ```route.so```
-* ```sysctl.so```
+* ```cat```
+* ```df```
+* ```ifconfig```
+* ```ls```
+* ```mkdir```
+* ```mount_ffs```
+* ```mount``` mount -vv will not work as it forks
+* ```mv```
+* ```ping``` [needs patches for random number support](https://github.com/anttikantee/buildrump.sh/issues/61)
+* ```ping6``` ditto, and another issue
+* ```rm```
+* ```route```
+* ```sysctl```
 
 There is also a LuaJIT interactive shell which runs libraries in the program directory:
 
