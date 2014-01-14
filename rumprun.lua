@@ -20,6 +20,7 @@ extern const char *__progname;
 ffi.cdef [[
 int emul_main_wrapper(int argc, const char *argv[]);
 int main(int argc, const char *argv[]);
+int _netbsd_exit(int rv);
 ]]
 
 ffi.cdef [[
@@ -46,13 +47,16 @@ function register(lib)
     if not handle then error "failed to load library" end
     local argc = select('#', ...) + 1
     local av = {lib, ...}
-    local argv = ffi.new("const char *[?]", argc, av)
+    local argv = ffi.new("const char *[?]", argc + 1, av)
+    argv[argc] = nil
     ffi.C.rump_pub_lwproc_rfork(0x01) -- RUMP_RFFDG
     handle._netbsd_environ = the_env
     ffi.C.__progname = lib
     local main = handle.emul_main_wrapper
     if not main then error "cannot find main" end
     local ret = main(argc, argv)
+    local dlexit = handle._netbsd_exit
+    dlexit(ret);
     ffi.C.rump_pub_lwproc_releaselwp() -- exit this process
     ffi.C.rump_pub_lwproc_switch(origlwp)
     handle = nil
