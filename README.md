@@ -21,6 +21,7 @@ Binaries currently built:
 * ```cp```
 * ```disklabel```
 * ```df```
+* ```fsck```
 * ```ifconfig```
 * ```ls```
 * ```mkdir```
