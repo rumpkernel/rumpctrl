@@ -8,7 +8,6 @@ RUMPMAKE:=$(shell echo `pwd`/rumptools/rumpmake)
 
 NBUTILS+=		cat
 NBSRCDIR.cat=		bin/cat
-NBLIBS.cat=
 
 NBUTILS+=		df
 NBSRCDIR.df=		bin/df
@@ -32,11 +31,9 @@ NBLIBS.mount_ffs=	rump/lib/libutil.a
 
 NBUTILS+=		mkdir
 NBSRCDIR.mkdir=		bin/mkdir
-NBLIBS.mkdir=
 
 NBUTILS+=		mv
 NBSRCDIR.mv=		bin/mv
-NBLIBS.mv=
 
 NBUTILS+=		ping
 NBSRCDIR.ping=		sbin/ping
@@ -48,15 +45,12 @@ NBLIBS.ping6=		rump/lib/libm.a rump/lib/libipsec.a
 
 NBUTILS+=		rm
 NBSRCDIR.rm=		bin/rm
-NBLIBS.rm=
 
 NBUTILS+=		route
 NBSRCDIR.route=		sbin/route
-NBLIBS.route=
 
 NBUTILS+=		sysctl
 NBSRCDIR.sysctl=	sbin/sysctl
-NBLIBS.sysctl=
 
 NBUTILSSO=$(NBUTILS:%=%.so)
 
