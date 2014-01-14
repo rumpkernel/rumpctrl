@@ -8,30 +8,16 @@ RUMPMAKE:=$(shell echo `pwd`/rumptools/rumpmake)
 
 NBUTILS+=		bin/cat
 NBUTILS+=		bin/df
-NBLIBS.df=		rump/lib/libutil.a
-
-NBUTILS+=		sbin/ifconfig
-NBLIBS.ifconfig=	rump/lib/libprop.a rump/lib/libutil.a
-
 NBUTILS+=		bin/ls
-NBLIBS.ls=		rump/lib/libutil.a
-
-NBUTILS+=		sbin/mount
-NBLIBS.mount=		rump/lib/libutil.a
-
-NBUTILS+=		sbin/mount_ffs
-NBLIBS.mount_ffs=	rump/lib/libutil.a
-
 NBUTILS+=		bin/mkdir
 NBUTILS+=		bin/mv
-
-NBUTILS+=		sbin/ping
-NBLIBS.ping=		rump/lib/libm.a rump/lib/libipsec.a
-
-NBUTILS+=		sbin/ping6
-NBLIBS.ping6=		rump/lib/libm.a rump/lib/libipsec.a
-
 NBUTILS+=		bin/rm
+
+NBUTILS+=		sbin/ifconfig
+NBUTILS+=		sbin/mount
+NBUTILS+=		sbin/mount_ffs
+NBUTILS+=		sbin/ping
+NBUTILS+=		sbin/ping6
 NBUTILS+=		sbin/route
 NBUTILS+=		sbin/sysctl
 
@@ -77,7 +63,8 @@ rumpsrc/${1}/${2}.ro:
 	( cd rumpsrc/${1} && \
 	    ${RUMPMAKE} LIBCRT0= BUILDRUMP_CFLAGS='-fPIC -std=gnu99' ${2}.ro )
 
-LIBS.${2}= rump/lib/libc.a $${NBLIBS.${2}}
+NBLIBS.${2}:= $(shell cd rumpsrc/${1} && ${RUMPMAKE} -V '$${LDADD}')
+LIBS.${2}= rump/lib/libc.a $${NBLIBS.${2}:-l%=rump/lib/lib%.a}
 ${2}.so: rumpsrc/${1}/${2}.ro emul.o exit.o readwrite.o stub.o rump.map $${LIBS.${2}}
 	${CC} -Wl,-r -nostdlib rumpsrc/${1}/${2}.ro $${LIBS.${2}} -o tmp1_${2}.o
 	objcopy --redefine-syms=extra.map tmp1_${2}.o
