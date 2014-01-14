@@ -18,6 +18,7 @@ Currently tested on Linux and FreeBSD, so should be generally portable. (FreeBSD
 
 Binaries currently built:
 * ```ifconfig.so```
+* ```ls.so```
 * ```mount_ffs.so```
 * ```mount.so``` mount -vv will not work as it forks
 * ```ping.so``` [needs patches for random number support](https://github.com/anttikantee/buildrump.sh/issues/61)

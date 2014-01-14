@@ -10,6 +10,10 @@ NBUTILS+=		ifconfig
 NBSRCDIR.ifconfig=	sbin/ifconfig
 NBLIBS.ifconfig=	rump/lib/libprop.a rump/lib/libutil.a
 
+NBUTILS+=		ls
+NBSRCDIR.ls=		bin/ls
+NBLIBS.ls=		rump/lib/libutil.a
+
 NBUTILS+=		mount
 NBSRCDIR.mount=		sbin/mount
 NBLIBS.mount=		rump/lib/libutil.a
