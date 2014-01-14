@@ -6,53 +6,37 @@ RUMPCLIENT=-Lrumpdyn/lib -lrumpclient
 
 RUMPMAKE:=$(shell echo `pwd`/rumptools/rumpmake)
 
-NBUTILS+=		cat
-NBSRCDIR.cat=		bin/cat
-
-NBUTILS+=		df
-NBSRCDIR.df=		bin/df
+NBUTILS+=		bin/cat
+NBUTILS+=		bin/df
 NBLIBS.df=		rump/lib/libutil.a
 
-NBUTILS+=		ifconfig
-NBSRCDIR.ifconfig=	sbin/ifconfig
+NBUTILS+=		sbin/ifconfig
 NBLIBS.ifconfig=	rump/lib/libprop.a rump/lib/libutil.a
 
-NBUTILS+=		ls
-NBSRCDIR.ls=		bin/ls
+NBUTILS+=		bin/ls
 NBLIBS.ls=		rump/lib/libutil.a
 
-NBUTILS+=		mount
-NBSRCDIR.mount=		sbin/mount
+NBUTILS+=		sbin/mount
 NBLIBS.mount=		rump/lib/libutil.a
 
-NBUTILS+=		mount_ffs
-NBSRCDIR.mount_ffs=	sbin/mount_ffs
+NBUTILS+=		sbin/mount_ffs
 NBLIBS.mount_ffs=	rump/lib/libutil.a
 
-NBUTILS+=		mkdir
-NBSRCDIR.mkdir=		bin/mkdir
+NBUTILS+=		bin/mkdir
+NBUTILS+=		bin/mv
 
-NBUTILS+=		mv
-NBSRCDIR.mv=		bin/mv
-
-NBUTILS+=		ping
-NBSRCDIR.ping=		sbin/ping
+NBUTILS+=		sbin/ping
 NBLIBS.ping=		rump/lib/libm.a rump/lib/libipsec.a
 
-NBUTILS+=		ping6
-NBSRCDIR.ping6=		sbin/ping6
+NBUTILS+=		sbin/ping6
 NBLIBS.ping6=		rump/lib/libm.a rump/lib/libipsec.a
 
-NBUTILS+=		rm
-NBSRCDIR.rm=		bin/rm
+NBUTILS+=		bin/rm
+NBUTILS+=		sbin/route
+NBUTILS+=		sbin/sysctl
 
-NBUTILS+=		route
-NBSRCDIR.route=		sbin/route
-
-NBUTILS+=		sysctl
-NBSRCDIR.sysctl=	sbin/sysctl
-
-NBUTILSSO=$(NBUTILS:%=%.so)
+NBUTILS_BASE= $(notdir ${NBUTILS})
+NBUTILSSO=$(NBUTILS_BASE:%=%.so)
 
 PROGS=rumprun rumpremote
 
@@ -89,30 +73,30 @@ rump.map:
 			awk -F @ '$$1 ~ /^read|write$$/{$$2="rumprun_" $$1 "_wrapper"}{printf "%s\t%s\n", $$1, $$2}' > $@
 
 define NBUTIL_templ
-rumpsrc/$${NBSRCDIR.${1}}/${1}.ro:
-	( cd rumpsrc/$${NBSRCDIR.${1}} && \
-	    ${RUMPMAKE} LIBCRT0= BUILDRUMP_CFLAGS='-fPIC -std=gnu99' ${1}.ro )
+rumpsrc/${1}/${2}.ro:
+	( cd rumpsrc/${1} && \
+	    ${RUMPMAKE} LIBCRT0= BUILDRUMP_CFLAGS='-fPIC -std=gnu99' ${2}.ro )
 
-LIBS.${1}= rump/lib/libc.a $${NBLIBS.${1}}
-${1}.so: rumpsrc/$${NBSRCDIR.${1}}/${1}.ro emul.o exit.o readwrite.o stub.o rump.map $${LIBS.${1}}
-	${CC} -Wl,-r -nostdlib rumpsrc/$${NBSRCDIR.${1}}/${1}.ro $${LIBS.${1}} -o tmp1_${1}.o
-	objcopy --redefine-syms=extra.map tmp1_${1}.o
-	objcopy --redefine-syms=rump.map tmp1_${1}.o
-	objcopy --redefine-sym environ=_netbsd_environ tmp1_${1}.o
-	objcopy --redefine-sym exit=_netbsd_exit tmp1_${1}.o
-	${CC} -Wl,-r -nostdlib -Wl,-dc tmp1_${1}.o emul.o exit.o readwrite.o stub.o -o tmp2_${1}.o
-	objcopy -w -L '*' tmp2_${1}.o
+LIBS.${2}= rump/lib/libc.a $${NBLIBS.${2}}
+${2}.so: rumpsrc/${1}/${2}.ro emul.o exit.o readwrite.o stub.o rump.map $${LIBS.${2}}
+	${CC} -Wl,-r -nostdlib rumpsrc/${1}/${2}.ro $${LIBS.${2}} -o tmp1_${2}.o
+	objcopy --redefine-syms=extra.map tmp1_${2}.o
+	objcopy --redefine-syms=rump.map tmp1_${2}.o
+	objcopy --redefine-sym environ=_netbsd_environ tmp1_${2}.o
+	objcopy --redefine-sym exit=_netbsd_exit tmp1_${2}.o
+	${CC} -Wl,-r -nostdlib -Wl,-dc tmp1_${2}.o emul.o exit.o readwrite.o stub.o -o tmp2_${2}.o
+	objcopy -w -L '*' tmp2_${2}.o
 	objcopy --globalize-symbol=emul_main_wrapper \
 	    --globalize-symbol=_netbsd_environ \
-	    --globalize-symbol=_netbsd_exit tmp2_${1}.o
-	${CC} tmp2_${1}.o -nostdlib -shared -Wl,-dc -Wl,-soname,${1}.so -o ${1}.so
+	    --globalize-symbol=_netbsd_exit tmp2_${2}.o
+	${CC} tmp2_${2}.o -nostdlib -shared -Wl,-dc -Wl,-soname,${2}.so -o ${2}.so
 
-clean_${1}:
-	( [ ! -f rumpsrc/$${NBSRCDIR.${1}} ] || ( cd rumpsrc/$${NBSRCDIR.${1}} && ${RUMPMAKE} cleandir && rm -f ${1}.ro ) )
+clean_${2}:
+	( [ ! -f rumpsrc/${1} ] || ( cd rumpsrc/$1} && ${RUMPMAKE} cleandir && rm -f ${2}.ro ) )
 endef
-$(foreach util,${NBUTILS},$(eval $(call NBUTIL_templ,${util})))
+$(foreach util,${NBUTILS},$(eval $(call NBUTIL_templ,${util},$(notdir ${util}))))
 
-clean: $(foreach util,${NBUTILS},clean_${util})
+clean: $(foreach util,${NBUTILS_BASE},clean_${util})
 		rm -f *.o *.so *~ rump.map ${PROGS}
 
 cleanrump:	clean
