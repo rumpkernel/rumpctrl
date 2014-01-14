@@ -7,6 +7,7 @@ RUMPCLIENT=-Lrumpdyn/lib -lrumpclient
 RUMPMAKE:=$(shell echo `pwd`/rumptools/rumpmake)
 
 NBUTILS+=		bin/cat
+NBUTILS+=		bin/cp
 NBUTILS+=		bin/df
 NBUTILS+=		bin/ls
 NBUTILS+=		bin/mkdir

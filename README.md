@@ -18,6 +18,7 @@ Currently tested on Linux and FreeBSD, so should be generally portable. (FreeBSD
 
 Binaries currently built:
 * ```cat```
+* ```cp```
 * ```df```
 * ```ifconfig```
 * ```ls```
