@@ -31,13 +31,13 @@ all:		${NBUTILSSO} ${PROGS}
 stub.o:		stub.c
 		${CC} ${NBCFLAGS} -fno-builtin-execve -c $< -o $@
 
-rumprun.o:	rumprun.c
+rumprun.o:	rumprun.c rumprun_common.c
 		${CC} ${HOSTCFLAGS} -c $< -o $@
 
 rumprun:	rumprun.o
 		${CC} $< -o $@ ${RUMPLIBS} -lc -ldl
 
-rumpremote.o:	rumpremote.c
+rumpremote.o:	rumpremote.c rumprun_common.c
 		${CC} ${HOSTCFLAGS} -c $< -o $@
 
 rumpremote:	rumpremote.o

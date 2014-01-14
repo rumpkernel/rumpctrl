@@ -34,10 +34,14 @@ rumprun_so(int argc, char *argv[])
 	void (*dlexit)(int);
         char ***env;
 	int ret;
+	char lib[256];
 
 	if (argc == 1)
 		die("supply a program to load");
-	dl = dlopen(argv[1], RTLD_LAZY | RTLD_LOCAL);
+	ret = snprintf(lib, sizeof(lib), "%s.so", argv[1]);
+	if (ret >= sizeof(lib))
+		die("name too long");
+	dl = dlopen(lib, RTLD_LAZY | RTLD_LOCAL);
 	if (! dl)
 		die("could not open library");
 	dlmain = dlsym(dl, "emul_main_wrapper");
