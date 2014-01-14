@@ -21,6 +21,7 @@ Binaries currently built:
 * ```mount_ffs.so```
 * ```mount.so``` mount -vv will not work as it forks
 * ```ping.so``` [needs patches for random number support](https://github.com/anttikantee/buildrump.sh/issues/61)
+* ```ping6.so``` ditto
 * ```route.so```
 * ```sysctl.so```
 

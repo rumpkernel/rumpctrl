@@ -22,6 +22,10 @@ NBUTILS+=		ping
 NBSRCDIR.ping=		sbin/ping
 NBLIBS.ping=		rump/lib/libm.a rump/lib/libipsec.a
 
+NBUTILS+=		ping6
+NBSRCDIR.ping6=		sbin/ping6
+NBLIBS.ping6=		rump/lib/libm.a rump/lib/libipsec.a
+
 NBUTILS+=		route
 NBSRCDIR.route=		sbin/route
 NBLIBS.route=
