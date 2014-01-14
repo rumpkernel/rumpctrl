@@ -9,5 +9,6 @@ env:
 script:
   - BUILD_QUIET=-qq ./buildnb.sh
   - make
-  - ./rumprun ifconfig.so
-  - ./rumprun sysctl.so kern.hostname
+  - ./rumprun ifconfig
+  - ./rumprun sysctl kern.hostname
+  - ./rumprun df
