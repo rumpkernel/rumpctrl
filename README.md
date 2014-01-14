@@ -16,6 +16,14 @@ export LD_LIBRARY_PATH=.:rumpdyn/lib
 
 Currently tested on Linux and FreeBSD, so should be generally portable. (FreeBSD needs a few tweaks to Makefile).
 
+Binaries currently built:
+* ```ifconfig.so```
+* ```mount_ffs.so```
+* ```mount.so``` mount -vv will not work as it forks
+* ```ping.so``` [needs patches for random number support](https://github.com/anttikantee/buildrump.sh/issues/61)
+* ```route.so```
+* ```sysctl.so```
+
 There is also a LuaJIT interactive shell which runs libraries in the program directory:
 
 ````
