@@ -27,7 +27,7 @@ NBUTILS+=		sbin/ping
 NBUTILS+=		sbin/ping6
 NBUTILS+=		sbin/route
 NBUTILS+=		sbin/sysctl
-NBUTILS+=		sbin/umount
+#NBUTILS+=		sbin/umount
 
 NBUTILS+=		usr.sbin/vnconfig
 
