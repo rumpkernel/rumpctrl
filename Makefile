@@ -34,7 +34,7 @@ NBUTILS+=		sbin/umount
 NBUTILS+=		usr.sbin/vnconfig
 
 #NBUTILS+=		usr.bin/kdump
-#NBUTILS+=		usr.bin/ktrace
+NBUTILS+=		usr.bin/ktrace
 
 CPPFLAGS.umount=	-DSMALL
 
