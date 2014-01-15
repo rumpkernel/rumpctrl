@@ -3,6 +3,10 @@
 #include <stdint.h>
 #include <errno.h>
 
+/* it would make sense to directly call host interfaces here
+   but the symbols are not available so use rumpuser interfaces for now
+*/
+
 #define LIBRUMPUSER
 #include <rump/rump.h>
 #include <rump/rumpuser.h>
