@@ -19,6 +19,7 @@ Currently tested on Linux and FreeBSD, so should be generally portable. (FreeBSD
 Binaries currently built:
 * ```cat```
 * ```cp```
+* ```dd```
 * ```disklabel```
 * ```df```
 * ```dump```
@@ -27,6 +28,7 @@ Binaries currently built:
 * ```ifconfig```
 * ```ls```
 * ```mkdir```
+* ```mknod```
 * ```modstat```
 * ```mount_ffs```
 * ```mount``` mount -vv will not work as it forks
@@ -37,6 +39,7 @@ Binaries currently built:
 * ```rm```
 * ```route```
 * ```sysctl```
+* ```umount```
 * ```vnconfig```
 
 There is also a LuaJIT interactive shell which runs libraries in the program directory:
