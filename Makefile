@@ -33,6 +33,9 @@ NBUTILS+=		sbin/umount
 
 NBUTILS+=		usr.sbin/vnconfig
 
+#NBUTILS+=		usr.bin/kdump
+#NBUTILS+=		usr.bin/ktrace
+
 CPPFLAGS.umount=	-DSMALL
 
 NBUTILS_BASE= $(notdir ${NBUTILS})
@@ -75,7 +78,7 @@ rump.map:
 define NBUTIL_templ
 rumpsrc/${1}/${2}.ro:
 	( cd rumpsrc/${1} && \
-	    ${RUMPMAKE} LIBCRT0= BUILDRUMP_CFLAGS="-fPIC -std=gnu99 ${CPPFLAGS.${2}}" ${2}.ro )
+	    ${RUMPMAKE} LIBCRT0= BUILDRUMP_CFLAGS="-fPIC -std=gnu99 -D__NetBSD__ ${CPPFLAGS.${2}}" ${2}.ro )
 
 NBLIBS.${2}:= $(shell cd rumpsrc/${1} && ${RUMPMAKE} -V '$${LDADD}')
 LIBS.${2}= rump/lib/libc.a $${NBLIBS.${2}:-l%=rump/lib/lib%.a}
