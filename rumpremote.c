@@ -1,8 +1,5 @@
 /*
  * Like rumprun, except connects to a remote service.
- * Note, std* will be directed to the remote service (and they are
- * not even open by default), so example.so needs to be judiciously
- * selected, at least for now.
  */
 
 #include "rumprun_common.c"
