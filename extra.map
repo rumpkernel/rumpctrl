@@ -4,3 +4,4 @@ _lseek		rump___sysimpl_lseek
 _pread		rump___sysimpl_pread
 _pwrite		rump___sysimpl_pwrite
 _ftruncate	rump___sysimpl_ftruncate
+_readlink	rump___sysimpl_readlink
