@@ -21,13 +21,16 @@ Binaries currently built:
 * ```cp```
 * ```disklabel```
 * ```df```
+* ```dump```
 * ```fsck```
+* ```fsck_ffs```
 * ```ifconfig```
 * ```ls```
 * ```mkdir```
 * ```mount_ffs```
 * ```mount``` mount -vv will not work as it forks
 * ```mv```
+* ```newfs```
 * ```ping``` [needs patches for random number support](https://github.com/anttikantee/buildrump.sh/issues/61)
 * ```ping6``` ditto, and another issue
 * ```rm```
