@@ -7,6 +7,8 @@
    but the symbols are not available so use rumpuser interfaces for now
 */
 
+#include <rump/rumpclient.h>
+
 #define LIBRUMPUSER
 #include <rump/rump.h>
 #include <rump/rumpuser.h>
@@ -127,5 +129,17 @@ int
 setpriority(int which, int who, int prio) {
 	/* don't prioritise */
 	return 0;
+}
+
+int
+__fork(void)
+{
+	rumpclient_fork();
+}
+
+int
+__vfork14(void)
+{
+	rumpclient_fork();
 }
 

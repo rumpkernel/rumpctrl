@@ -17,8 +17,6 @@ STUB(__getrusage50);
 STUB(_lwp_kill);
 STUB(_lwp_self);
 STUB(__wait450);
-STUB(__fork);
-STUB(__vfork14);
 STUB(execve);
 STUB(kill);
 
