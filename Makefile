@@ -8,6 +8,7 @@ RUMPMAKE:=$(shell echo `pwd`/rumptools/rumpmake)
 
 NBUTILS+=		bin/cat
 NBUTILS+=		bin/cp
+NBUTILS+=		bin/dd
 NBUTILS+=		bin/df
 NBUTILS+=		bin/ls
 NBUTILS+=		bin/mkdir
