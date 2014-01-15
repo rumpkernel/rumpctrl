@@ -81,7 +81,7 @@ rumpsrc/${1}/${2}.ro:
 	    ${RUMPMAKE} LIBCRT0= BUILDRUMP_CFLAGS="-fPIC -std=gnu99 -D__NetBSD__ ${CPPFLAGS.${2}}" ${2}.ro )
 
 NBLIBS.${2}:= $(shell cd rumpsrc/${1} && ${RUMPMAKE} -V '$${LDADD}')
-LIBS.${2}= rump/lib/libc.a $${NBLIBS.${2}:-l%=rump/lib/lib%.a}
+LIBS.${2}=$${NBLIBS.${2}:-l%=rump/lib/lib%.a} rump/lib/libc.a
 ${2}.so: rumpsrc/${1}/${2}.ro emul.o exit.o readwrite.o stub.o rump.map $${LIBS.${2}}
 	${CC} -Wl,-r -nostdlib rumpsrc/${1}/${2}.ro $${LIBS.${2}} -o tmp1_${2}.o
 	objcopy --redefine-syms=extra.map tmp1_${2}.o
