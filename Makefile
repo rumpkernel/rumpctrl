@@ -20,6 +20,7 @@ NBUTILS+=		sbin/dump
 NBUTILS+=		sbin/fsck
 NBUTILS+=		sbin/fsck_ffs
 NBUTILS+=		sbin/ifconfig
+NBUTILS+=		sbin/mknod
 NBUTILS+=		sbin/modstat
 NBUTILS+=		sbin/mount
 NBUTILS+=		sbin/mount_ffs
