@@ -27,6 +27,7 @@ Binaries currently built:
 * ```ifconfig```
 * ```ls```
 * ```mkdir```
+* ```modstat```
 * ```mount_ffs```
 * ```mount``` mount -vv will not work as it forks
 * ```mv```
