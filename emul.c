@@ -134,12 +134,17 @@ setpriority(int which, int who, int prio) {
 int
 __fork(void)
 {
-	rumpclient_fork();
+	return rumpclient_fork();
 }
 
 int
 __vfork14(void)
 {
-	rumpclient_fork();
+	return rumpclient_fork();
 }
 
+int
+execve(const char *filename, char *const argv[], char *const envp[])
+{
+	return rumpclient_exec(filename, argv, envp);
+}

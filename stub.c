@@ -17,6 +17,5 @@ STUB(__getrusage50);
 STUB(_lwp_kill);
 STUB(_lwp_self);
 STUB(__wait450);
-STUB(execve);
 STUB(kill);
 
