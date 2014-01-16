@@ -16,7 +16,7 @@ export LD_LIBRARY_PATH=.:rumpdyn/lib
 
 Currently tested on Linux and FreeBSD, so should be generally portable. (FreeBSD needs a few tweaks to Makefile).
 
-Binaries currently built:
+Binaries currently built listed here. Not all are fully tested yet and there may be some issues not listed.
 * ```cat```
 * ```cp```
 * ```dd```
@@ -26,6 +26,8 @@ Binaries currently built:
 * ```fsck```
 * ```fsck_ffs```
 * ```ifconfig```
+* ```ktrace``` there is no kdump support yet but you can cat to host
+* ```ln```
 * ```ls```
 * ```mkdir```
 * ```mknod```
@@ -33,7 +35,7 @@ Binaries currently built:
 * ```mount_ffs```
 * ```mount``` mount -vv will not work as it forks
 * ```mv```
-* ```newfs```
+* ```newfs``` seem to be sme unresolved issues
 * ```ping``` [needs patches for random number support](https://github.com/anttikantee/buildrump.sh/issues/61)
 * ```ping6``` ditto, and another issue
 * ```rm```
@@ -41,6 +43,8 @@ Binaries currently built:
 * ```sysctl```
 * ```umount```
 * ```vnconfig```
+
+For programs that fork, you need to run under rumpremote and it will fork the provided host binary, so for ktrace you must do ```./rumpremote ktrace /home/justin/rump/rumprun/rumpremote ls```.
 
 There is also a LuaJIT interactive shell which runs libraries in the program directory:
 
