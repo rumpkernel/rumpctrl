@@ -39,6 +39,7 @@ Binaries currently built listed here. Not all are fully tested yet and there may
 * ```ping``` [needs patches for random number support](https://github.com/anttikantee/buildrump.sh/issues/61)
 * ```ping6``` ditto, and another issue
 * ```rm```
+* ```rndctl```
 * ```route```
 * ```sysctl```
 * ```umount```

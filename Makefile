@@ -28,6 +28,7 @@ NBUTILS+=		sbin/mount_ffs
 NBUTILS+=		sbin/newfs
 NBUTILS+=		sbin/ping
 NBUTILS+=		sbin/ping6
+NBUTILS+=		sbin/rndctl
 NBUTILS+=		sbin/route
 NBUTILS+=		sbin/sysctl
 NBUTILS+=		sbin/umount
