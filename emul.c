@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <errno.h>
+#include <stddef.h>
 
 /* it would make sense to directly call host interfaces here
    but the symbols are not available so use rumpuser interfaces for now
@@ -143,8 +144,10 @@ __vfork14(void)
 	return rumpclient_fork();
 }
 
+extern char **environ;
+
 int
 execve(const char *filename, char *const argv[], char *const envp[])
 {
-	return rumpclient_exec(filename, argv, envp);
+	return rumpclient_exec(filename, argv, environ);
 }
