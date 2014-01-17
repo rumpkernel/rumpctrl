@@ -6,48 +6,90 @@ For more information about the rump kernel see [http://www.rumpkernel.org/](http
 
 Rumprun takes NetBSD program (see Makefile) and compiles it using the NetBSD ABI, and then dynamically opens the compiled program.  The system calls that the program makes are being served by a rump kernel instead of the host kernel.
 
-To build & run, e.g.: 
+Currently tested on Linux and FreeBSD, so should be generally portable. (FreeBSD needs a few tweaks to Makefile).
+
+Building
+========
+
+To build, run: 
 ````
 ./buildnb.sh
 make
+```
+
+This will automatically fetch and build all dependencies, so assuming you
+have build tools (compiler etc.) installed, you are good to go.
+
+Running
+=======
+
+There are two ways to use rumprun, via `rumprun` or `rumpremote`.
+The latter resembles the model used by a regular operating system,
+and we will describe it first.
+
+`rumpremote`
+------------
+
+When using `rumpremote`, you run the rump kernel in a separate process
+from the NetBSD applications run with the help of `rumpremote`.
+
+The most straightforward way to use `rumpremote` is in conjuction
+with the readily available `rump_server` program.  The method
+will be briefly described, with more documentation available from
+http://www.rumpkernel.org/.
+
+First, we run the server, for example with IP networking components:
+
+````
+$ export LD_LIBRARY_PATH=rumpdyn/lib
+$ export LD_DYNAMIC_WEAK=1 #required on glibc systems
+$ ./rumpdyn/bin/rump_server -lrumpnet -lrumpnet_net -lrumpnet_netinet6 -lrumpnet_shmif unix://csock
+$
+````
+
+Now we can make system calls to `rump_server` via the local domain
+socket (`unix://csock``).  We control the location that `rumpremote`
+accesses by setting the env variable `$RUMP_SERVER`.
+
+To configure one shmif interface:
+
+````
+$ export LD_LIBRARY_PATH=.:rumpdyn/lib
+$ export RUMP_SERVER=unix://csock
+$ ./rumpremote ifconfig shmif0 create
+$ ./rumpremote ifconfig shmif0 linkstr busmem
+$ ./rumpremote ifconfig shmif0 inet 1.2.3.4 netmask 0xffffff00
+$ ./rumpremote ifconfig shmif0
+shmif0: flags=8043<UP,BROADCAST,RUNNING,MULTICAST> mtu 1500
+	address: b2:a0:37:26:d3:2e
+	linkstr: busmem
+	inet 1.2.3.4 netmask 0xffffff00 broadcast 1.2.3.255
+````
+
+The interface will persist until `rump_server` is killed or halted,
+like in a regular system an interface will persist until the
+system is rebooted.
+
+You can also use a custom application instead of `rump_server`.  Consult
+http://www.rumpkernel.org/ for the documentation on how to do that.
+
+`rumprun`
+---------
+
+As opposed to `rumpremote`, `rumprun` runs both the rump kernel and
+application in the same process.
+
 export LD_LIBRARY_PATH=.:rumpdyn/lib
 ./rumprun ifconfig -a
 ````
 
-Currently tested on Linux and FreeBSD, so should be generally portable. (FreeBSD needs a few tweaks to Makefile).
+Note that operations from one `rumprun` invocation to the next
+will not persist, given that the rump kernel is hosted in the
+same process as `rumprun`.
 
-Binaries currently built listed here. Not all are fully tested yet and there may be some issues not listed.
-* ```cat```
-* ```cp```
-* ```dd```
-* ```disklabel```
-* ```df```
-* ```dump```
-* ```fsck```
-* ```fsck_ffs```
-* ```ifconfig```
-* ```ktrace``` there is no kdump support yet but you can cat to host
-* ```ln```
-* ```ls```
-* ```mkdir```
-* ```mknod```
-* ```modstat```
-* ```mount_ffs```
-* ```mount``` mount -vv will not work as it forks
-* ```mv```
-* ```newfs``` seem to be sme unresolved issues
-* ```ping``` you need NetBSD source HEAD instead of the one from buildrump.sh
-* ```ping6``` ditto, and another issue
-* ```rm```
-* ```rndctl```
-* ```route```
-* ```sysctl```
-* ```umount```
-* ```vnconfig```
-
-For programs that fork, you need to run under rumpremote and it will fork the provided host binary, so for ktrace you must do ```./rumpremote ktrace /home/justin/rump/rumprun/rumpremote ls```.
-
-There is also a LuaJIT interactive shell which runs libraries in the program directory:
+There is also a LuaJIT interactive shell which runs libraries in the
+program directory.  It has the advantage of being able to execute
+multiple commands, somewhat akin to what is possible with `rumpremote`.
 
 ````
 luajit -e "require 'rumprun'" -i
@@ -83,3 +125,37 @@ lo1: flags=8048<LOOPBACK,RUNNING,MULTICAST> mtu 33648
 
 You might want to install a nicer Lua shell with readline support like https://github.com/jdesgats/ILuaJIT or http://www.nongnu.org/techne/lua/luaprompt/
 
+
+Supported programs
+==================
+
+Binaries currently built listed here. Not all are fully tested yet and there may be some issues not listed.
+* ```cat```
+* ```cp```
+* ```dd```
+* ```disklabel```
+* ```df```
+* ```dump```
+* ```fsck```
+* ```fsck_ffs```
+* ```ifconfig```
+* ```ktrace``` there is no kdump support yet but you can cat to host
+* ```ln```
+* ```ls```
+* ```mkdir```
+* ```mknod```
+* ```modstat```
+* ```mount_ffs```
+* ```mount``` mount -vv will not work as it forks
+* ```mv```
+* ```newfs``` seem to be sme unresolved issues
+* ```ping``` you need NetBSD source HEAD instead of the one from buildrump.sh
+* ```ping6``` ditto, and another issue
+* ```rm```
+* ```rndctl```
+* ```route```
+* ```sysctl```
+* ```umount```
+* ```vnconfig```
+
+For programs that fork, you need to run under rumpremote and it will fork the provided host binary, so for ktrace you must do ```./rumpremote ktrace /home/justin/rump/rumprun/rumpremote ls```.
