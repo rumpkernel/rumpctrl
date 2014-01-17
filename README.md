@@ -1,10 +1,10 @@
 [![Build Status](https://travis-ci.org/justincormack/rumprun.png)](https://travis-ci.org/justincormack/rumprun)
 
-This is a small experimental wrapper for running programs that were written for a normal POSIX (NetBSD) system to run them under rump kernel.
+This is a small experimental wrapper for running programs that were written for a normal POSIX (NetBSD) system to run them under rump kernel.  Rumprun is especially useful for running NetBSD configuration tools on non-NetBSD systems for the purposes of configuring rump kernels.
 
-For more information about the rump kernel see [https://www.netbsd.org/docs/rump/](https://www.netbsd.org/docs/rump/).
+For more information about the rump kernel see [http://www.rumpkernel.org/](http://www.rumpkernel.org/)
 
-It takes NetBSD program (see Makefile) and compiles it using the NetBSD ABI, and then dynamically opens it in a rump kernel environment.
+Rumprun takes NetBSD program (see Makefile) and compiles it using the NetBSD ABI, and then dynamically opens the compiled program.  The system calls that the program makes are being served by a rump kernel instead of the host kernel.
 
 To build & run, e.g.: 
 ````
