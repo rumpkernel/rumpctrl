@@ -79,6 +79,7 @@ http://www.rumpkernel.org/ for the documentation on how to do that.
 As opposed to `rumpremote`, `rumprun` runs both the rump kernel and
 application in the same process.
 
+````
 export LD_LIBRARY_PATH=.:rumpdyn/lib
 ./rumprun ifconfig -a
 ````
