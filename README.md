@@ -48,7 +48,7 @@ $
 ````
 
 Now we can make system calls to `rump_server` via the local domain
-socket (`unix://csock``).  We control the location that `rumpremote`
+socket (`unix://csock`).  We control the location that `rumpremote`
 accesses by setting the env variable `$RUMP_SERVER`.
 
 To configure one shmif interface:
