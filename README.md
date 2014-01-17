@@ -130,7 +130,12 @@ You might want to install a nicer Lua shell with readline support like https://g
 Supported programs
 ==================
 
-Binaries currently built listed here. Not all are fully tested yet and there may be some issues not listed.
+Binaries currently built listed here. Not all are fully tested yet and
+there may be some unlisted caveats.  Generally speaking, supporting a
+program is a matter of pulling in the unmodified NetBSD source code and
+adding the name of the program to `Makefile`, so if you have requests,
+do not hesitate to file an issue.
+
 * ```cat```
 * ```cp```
 * ```dd```
