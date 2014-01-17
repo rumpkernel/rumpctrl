@@ -36,7 +36,7 @@ Binaries currently built listed here. Not all are fully tested yet and there may
 * ```mount``` mount -vv will not work as it forks
 * ```mv```
 * ```newfs``` seem to be sme unresolved issues
-* ```ping``` [needs patches for random number support](https://github.com/anttikantee/buildrump.sh/issues/61)
+* ```ping``` you need NetBSD source HEAD instead of the one from buildrump.sh
 * ```ping6``` ditto, and another issue
 * ```rm```
 * ```rndctl```
