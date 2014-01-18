@@ -34,6 +34,7 @@ NBUTILS+=		sbin/sysctl
 NBUTILS+=		sbin/umount
 
 NBUTILS+=		usr.sbin/vnconfig
+NBUTILS+=		usr.sbin/pcictl
 
 #NBUTILS+=		usr.bin/kdump
 NBUTILS+=		usr.bin/ktrace
