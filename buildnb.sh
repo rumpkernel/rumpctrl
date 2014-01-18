@@ -4,7 +4,7 @@
 
 # Just a script to run the handful of commands required to build NetBSD libc, headers
 
-LIBS="c ipsec m pthread prop util"
+LIBS="c ipsec m pthread prop util pci"
 
 STDJ='-j4'
 : ${BUILD_QUIET:=-q}
