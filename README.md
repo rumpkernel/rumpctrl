@@ -134,7 +134,9 @@ Binaries currently built listed here. Not all are fully tested yet and
 there may be some unlisted caveats.  Generally speaking, supporting a
 program is a matter of pulling in the unmodified NetBSD source code and
 adding the name of the program to `Makefile`, so if you have requests,
-do not hesitate to file an issue.
+do not hesitate to file an issue.  The manual page for each command
+is available from http://man.NetBSD.org/,
+e.g. (`cat`)[man.NetBSD.org/cgi-bin/man-cgi?cat++NetBSD-current].
 
 * ```cat```
 * ```cp```
