@@ -154,6 +154,7 @@ do not hesitate to file an issue.
 * ```mount_ffs```
 * ```mount``` mount -vv will not work as it forks
 * ```mv```
+* ```ndp```
 * ```newfs``` seem to be some unresolved issues
 * ```pcictl``` for future use, no pci bus yet
 * ```ping``` you need NetBSD source HEAD instead of the one from buildrump.sh
