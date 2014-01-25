@@ -160,7 +160,7 @@ e.g. [`cat`](http://man.NetBSD.org/cgi-bin/man-cgi?cat++NetBSD-current).
 * ```newfs``` seem to be some unresolved issues
 * ```pcictl``` for future use, no pci bus yet
 * ```ping``` you need NetBSD source HEAD instead of the one from buildrump.sh
-* ```ping6``` ditto, and another issue
+* ```ping6``` ditto, and uses signals not timeouts so only first ping working
 * ```rm```
 * ```rndctl```
 * ```route```
