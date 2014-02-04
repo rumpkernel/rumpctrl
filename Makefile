@@ -97,7 +97,7 @@ ${2}.so: rumpsrc/${1}/${2}.ro emul.o exit.o readwrite.o stub.o rump.map $${LIBS.
 	objcopy --globalize-symbol=emul_main_wrapper \
 	    --globalize-symbol=_netbsd_environ \
 	    --globalize-symbol=_netbsd_exit tmp2_${2}.o
-	${CC} tmp2_${2}.o -nostdlib -shared -Wl,-dc -Wl,-soname,${2}.so -o ${2}.so
+	${CC} tmp2_${2}.o -shared -Wl,-dc -Wl,-soname,${2}.so -nostdlib -o ${2}.so
 
 clean_${2}:
 	( [ ! -d rumpsrc/${1} ] || ( cd rumpsrc/${1} && ${RUMPMAKE} cleandir && rm -f ${2}.ro ) )
