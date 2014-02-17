@@ -12,3 +12,6 @@ script:
   - ./rumprun ifconfig
   - ./rumprun sysctl kern.hostname
   - ./rumprun df
+
+notifications:
+  irc: "chat.freenode.net#rumpkernel-builds"
