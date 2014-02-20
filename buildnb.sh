@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# modified version of buildxen.sh from https://github.com/anttikantee/xen-nblibc
+# modified version of buildxen.sh from https://github.com/rumpkernel/rumpuser-xen
 
 # Just a script to run the handful of commands required to build NetBSD libc, headers
 
