@@ -4,3 +4,6 @@
 [submodule "nblib"]
 	path = nblib
 	url = https://github.com/rumpkernel/xen-nblibc.git
+[submodule "nbusersrc"]
+	path = nbusersrc
+	url = https://github.com/rumpkernel/netbsd-userspace-src

@@ -13,13 +13,13 @@ set -e
 
 # ok, urgh, we need just one tree due to how build systems work (or
 # don't work).  So here's what we'll do for now.  Checkout rumpsrc,
-# checkout nblib, and copy nblib over rumpsrc.  Obviously, we cannot
+# checkout nbusersrc, and copy nbusersrc over rumpsrc.  Obviously, we cannot
 # update rumpsrc except manually after the copy operation, but that's
 # a price we're just going to be paying for now.
 if [ ! -d rumpsrc ]; then
 	git submodule update --init --recursive
 	./buildrump.sh/buildrump.sh -s rumpsrc checkout
-	cp -Rp nblib/* rumpsrc/
+	cp -Rp nbusersrc/* rumpsrc/
 fi
 
 # Build rump kernel
