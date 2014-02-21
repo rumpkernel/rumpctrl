@@ -4,7 +4,15 @@
 
 # Just a script to run the handful of commands required to build NetBSD libc, headers
 
-LIBS="c ipsec m pthread prop util pci"
+LIBLIBS="c crypt ipsec m pthread prop util pci y"
+MORELIBS="external/bsd/flex/lib crypto/external/bsd/openssl/lib/libcrypto"
+LIBS=""
+for lib in ${LIBLIBS}; do
+	LIBS="${LIBS} rumpsrc/lib/lib${lib}"
+done
+for lib in ${MORELIBS}; do
+	LIBS="${LIBS} rumpsrc/${lib}"
+done
 
 STDJ='-j4'
 : ${BUILD_QUIET:=-q}
@@ -45,11 +53,13 @@ RMAKE_INST=`pwd`/rumptools/_buildrumpsh-rumpmake
 # first, "mtree" (TODO: fetch/use nbmtree)
 INCSDIRS='adosfs altq arpa crypto dev filecorefs fs i386 isofs miscfs
 	msdosfs net net80211 netatalk netbt netinet netinet6 netipsec
-	netisdn netkey netmpls netnatm netsmb nfs ntfs ppath prop
+	netisdn netkey netmpls netnatm netsmb nfs ntfs openssl ppath prop
 	protocols rpc rpcsvc ssp sys ufs uvm x86'
 for dir in ${INCSDIRS}; do
 	mkdir -p rump/include/$dir
 done
+# XXX
+mkdir -p rumpobj/dest.stage/usr/lib/pkgconfig
 
 # then, install
 echo '>> Installing headers.  please wait (may take a while) ...'
@@ -66,7 +76,7 @@ echo '>> Installing headers.  please wait (may take a while) ...'
 
 # other lossage
 for lib in ${LIBS}; do
-	( cd rumpsrc/lib/lib${lib} && ${RMAKE} includes >/dev/null 2>&1)
+	( cd ${lib} && ${RMAKE} includes >/dev/null 2>&1)
 done
 ( cd rumpsrc/lib/librumpclient && ${RMAKE} includes >/dev/null 2>&1)
 
@@ -75,7 +85,7 @@ echo '>> done with headers'
 makeuserlib ()
 {
 
-	( cd rumpsrc/lib/$1
+	( cd $1
 		${RMAKE} obj
 		${RMAKE} MKMAN=no MKLINT=no MKPROFILE=no MKYP=no \
 		    NOGCCERROR=1 ${STDJ} dependall
@@ -83,7 +93,7 @@ makeuserlib ()
 	)
 }
 for lib in ${LIBS}; do
-	makeuserlib lib${lib}
+	makeuserlib ${lib}
 done
 
 ./buildrump.sh/buildrump.sh ${BUILD_QUIET} \

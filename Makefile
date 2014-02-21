@@ -16,6 +16,7 @@ NBUTILS+=		bin/mkdir
 NBUTILS+=		bin/mv
 NBUTILS+=		bin/rm
 
+NBUTILS+=		sbin/cgdconfig
 NBUTILS+=		sbin/disklabel
 NBUTILS+=		sbin/dump
 NBUTILS+=		sbin/fsck
