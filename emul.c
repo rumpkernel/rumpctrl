@@ -92,15 +92,14 @@ void *
 mmap(void *addr, size_t length, int prot, int nflags, int fd, _netbsd_off_t offset)
 {
 	void *memp;
-        int ret;
 
 	if (! (fd == -1 && nflags & _NETBSD_MAP_ANON)) {
 		rumpuser_seterrno(_NETBSD_ENOSYS);
 		return (void *) -1;
 	}
 
-	ret = rumpuser_malloc(length, 4096, &memp);
-	if (! ret) return (void *) -1;
+	if (rumpuser_malloc(length, 4096, &memp) != 0)
+		return (void *) -1;
 
 	return memp;
 }
