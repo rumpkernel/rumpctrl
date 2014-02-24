@@ -9,7 +9,7 @@ end
 
 __libs = {}
 local loadlibs = {"user", "", "vfs", "kern_tty", "dev", "net", "fs_tmpfs", "fs_kernfs", "fs_ptyfs",
-                  "net_net", "net_local", "net_netinet", "net_shmif"}
+                  "net_net", "net_local", "net_netinet", "net_netinet6", "net_shmif"}
 for _, v in ipairs(loadlibs) do __libs[#__libs + 1] = ffi.load("rump" .. v, true) end
 
 ffi.cdef [[
