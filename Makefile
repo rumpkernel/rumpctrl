@@ -51,9 +51,6 @@ PROGS=rumprun rumpremote
 
 all:		${NBUTILSSO} ${PROGS}
 
-stub.o:		stub.c
-		${CC} ${NBCFLAGS} -fno-builtin-execve -c $< -o $@
-
 rumprun.o:	rumprun.c rumprun_common.c
 		${CC} ${HOSTCFLAGS} -c $< -o $@
 
@@ -88,13 +85,13 @@ rumpsrc/${1}/${2}.ro:
 
 NBLIBS.${2}:= $(shell cd rumpsrc/${1} && ${RUMPMAKE} -V '$${LDADD}')
 LIBS.${2}=$${NBLIBS.${2}:-l%=rump/lib/lib%.a} rump/lib/libc.a
-${2}.so: rumpsrc/${1}/${2}.ro emul.o exit.o readwrite.o stub.o rump.map $${LIBS.${2}}
+${2}.so: rumpsrc/${1}/${2}.ro emul.o exit.o readwrite.o rump.map $${LIBS.${2}}
 	${CC} -Wl,-r -nostdlib rumpsrc/${1}/${2}.ro $${LIBS.${2}} -o tmp1_${2}.o
 	objcopy --redefine-syms=extra.map tmp1_${2}.o
 	objcopy --redefine-syms=rump.map tmp1_${2}.o
 	objcopy --redefine-sym environ=_netbsd_environ tmp1_${2}.o
 	objcopy --redefine-sym exit=_netbsd_exit tmp1_${2}.o
-	${CC} -Wl,-r -nostdlib -Wl,-dc tmp1_${2}.o emul.o exit.o readwrite.o stub.o -o tmp2_${2}.o
+	${CC} -Wl,-r -nostdlib -Wl,-dc tmp1_${2}.o emul.o exit.o readwrite.o -o tmp2_${2}.o
 	objcopy -w -L '*' tmp2_${2}.o
 	objcopy --globalize-symbol=emul_main_wrapper \
 	    --globalize-symbol=_netbsd_environ \

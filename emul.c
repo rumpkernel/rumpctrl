@@ -150,3 +150,27 @@ execve(const char *filename, char *const argv[], char *const envp[])
 {
 	return rumpclient_exec(filename, argv, environ);
 }
+
+
+/*
+ * BEGIN stubs
+ */
+
+#define STUB(name)                              \
+  int name(void); int name(void) {              \
+        static int done = 0;                    \
+        errno = ENOTSUP;                        \
+        if (done) return ENOTSUP; done = 1;     \
+      /*printk("STUB ``%s'' called\n", #name);*/\
+        return ENOTSUP;}
+
+STUB(__nanosleep50);
+STUB(__setitimer50);
+STUB(__sigaction14);
+STUB(__sigprocmask14);
+STUB(__getrusage50);
+
+STUB(_lwp_kill);
+STUB(_lwp_self);
+STUB(__wait450);
+STUB(kill);
