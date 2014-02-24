@@ -107,4 +107,7 @@ clean: $(foreach util,${NBUTILS_BASE},clean_${util})
 		rm -f *.o *.so *~ rump.map ${PROGS}
 
 cleanrump:	clean
-		rm -rf obj rump rumpobj rumpsrc rumptools rumpdyn rumpdynobj
+		rm -rf obj rump rumpobj rumptools rumpdyn rumpdynobj
+
+distcleanrump:	clean cleanrump
+		rm -rf rumpsrc
