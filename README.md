@@ -162,7 +162,7 @@ e.g. [`cat`](http://man.NetBSD.org/cgi-bin/man-cgi?cat++NetBSD-current).
 * ```npfctl``` requires rump kernel component to be built without `_NPF_TESTING`
 * ```pcictl``` for future use, no pci bus yet
 * ```ping```
-* ```ping6``` and uses signals not timeouts so only first ping working
+* ```ping6``` uses signals not timeouts so only first ping working
 * ```raidctl```
 * ```rm```
 * ```rndctl```
