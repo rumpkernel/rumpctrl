@@ -65,7 +65,7 @@ rumpremote:	rumpremote.o
 		${CC} $< -o $@ ${RUMPCLIENT} -lc -ldl
 
 emul.o:		emul.c
-		${CC} ${NBCFLAGS} -c $< -o $@
+		${CC} ${HOSTCFLAGS} -fPIC -c $< -o $@
 
 exit.o:		exit.c
 		${CC} ${HOSTCFLAGS} -fPIC -c $< -o $@
@@ -90,14 +90,15 @@ ${2}.so: rumpsrc/${1}/${2}.ro emul.o exit.o readwrite.o rump.map $${LIBS.${2}}
 	${CC} -Wl,-r -nostdlib rumpsrc/${1}/${2}.ro $${LIBS.${2}} -o tmp1_${2}.o
 	objcopy --redefine-syms=extra.map tmp1_${2}.o
 	objcopy --redefine-syms=rump.map tmp1_${2}.o
+	objcopy --redefine-syms=emul.map tmp1_${2}.o
 	objcopy --redefine-sym environ=_netbsd_environ tmp1_${2}.o
 	objcopy --redefine-sym exit=_netbsd_exit tmp1_${2}.o
-	${CC} -Wl,-r -nostdlib -Wl,-dc tmp1_${2}.o emul.o exit.o readwrite.o -o tmp2_${2}.o
+	${CC} -Wl,-r -nostdlib -Wl,-dc tmp1_${2}.o exit.o readwrite.o -o tmp2_${2}.o
 	objcopy -w -L '*' tmp2_${2}.o
 	objcopy --globalize-symbol=emul_main_wrapper \
 	    --globalize-symbol=_netbsd_environ \
 	    --globalize-symbol=_netbsd_exit tmp2_${2}.o
-	${CC} tmp2_${2}.o -shared -Wl,-dc -Wl,-soname,${2}.so -nostdlib -o ${2}.so
+	${CC} tmp2_${2}.o emul.o  -shared -Wl,-dc -Wl,-soname,${2}.so -nostdlib -o ${2}.so
 
 clean_${2}:
 	( [ ! -d rumpsrc/${1} ] || ( cd rumpsrc/${1} && ${RUMPMAKE} cleandir && rm -f ${2}.ro ) )

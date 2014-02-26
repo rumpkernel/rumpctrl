@@ -4,15 +4,15 @@
 #include <errno.h>
 #include <stddef.h>
 
+#include <sys/mman.h>
+#include <unistd.h>
+#include <time.h>
+
 /* it would make sense to directly call host interfaces here
    but the symbols are not available so use rumpuser interfaces for now
 */
 
 #include <rump/rumpclient.h>
-
-#define LIBRUMPUSER
-#include <rump/rump.h>
-#include <rump/rumpuser.h>
 
 #define _NETBSD_ENOSYS 78
 
@@ -43,35 +43,41 @@ struct _netbsd_timespec {
 int
 __gettimeofday50(struct _netbsd_timeval *ntv, void *ntz)
 {
-	int64_t sec;
-        long nsec;
-	int ok = rumpuser_clock_gettime(RUMPUSER_CLOCK_RELWALL, &sec, &nsec);
-	ntv->tv_sec = sec;
-	ntv->tv_usec = nsec / 1000;
+	struct timeval tv;
+	int ok = gettimeofday(&tv, NULL);
+	ntv->tv_sec = tv.tv_sec;
+	ntv->tv_usec = tv.tv_usec;
 	return ok;
 }
 
 static int clockmap[4] = {
-  RUMPUSER_CLOCK_RELWALL,	/* CLOCK_REALTIME */
-  -1,				/* CLOCK_VIRTUAL */
-  -1,				/* CLOCK_PROF */
-  RUMPUSER_CLOCK_ABSMONO,	/* CLOCK_MONOTONIC */
+  CLOCK_REALTIME,
+#ifdef CLOCK_VIRTUAL
+  CLOCK_VIRTUAL,
+#else
+  -1,
+#endif
+#ifdef CLOCK_PROF
+  CLOCK_PROF,
+#else
+  -1,
+#endif
+  CLOCK_MONOTONIC,
 };
 
 int
 __clock_gettime50(_netbsd_clockid_t clock_id, struct _netbsd_timespec *res)
 {
-	int rump_clock_id = clockmap[clock_id];
-        int64_t sec;
-	long nsec;
+	int host_clock_id = clockmap[clock_id];
+        struct timespec ts;
 	int rv;
-	if (rump_clock_id == -1) {
+	if (host_clock_id == -1) {
 		errno = _NETBSD_ENOSYS;
 		return -1;
 	}
-	rv = rumpuser_clock_gettime(rump_clock_id, &sec, &nsec);
-	res->tv_sec = sec;
-	res->tv_nsec = nsec;
+	rv = clock_gettime(host_clock_id, &ts);
+	res->tv_sec = ts.tv_sec;
+	res->tv_nsec = ts.tv_nsec;
 	return rv;
 }
 
@@ -89,7 +95,7 @@ __clock_gettime50(_netbsd_clockid_t clock_id, struct _netbsd_timespec *res)
 #define _NETBSD_MAP_STACK        0x2000
 
 void *
-mmap(void *addr, size_t length, int prot, int nflags, int fd, _netbsd_off_t offset)
+emul_mmap(void *addr, size_t length, int prot, int nflags, int fd, _netbsd_off_t offset)
 {
 	void *memp;
 
@@ -98,7 +104,8 @@ mmap(void *addr, size_t length, int prot, int nflags, int fd, _netbsd_off_t offs
 		return (void *) -1;
 	}
 
-	if (rumpuser_anonmmap(NULL, length, 0, 0, &memp) != 0)
+        memp = mmap(NULL, length, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANON, -1, 0);
+	if (memp == MAP_FAILED)
 		return (void *) -1;
 
 	return memp;
@@ -108,39 +115,39 @@ mmap(void *addr, size_t length, int prot, int nflags, int fd, _netbsd_off_t offs
 void *
 _mmap(void *addr, size_t length, int prot, int nflags, int fd, _netbsd_off_t offset)
 {
-	return mmap(addr, length, prot, nflags, fd, offset);
+	return emul_mmap(addr, length, prot, nflags, fd, offset);
 }
 
 int
-munmap(void *addr, size_t len)
+emul_munmap(void *addr, size_t len)
 {
-	rumpuser_unmap(addr, len);
+	munmap(addr, len);
 	return 0;
 }
 
 int
-madvise(void *addr, size_t length, int advice)
+emul_madvise(void *addr, size_t length, int advice)
 {
-	/* thanks for the advice */
+	/* thanks for the advice TODO can add */
 	return 0;
 }
 
 int
-setpriority(int which, int who, int prio) {
-	/* don't prioritise */
+emul_setpriority(int which, int who, int prio) {
+	/* don't prioritise TODO can add */
 	return 0;
 }
 
 int
 __fork(void)
 {
-	return rumpclient_fork();
+	return fork();
 }
 
 int
 __vfork14(void)
 {
-	return rumpclient_fork();
+	return fork();
 }
 
 extern char **environ;
