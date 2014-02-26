@@ -13,6 +13,9 @@
 
 #include <rump/rumpclient.h>
 
+/* difficult to include headers */
+int rumpclient_fork(void);
+
 /* TODO map errors better, and generally better error handling */
 #define _NETBSD_EINVAL 22
 #define _NETBSD_ENOSYS 78
@@ -180,13 +183,13 @@ emul_setpriority(int which, int who, int prio) {
 int
 __fork(void)
 {
-	return fork();
+	return rumpclient_fork();
 }
 
 int
 __vfork14(void)
 {
-	return fork();
+	return rumpclient_fork();
 }
 
 static int rusage_map[2] = {
