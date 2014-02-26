@@ -139,6 +139,7 @@ is available from http://man.NetBSD.org/,
 e.g. [`cat`](http://man.NetBSD.org/cgi-bin/man-cgi?cat++NetBSD-current).
 
 * ```cat```
+* ```cgdconfig``` not fully tested; uses `getrusage()` for key len calcuation
 * ```cp```
 * ```dd```
 * ```disklabel```
@@ -157,10 +158,12 @@ e.g. [`cat`](http://man.NetBSD.org/cgi-bin/man-cgi?cat++NetBSD-current).
 * ```mount``` mount -vv will not work as it forks
 * ```mv```
 * ```ndp```
-* ```newfs``` seem to be some unresolved issues
+* ```newfs```
+* ```npfctl``` requires rump kernel component to be built without `_NPF_TESTING`
 * ```pcictl``` for future use, no pci bus yet
-* ```ping``` you need NetBSD source HEAD instead of the one from buildrump.sh
-* ```ping6``` ditto, and uses signals not timeouts so only first ping working
+* ```ping```
+* ```ping6``` and uses signals not timeouts so only first ping working
+* ```raidctl```
 * ```rm```
 * ```rndctl```
 * ```route```
