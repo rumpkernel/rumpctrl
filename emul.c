@@ -8,10 +8,6 @@
 #include <unistd.h>
 #include <time.h>
 
-/* it would make sense to directly call host interfaces here
-   but the symbols are not available so use rumpuser interfaces for now
-*/
-
 #include <rump/rumpclient.h>
 
 #define _NETBSD_ENOSYS 78
