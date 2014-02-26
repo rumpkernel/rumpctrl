@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <errno.h>
 #include <stddef.h>
+#include <stdlib.h>
 
 #include <sys/mman.h>
 #include <unistd.h>
@@ -10,6 +11,8 @@
 
 #include <rump/rumpclient.h>
 
+/* TODO map errors better, and generally better error handling */
+#define _NETBSD_EINVAL 22
 #define _NETBSD_ENOSYS 78
 
 /* host definition, might need fixing for other OS */
@@ -43,6 +46,18 @@ __gettimeofday50(struct _netbsd_timeval *ntv, void *ntz)
 	int ok = gettimeofday(&tv, NULL);
 	ntv->tv_sec = tv.tv_sec;
 	ntv->tv_usec = tv.tv_usec;
+	return ok;
+}
+
+int
+__nanosleep50(struct _netbsd_timespec *nreq, struct _netbsd_timespec *nrem)
+{
+	struct timespec req, rem;
+	req.tv_sec = nreq->tv_sec;
+	req.tv_nsec = nreq->tv_nsec;
+	int ok = nanosleep(&req, &rem);
+	nrem->tv_sec = rem.tv_sec;
+	nrem->tv_nsec = rem.tv_nsec;
 	return ok;
 }
 
@@ -96,13 +111,15 @@ emul_mmap(void *addr, size_t length, int prot, int nflags, int fd, _netbsd_off_t
 	void *memp;
 
 	if (! (fd == -1 && nflags & _NETBSD_MAP_ANON)) {
-		rumpuser_seterrno(_NETBSD_ENOSYS);
+		errno = _NETBSD_ENOSYS;
 		return (void *) -1;
 	}
 
         memp = mmap(NULL, length, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANON, -1, 0);
-	if (memp == MAP_FAILED)
+	if (memp == MAP_FAILED) {
+		errno = _NETBSD_EINVAL;
 		return (void *) -1;
+	}
 
 	return memp;
 }
@@ -167,9 +184,8 @@ execve(const char *filename, char *const argv[], char *const envp[])
       /*printk("STUB ``%s'' called\n", #name);*/\
         return ENOTSUP;}
 
-#define STUB_ABORT(name) void name(void); void name(void) { rumpuser_exit(-1); }
+#define STUB_ABORT(name) void name(void); void name(void) { exit(-1); }
 
-STUB(__nanosleep50);
 STUB(__setitimer50);
 STUB(__sigaction14);
 STUB(__sigprocmask14);
