@@ -98,7 +98,7 @@ mmap(void *addr, size_t length, int prot, int nflags, int fd, _netbsd_off_t offs
 		return (void *) -1;
 	}
 
-	if (rumpuser_malloc(length, 4096, &memp) != 0)
+	if (rumpuser_anonmmap(NULL, length, 0, 0, &memp) != 0)
 		return (void *) -1;
 
 	return memp;
@@ -114,8 +114,8 @@ _mmap(void *addr, size_t length, int prot, int nflags, int fd, _netbsd_off_t off
 int
 munmap(void *addr, size_t len)
 {
-	rumpuser_free(addr, len);
-	return 0; /* rumpuser_free is void */
+	rumpuser_unmap(addr, len);
+	return 0;
 }
 
 int
