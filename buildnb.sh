@@ -4,8 +4,9 @@
 
 # Just a script to run the handful of commands required to build NetBSD libc, headers
 
-LIBLIBS="c crypt ipsec m pthread prop util pci y"
-MORELIBS="external/bsd/flex/lib crypto/external/bsd/openssl/lib/libcrypto"
+LIBLIBS="c crypt ipsec m npf pthread prop util pci y"
+MORELIBS="external/bsd/flex/lib crypto/external/bsd/openssl/lib/libcrypto
+	external/bsd/libpcap/lib"
 LIBS=""
 for lib in ${LIBLIBS}; do
 	LIBS="${LIBS} rumpsrc/lib/lib${lib}"
@@ -53,7 +54,7 @@ RMAKE_INST=`pwd`/rumptools/_buildrumpsh-rumpmake
 # first, "mtree" (TODO: fetch/use nbmtree)
 INCSDIRS='adosfs altq arpa crypto dev filecorefs fs i386 isofs miscfs
 	msdosfs net net80211 netatalk netbt netinet netinet6 netipsec
-	netisdn netkey netmpls netnatm netsmb nfs ntfs openssl ppath prop
+	netisdn netkey netmpls netnatm netsmb nfs ntfs openssl pcap ppath prop
 	protocols rpc rpcsvc ssp sys ufs uvm x86'
 for dir in ${INCSDIRS}; do
 	mkdir -p rump/include/$dir
