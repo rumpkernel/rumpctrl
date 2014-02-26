@@ -4,10 +4,12 @@
 #include <errno.h>
 #include <stddef.h>
 #include <stdlib.h>
-
+#include <string.h>
 #include <sys/mman.h>
 #include <unistd.h>
 #include <time.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 
 #include <rump/rumpclient.h>
 
@@ -37,6 +39,25 @@ struct _netbsd_timeval {
 struct _netbsd_timespec {
 	_netbsd_time_t tv_sec;
 	long   tv_nsec;
+};
+
+struct _netbsd_rusage {
+  struct _netbsd_timeval ru_utime;
+  struct _netbsd_timeval ru_stime;
+  long    ru_maxrss;
+  long    ru_ixrss;
+  long    ru_idrss;
+  long    ru_isrss;
+  long    ru_minflt;
+  long    ru_majflt;
+  long    ru_nswap;
+  long    ru_inblock;
+  long    ru_oublock;
+  long    ru_msgsnd;
+  long    ru_msgrcv;
+  long    ru_nsignals;
+  long    ru_nvcsw;
+  long    ru_nivcsw;
 };
 
 int
@@ -79,9 +100,14 @@ static int clockmap[4] = {
 int
 __clock_gettime50(_netbsd_clockid_t clock_id, struct _netbsd_timespec *res)
 {
-	int host_clock_id = clockmap[clock_id];
+	int host_clock_id;
         struct timespec ts;
 	int rv;
+	if (clock_id < 0 || clock_id >= 4) {
+		errno = _NETBSD_EINVAL;
+		return -1;
+	}
+	host_clock_id = clockmap[clock_id];
 	if (host_clock_id == -1) {
 		errno = _NETBSD_ENOSYS;
 		return -1;
@@ -163,6 +189,31 @@ __vfork14(void)
 	return fork();
 }
 
+static int rusage_map[2] = {
+  RUSAGE_SELF,
+  RUSAGE_CHILDREN,
+};
+
+int
+__getrusage50(int who, struct _netbsd_rusage *nrusage)
+{
+	struct rusage rusage;
+	int ok;
+	if (who < 0 || who >= 2) {
+		errno = _NETBSD_EINVAL;
+		return -1;
+	}
+	who = rusage_map[who];
+	ok = getrusage(who, &rusage);
+	memset(nrusage, 0, sizeof(struct _netbsd_rusage));
+	nrusage->ru_utime.tv_sec = rusage.ru_utime.tv_sec;
+	nrusage->ru_utime.tv_usec = rusage.ru_utime.tv_usec;
+	nrusage->ru_stime.tv_sec = rusage.ru_stime.tv_sec;
+	nrusage->ru_stime.tv_usec = rusage.ru_stime.tv_usec;
+	/* TODO add rest of fields */
+	return ok;
+}
+
 extern char **environ;
 
 int
@@ -189,7 +240,6 @@ execve(const char *filename, char *const argv[], char *const envp[])
 STUB(__setitimer50);
 STUB(__sigaction14);
 STUB(__sigprocmask14);
-STUB(__getrusage50);
 
 STUB(_lwp_self);
 STUB(__wait450);
