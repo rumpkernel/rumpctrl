@@ -238,7 +238,7 @@ execve(const char *filename, char *const argv[], char *const envp[])
       /*printk("STUB ``%s'' called\n", #name);*/\
         return ENOTSUP;}
 
-#define STUB_ABORT(name) void name(void); void name(void) { exit(-1); }
+#define STUB_ABORT(name) void name(void); void name(void) { abort(); }
 
 STUB(__setitimer50);
 STUB(__sigaction14);
