@@ -220,7 +220,7 @@ __getrusage50(int who, struct _netbsd_rusage *nrusage)
 extern char **environ;
 
 int
-execve(const char *filename, char *const argv[], char *const envp[])
+emul_execve(const char *filename, char *const argv[], char *const envp[])
 {
 	return rumpclient_exec(filename, argv, environ);
 }

@@ -3,3 +3,4 @@ mmap		emul_mmap
 munmap		emul_munmap
 madvise		emul_madvise
 setpriority	emul_setpriority
+execve		emul_execve
