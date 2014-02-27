@@ -148,7 +148,7 @@ e.g. [`cat`](http://man.NetBSD.org/cgi-bin/man-cgi?cat++NetBSD-current).
 * ```fsck```
 * ```fsck_ffs```
 * ```ifconfig```
-* ```ktrace``` there is no kdump support yet but you can cat to host
+* ```ktrace``` there is no kdump support yet. you can cat `ktrace.out` to host
 * ```ln```
 * ```ls```
 * ```mkdir```
@@ -169,6 +169,6 @@ e.g. [`cat`](http://man.NetBSD.org/cgi-bin/man-cgi?cat++NetBSD-current).
 * ```route```
 * ```sysctl```
 * ```umount```
-* ```vnconfig```
+* ```vnconfig``` the vnd kernel driver is not provided by rumprun ;)
 
 For programs that fork, you need to run under rumpremote and it will fork the provided host binary, so for ktrace you must do ```./rumpremote ktrace /home/justin/rump/rumprun/rumpremote ls```.
