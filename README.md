@@ -73,6 +73,11 @@ system is rebooted.
 You can also use a custom application instead of `rump_server`.  Consult
 http://www.rumpkernel.org/ for the documentation on how to do that.
 
+If you run a program that `exec`s another, the exec will take place on the host system, so you probably want to invoke rumpremote. For example to ktrace `ls` do:
+````
+./rumpremote ktrace ./rumpremote ls
+````
+
 `rumprun`
 ---------
 
