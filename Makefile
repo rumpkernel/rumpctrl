@@ -4,7 +4,7 @@ DEFUNDEF=-D__NetBSD__ -U__FreeBSD__ -Ulinux -U__linux -U__linux__ -U__gnu_linux_
 NBCFLAGS=-nostdinc -nostdlib -Irump/include -O2 -g -Wall -fPIC  ${DEFUNDEF}
 HOSTCFLAGS=-O2 -g -Wall -Irumpdyn/include
 RUMPLIBS=-Lrumpdyn/lib -Wl,--no-as-needed -lrumpvfs -lrumpfs_kernfs -lrumpdev -lrumpnet_local -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_net -lrumpnet -lrump -lrumpuser
-RUMPCLIENT=-Lrumpdyn/lib -lrumpclient -Wl,--no-as-needed -lrumpuser
+RUMPCLIENT=-Lrumpdyn/lib -Wl,-R$(PWD)/rumpdyn/lib -lrumpclient
 
 RUMPMAKE:=$(shell echo `pwd`/rumptools/rumpmake)
 
