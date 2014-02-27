@@ -73,11 +73,6 @@ system is rebooted.
 You can also use a custom application instead of `rump_server`.  Consult
 http://www.rumpkernel.org/ for the documentation on how to do that.
 
-If you run a program that `exec`s another, the exec will take place on the host system, so you probably want to invoke rumpremote. For example to ktrace `ls` do:
-````
-./rumpremote ktrace ./rumpremote ls
-````
-
 `rumprun`
 ---------
 
@@ -176,4 +171,4 @@ e.g. [`cat`](http://man.NetBSD.org/cgi-bin/man-cgi?cat++NetBSD-current).
 * ```umount```
 * ```vnconfig``` the vnd kernel driver is not provided by rumprun ;)
 
-For programs that fork, you need to run under rumpremote and it will fork the provided host binary, so for ktrace you must do ```./rumpremote ktrace /home/justin/rump/rumprun/rumpremote ls```.
+For programs that fork and exec, you need to run under rumpremote and it will fork the provided host binary, so for ktrace you must do ```./rumpremote ktrace ./rumpremote ls```.
