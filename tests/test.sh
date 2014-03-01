@@ -6,77 +6,77 @@
 export LD_LIBRARY_PATH=.:rumpdyn/lib
 EC=0
 
-Basic_ifconfig()
+Test_ifconfig()
 {
-echo "Basic ifconfig"
+echo "Test ifconfig"
 ./rumprun ifconfig | grep lo0 > /dev/null
 if [ $? -ne 0 ]
 then 
-	echo "ERROR Basic ifconfig"
+	echo "ERROR Test ifconfig"
 	EC=`expr $EC + 1`
 fi 
 }
-Basic_ifconfig
+Test_ifconfig
 
-Basic_sysctl()
+Test_sysctl()
 {
-echo "Basic sysctl"
+echo "Test sysctl"
 ./rumprun sysctl kern.hostname | grep 'kern.hostname = rump-' > /dev/null
 if [ $? -ne 0 ]
 then 
-	echo "ERROR Basic sysctl"
+	echo "ERROR Test sysctl"
 	EC=`expr $EC + 1`
 fi 
 }
-Basic_sysctl
+Test_sysctl
 
-Basic_df()
+Test_df()
 {
-echo "Basic df"
+echo "Test df"
 ./rumprun df | grep rumpfs > /dev/null
 if [ $? -ne 0 ]
 then
-	echo "ERROR Basic df"
+	echo "ERROR Test df"
 	EC=`expr $EC + 1`
 fi
 }
-Basic_df
+Test_df
 
-Basic_cat()
+Test_cat()
 {
-echo "Basic cat"
+echo "Test cat"
 ./rumprun cat /dev/null > /dev/null
 if [ $? -ne 0 ]
 then
-	echo "ERROR Basic cat"
+	echo "ERROR Test cat"
 	EC=`expr $EC + 1`
 fi
 }
-Basic_cat
+Test_cat
 
-Basic_ping()
+Test_ping()
 {
-echo "Basic ping"
+echo "Test ping"
 ./rumprun ping -o 127.0.0.1 | grep '64 bytes from 127.0.0.1: icmp_seq=0' > /dev/null
 if [ $? -ne 0 ]
 then
-	echo "ERROR Basic ping"
+	echo "ERROR Test ping"
 	EC=`expr $EC + 1`
 fi
 }
-Basic_ping
+Test_ping
 
-Basic_ping6()
+Test_ping6()
 {
-echo "Basic ping6"
+echo "Test ping6"
 ./rumprun ping6 -c 1 ::1 | grep '16 bytes from ::1, icmp_seq=0' > /dev/null
 if [ $? -ne 0 ]
 then
-	echo "ERROR Basic ping6"
+	echo "ERROR Test ping6"
 	EC=`expr $EC + 1`
 fi
 }
-Basic_ping6
+Test_ping6
 
 # output
 
