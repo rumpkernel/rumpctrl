@@ -42,6 +42,42 @@ fi
 }
 Basic_df
 
+Basic_cat()
+{
+echo "Basic cat"
+./rumprun cat /dev/null > /dev/null
+if [ $? -ne 0 ]
+then
+	echo "ERROR Basic cat"
+	EC=`expr $EC + 1`
+fi
+}
+Basic_cat
+
+Basic_ping()
+{
+echo "Basic ping"
+./rumprun ping -o 127.0.0.1 | grep '64 bytes from 127.0.0.1: icmp_seq=0' > /dev/null
+if [ $? -ne 0 ]
+then
+	echo "ERROR Basic ping"
+	EC=`expr $EC + 1`
+fi
+}
+Basic_ping
+
+Basic_ping6()
+{
+echo "Basic ping6"
+./rumprun ping6 -c 1 ::1 | grep '16 bytes from ::1, icmp_seq=0' > /dev/null
+if [ $? -ne 0 ]
+then
+	echo "ERROR Basic ping6"
+	EC=`expr $EC + 1`
+fi
+}
+Basic_ping6
+
 # output
 
 if [ $EC -ne 0 ]
