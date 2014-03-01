@@ -10,7 +10,7 @@ EC=0
 # start rump server
 SOCKFILE="csock-$$"
 ./rumpdyn/bin/rump_server -lrumpnet -lrumpnet_net -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_shmif unix://$SOCKFILE
-export RUMP_SERVER=unix://csock
+export RUMP_SERVER="unix://$SOCKFILE"
 
 # tests
 
