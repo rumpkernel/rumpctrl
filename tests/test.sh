@@ -9,7 +9,7 @@ EC=0
 
 # start rump server
 SOCKFILE="csock-$$"
-./rumpdyn/bin/rump_server -lrumpnet -lrumpnet_net -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_shmif unix://$SOCKFILE
+./rumpdyn/bin/rump_server -lrumpvfs -lrumpnet -lrumpnet_net -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_shmif unix://$SOCKFILE
 export RUMP_SERVER="unix://$SOCKFILE"
 
 # tests
@@ -102,8 +102,7 @@ fi
 Test_shmif
 
 # cleanup
-rm $SOCKFILE
-# TODO kill rump server, but we need to compile shutdown!
+./rumpremote halt
 
 # show if passed
 

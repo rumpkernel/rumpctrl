@@ -81,6 +81,24 @@ exit.o:		exit.c
 readwrite.o:	readwrite.c
 		${CC} ${HOSTCFLAGS} -fPIC -c $< -o $@
 
+halt.o:		halt.c
+		${CC} ${NBCFLAGS} -c $< -o $@
+
+# this should be refactored into a script...
+halt.so:	halt.o
+	${CC} -Wl,-r -nostdlib $< rump/lib/libc.a -o ${OBJDIR}/tmp1_halt.o
+	objcopy --redefine-syms=extra.map ${OBJDIR}/tmp1_halt.o
+	objcopy --redefine-syms=rump.map ${OBJDIR}/tmp1_halt.o
+	objcopy --redefine-syms=emul.map ${OBJDIR}/tmp1_halt.o
+	objcopy --redefine-sym environ=_netbsd_environ ${OBJDIR}/tmp1_halt.o
+	objcopy --redefine-sym exit=_netbsd_exit ${OBJDIR}/tmp1_halt.o
+	${CC} -Wl,-r -nostdlib -Wl,-dc ${OBJDIR}/tmp1_halt.o exit.o readwrite.o -o ${OBJDIR}/tmp2_halt.o
+	objcopy -w -L '*' ${OBJDIR}/tmp2_halt.o
+	objcopy --globalize-symbol=emul_main_wrapper \
+	    --globalize-symbol=_netbsd_environ \
+	    --globalize-symbol=_netbsd_exit ${OBJDIR}/tmp2_halt.o
+	${CC} ${OBJDIR}/tmp2_halt.o emul.o  -shared -Wl,-dc -Wl,-soname,$@ -nostdlib -o $@
+
 rump.map:	
 		cat ./rumpsrc/sys/rump/librump/rumpkern/rump_syscalls.c | \
 			grep rsys_aliases | grep -v -- '#define' | \

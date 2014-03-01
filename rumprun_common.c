@@ -49,9 +49,13 @@ rumprun_so(int argc, char *argv[])
 		die("could not find main wrapper in library");
         __progname = argv[1];
         env = dlsym(dl, "_netbsd_environ");
-        *env = the_env;
-	ret = (*dlmain)(argc - 1, argv + 1);	
+	if (env) {
+        	*env = the_env;
+	}
+	ret = (*dlmain)(argc - 1, argv + 1);
 	dlexit = dlsym(dl, "_netbsd_exit");
-	dlexit(ret);
+	if (dlexit) {
+		dlexit(ret);
+	}
 	return ret;
 }
