@@ -5,8 +5,9 @@
 int
 main(int argc, char *argv[])
 {
-
+	int ret;
 	rump_init();
-	rumprun_so(argc, argv);
-	return rump_sys_reboot(0, NULL);
+	ret = rumprun_so(argc, argv);
+	rump_sys_reboot(0, NULL);
+	return ret;
 }
