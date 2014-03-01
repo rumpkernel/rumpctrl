@@ -1,5 +1,10 @@
 OBJDIR=	obj-rr
 
+UNAME := $(shell uname -s)
+ifeq ($(UNAME),Linux)
+	DLFLAG=-ldl
+endif
+
 DEFUNDEF=-D__NetBSD__ -U__FreeBSD__ -Ulinux -U__linux -U__linux__ -U__gnu_linux__
 NBCFLAGS=-nostdinc -nostdlib -Irump/include -O2 -g -Wall -fPIC  ${DEFUNDEF}
 HOSTCFLAGS=-O2 -g -Wall -Irumpdyn/include
@@ -58,13 +63,13 @@ rumprun.o:	rumprun.c rumprun_common.c
 		${CC} ${HOSTCFLAGS} -c $< -o $@
 
 rumprun:	rumprun.o
-		${CC} $< -o $@ ${RUMPLIBS} -lc -ldl
+		${CC} $< -o $@ ${RUMPLIBS} -lc ${DLFLAG}
 
 rumpremote.o:	rumpremote.c rumprun_common.c
 		${CC} ${HOSTCFLAGS} -c $< -o $@
 
 rumpremote:	rumpremote.o
-		${CC} $< -o $@ ${RUMPCLIENT} -lc -ldl
+		${CC} $< -o $@ ${RUMPCLIENT} -lc ${DLFLAG}
 
 emul.o:		emul.c
 		${CC} ${HOSTCFLAGS} -fPIC -c $< -o $@
