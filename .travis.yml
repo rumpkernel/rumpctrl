@@ -9,9 +9,7 @@ env:
 script:
   - BUILD_QUIET=-qq ./buildnb.sh
   - make
-  - ./rumprun ifconfig
-  - ./rumprun sysctl kern.hostname
-  - ./rumprun df
+  - ./tests/test.sh
 
 notifications:
   irc: "chat.freenode.net#rumpkernel-builds"
