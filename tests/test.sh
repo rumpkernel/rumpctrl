@@ -4,7 +4,15 @@
 
 # set up environment
 export LD_LIBRARY_PATH=.:rumpdyn/lib
+export LD_DYNAMIC_WEAK=1
 EC=0
+
+# start rump server
+SOCKFILE="csock-$$"
+./rumpdyn/bin/rump_server -lrumpnet -lrumpnet_net -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_shmif unix://$SOCKFILE
+export RUMP_SERVER=unix://csock
+
+# tests
 
 Test_ifconfig()
 {
@@ -78,7 +86,26 @@ fi
 }
 Test_ping6
 
-# output
+Test_shmif()
+{
+echo "Test shmif"
+./rumpremote ifconfig shmif0 create > /dev/null && \
+./rumpremote ifconfig shmif0 linkstr busmem > /dev/null && \
+./rumpremote ifconfig shmif0 inet 1.2.3.4 netmask 0xffffff00 > /dev/null && \
+./rumpremote ifconfig shmif0 | grep 'shmif0: flags=8043<UP,BROADCAST,RUNNING,MULTICAST> mtu 1500' > /dev/null
+if [ $? -ne 0 ]
+then
+	echo "ERROR Test shmif"
+	EC=`expr $EC + 1`
+fi
+}
+Test_shmif
+
+# cleanup
+rm $SOCKFILE
+# TODO kill rump server, but we need to compile shutdown!
+
+# show if passed
 
 if [ $EC -ne 0 ]
 then
