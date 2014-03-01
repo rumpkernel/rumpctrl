@@ -165,7 +165,7 @@ e.g. [`cat`](http://man.NetBSD.org/cgi-bin/man-cgi?cat++NetBSD-current).
 * ```ping```
 * ```ping6``` uses signals not timeouts so only first ping working
 * ```raidctl```
-* ```reboot``` not working due to signals
+* ```reboot``` not working due to signals; there is a simple ```halt``` available.
 * ```rm```
 * ```rndctl```
 * ```route```
