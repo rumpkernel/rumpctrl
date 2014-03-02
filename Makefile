@@ -58,7 +58,7 @@ NBUTILSSO=$(NBUTILS_BASE:%=%.so)
 
 PROGS=rumprun rumpremote
 
-all:		${NBUTILSSO} ${PROGS}
+all:		${NBUTILSSO} ${PROGS} halt.so
 
 rumprun.o:	rumprun.c rumprun_common.c
 		${CC} ${HOSTCFLAGS} -c $< -o $@
