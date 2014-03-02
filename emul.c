@@ -21,6 +21,13 @@ int rumpclient_fork(void);
 #define _NETBSD_ENOSYS 78
 
 /* host definition, might need fixing for other OS */
+#ifdef __FreeBSD__
+int *
+__errno(void)
+{
+        return __error();
+}
+#else
 int * __errno_location(void);
 
 int *
@@ -28,6 +35,7 @@ __errno(void)
 {
         return __errno_location();
 }
+#endif
 
 typedef int64_t _netbsd_time_t;
 typedef int _netbsd_suseconds_t;
