@@ -101,6 +101,21 @@ fi
 }
 Test_directories
 
+Test_ktrace()
+{
+echo "Test ktrace"
+# no kdump support yet so does not tet output is sane
+./rumpremote ktrace ./rumpremote ls > /dev/null && \
+./rumpremote ls / | grep kdump > /dev/null && \
+./rumpremote rm kdump > /dev/null && \
+if [ $? -ne 0 ]
+then
+	echo "ERROR Test ktrace"
+	EC=`expr $EC + 1`
+fi
+}
+Test_ktrace
+
 Test_shmif()
 {
 echo "Test shmif"
