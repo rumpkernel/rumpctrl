@@ -167,6 +167,7 @@ e.g. [`cat`](http://man.NetBSD.org/cgi-bin/man-cgi?cat++NetBSD-current).
 * ```raidctl```
 * ```reboot``` not working due to signals; there is a simple ```halt``` available.
 * ```rm```
+* ```rmdir```
 * ```rndctl```
 * ```route```
 * ```sysctl```
