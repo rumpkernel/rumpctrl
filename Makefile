@@ -22,6 +22,7 @@ NBUTILS+=		bin/ls
 NBUTILS+=		bin/mkdir
 NBUTILS+=		bin/mv
 NBUTILS+=		bin/rm
+NBUTILS+=		bin/rmdir
 
 NBUTILS+=		sbin/cgdconfig
 NBUTILS+=		sbin/disklabel
