@@ -86,6 +86,21 @@ fi
 }
 Test_ping6
 
+Test_directories()
+{
+echo "Test directories"
+./rumpremote mkdir /tmp > /dev/null && \
+./rumpremote ls / | grep tmp > /dev/null && \
+./rumpremote rmdir /tmp > /dev/null && \
+./rumpremote ls / | grep -v tmp > /dev/null
+if [ $? -ne 0 ]
+then
+	echo "ERROR Test directories"
+	EC=`expr $EC + 1`
+fi
+}
+Test_directories
+
 Test_shmif()
 {
 echo "Test shmif"
