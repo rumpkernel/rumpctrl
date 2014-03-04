@@ -92,8 +92,8 @@ Test_ktrace()
 echo "Test ktrace"
 # no kdump support yet so does not test output is sane
 ./rumpremote ktrace ./rumpremote ls > /dev/null
-./rumpremote ls / | grep kdump > /dev/null
-./rumpremote rm kdump > /dev/null
+./rumpremote ls / | grep ktrace.out > /dev/null
+./rumpremote rm ktrace.out > /dev/null
 }
 definetest Test_ktrace
 
