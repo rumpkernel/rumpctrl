@@ -2,7 +2,7 @@ OBJDIR=	obj-rr
 
 UNAME := $(shell uname -s)
 ifeq ($(UNAME),Linux)
-	DLFLAG=-ldl -lrt
+	DLFLAG=-ldl -Wl,--no-as-needed -lrt
 endif
 
 DEFUNDEF=-D__NetBSD__ -U__FreeBSD__ -Ulinux -U__linux -U__linux__ -U__gnu_linux__
