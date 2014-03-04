@@ -122,7 +122,11 @@ export RUMP_SERVER="$SOCKFILE2"
 
 ./rumpremote ping -c 1 1.2.3.1 > /dev/null
 
-cat tests/npf.conf | ./rumpremote dd of=/npf.conf 2> /dev/null
+IFS=' '
+echo 'group default {
+        ruleset "test-set"
+        pass all
+}' | ./rumpremote dd of=/npf.conf 2> /dev/null
 ./rumpremote npfctl reload /npf.conf
 ./rumpremote npfctl rule "test-set" add block proto icmp from 1.2.3.1 > /dev/null
 
