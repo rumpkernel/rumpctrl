@@ -119,19 +119,19 @@ export RUMP_SERVER="$SOCKFILE2"
 ./rumpremote ifconfig shmif0 linkstr test_busmem
 ./rumpremote ifconfig shmif0 inet 1.2.3.2
 
-./rumpremote ping -c 1 1.2.3.1
+./rumpremote ping -c 1 1.2.3.1 > /dev/null
 
-cat tests/npf.conf | ./rumpremote dd of=/npf.conf
+cat tests/npf.conf | ./rumpremote dd of=/npf.conf 2> /dev/null
 ./rumpremote npfctl reload /npf.conf
-./rumpremote npfctl rule "test-set" add block proto icmp from 1.2.3.1
+./rumpremote npfctl rule "test-set" add block proto icmp from 1.2.3.1 > /dev/null
 
-./rumpremote ping -oq 1.2.3.1
+./rumpremote ping -oq 1.2.3.1 | grep '1 packets received' > /dev/null
 
 ./rumpremote npfctl start
-./rumpremote ping -oq -w 2 1.2.3.1
+./rumpremote ping -oq -w 2 1.2.3.1 | grep '0 packets received' > /dev/null
 
 ./rumpremote npfctl stop
-./rumpremote ping -oq -w 2 1.2.3.1
+./rumpremote ping -oq -w 2 1.2.3.1 | grep '1 packets received' > /dev/null
 }
 definetest Test_npf
 
