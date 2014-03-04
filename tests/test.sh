@@ -119,8 +119,9 @@ Test_ktrace
 Test_shmif()
 {
 echo "Test shmif"
+rm -f test_busmem
 ./rumpremote ifconfig shmif0 create > /dev/null && \
-./rumpremote ifconfig shmif0 linkstr busmem > /dev/null && \
+./rumpremote ifconfig shmif0 linkstr test_busmem > /dev/null && \
 ./rumpremote ifconfig shmif0 inet 1.2.3.4 netmask 0xffffff00 > /dev/null && \
 ./rumpremote ifconfig shmif0 | grep 'shmif0: flags=8043<UP,BROADCAST,RUNNING,MULTICAST> mtu 1500' > /dev/null
 if [ $? -ne 0 ]
@@ -141,18 +142,19 @@ echo "Test npf"
 # create servers
 SOCKFILE1="unix://csock1-$$"
 SOCKFILE2="unix://csock2-$$"
+rm -f test_busmem
 ./rumpdyn/bin/rump_server -lrumpnet_shmif -lrumpnet_netinet -lrumpnet_net -lrumpnet $SOCKFILE1
 ./rumpdyn/bin/rump_server -lrumpnet_shmif -lrumpnet_netinet -lrumpnet_net -lrumpnet -lrumpnet_npf -lrumpdev_bpf -lrumpdev -lrumpvfs $SOCKFILE2
 
 # configure network
 export RUMP_SERVER="$SOCKFILE1"
 ./rumpremote ifconfig shmif0 create
-./rumpremote ifconfig shmif0 linkstr /tmp/busmem
+./rumpremote ifconfig shmif0 linkstr test_busmem
 ./rumpremote ifconfig shmif0 inet 1.2.3.1
 
 export RUMP_SERVER="$SOCKFILE2"
 ./rumpremote ifconfig shmif0 create
-./rumpremote ifconfig shmif0 linkstr /tmp/busmem
+./rumpremote ifconfig shmif0 linkstr test_busmem
 ./rumpremote ifconfig shmif0 inet 1.2.3.2
 
 ./rumpremote ping -c 1 1.2.3.1
