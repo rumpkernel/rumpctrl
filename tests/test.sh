@@ -25,6 +25,7 @@ definetest ()
 runtest ()
 {
 
+	echo $1
 	( set -e ; $1 )
 	if [ $? -ne 0 ]
 	then 
@@ -37,49 +38,42 @@ runtest ()
 
 Test_ifconfig()
 {
-echo "Test ifconfig"
 ./rumprun ifconfig | grep lo0 > /dev/null
 }
 definetest Test_ifconfig
 
 Test_sysctl()
 {
-echo "Test sysctl"
 ./rumprun sysctl kern.hostname | grep 'kern.hostname = rump-' > /dev/null
 }
 definetest Test_sysctl
 
 Test_df()
 {
-echo "Test df"
 ./rumprun df | grep rumpfs > /dev/null
 }
 definetest Test_df
 
 Test_cat()
 {
-echo "Test cat"
 ./rumprun cat /dev/null > /dev/null
 }
 definetest Test_cat
 
 Test_ping()
 {
-echo "Test ping"
 ./rumprun ping -o 127.0.0.1 | grep '64 bytes from 127.0.0.1: icmp_seq=0' > /dev/null
 }
 definetest Test_ping
 
 Test_ping6()
 {
-echo "Test ping6"
 ./rumprun ping6 -c 1 ::1 | grep '16 bytes from ::1, icmp_seq=0' > /dev/null
 }
 definetest Test_ping6
 
 Test_directories()
 {
-echo "Test directories"
 ./rumpremote mkdir /tmp > /dev/null
 ./rumpremote ls / | grep tmp > /dev/null
 ./rumpremote rmdir /tmp > /dev/null
@@ -89,7 +83,6 @@ definetest Test_directories
 
 Test_ktrace()
 {
-echo "Test ktrace"
 # no kdump support yet so does not test output is sane
 ./rumpremote ktrace ./rumpremote ls > /dev/null
 ./rumpremote ls / | grep ktrace.out > /dev/null
@@ -99,7 +92,6 @@ definetest Test_ktrace
 
 Test_shmif()
 {
-echo "Test shmif"
 rm -f test_busmem
 ./rumpremote ifconfig shmif0 create > /dev/null
 ./rumpremote ifconfig shmif0 linkstr test_busmem > /dev/null
@@ -111,7 +103,6 @@ definetest Test_shmif
 # TODO does not test for failures properly!
 Test_npf()
 {
-echo "Test npf"
 # create servers
 rm -f test_busmem
 ./rumpdyn/bin/rump_server -lrumpnet_shmif -lrumpnet_netinet -lrumpnet_net -lrumpnet $SOCKFILE1
