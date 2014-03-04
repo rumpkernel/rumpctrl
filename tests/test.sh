@@ -26,12 +26,14 @@ definetest ()
 runtest ()
 {
 
-	echo $1
+	printf "$1 ... "
 	( set -e ; $1 )
 	if [ $? -ne 0 ]
 	then 
-		echo "ERROR $1"
+		echo "ERROR"
 		EC=$((${EC} + 1))
+	else
+		echo "passed"
 	fi 
 }
 
