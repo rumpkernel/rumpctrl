@@ -11,6 +11,7 @@ SOCKFILE="unix://csock-$$"
 SOCKFILE1="unix://csock1-$$"
 SOCKFILE2="unix://csock2-$$"
 SOCKFILE_CGD="unix://csock2-cgd-$$"
+SOCKFILE_LIST="${SOCKFILE}"
 
 # start global rump server
 ./rumpdyn/bin/rump_server -lrumpvfs -lrumpnet -lrumpnet_net -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_shmif $SOCKFILE
@@ -20,7 +21,10 @@ TESTS=''
 definetest ()
 {
 
-	TESTS="${TESTS} $*"
+	test=$1
+	shift
+	TESTS="${TESTS} ${test}"
+	[ $# -gt 0 ] && SOCKFILE_LIST="${SOCKFILE_LIST} $*"
 }
 
 runtest ()
@@ -142,7 +146,7 @@ echo 'group default {
 }
 # XXX on Travis, fails with:
 # ./rumpremote: symbol lookup error: ./ping.so: undefined symbol: clock_gettime
-#definetest Test_npf
+#definetest Test_npf ${SOCKFILE1} ${SOCKFILE2}
 
 Test_cgd()
 {
@@ -158,7 +162,7 @@ rm -f test_disk1
 ./rumpremote mount_ffs /dev/cgd0a /mnt
 ./rumpremote mount | grep -q cgd0a
 }
-definetest Test_cgd
+definetest Test_cgd ${SOCKFILE_CGD}
 
 # actually run the tests
 for test in ${TESTS}; do
@@ -166,7 +170,7 @@ for test in ${TESTS}; do
 done
 
 # shutdown
-for serv in ${SOCKFILE} ${SOCKFILE1} ${SOCKFILE2} ${SOCKFILE_CGD}; do
+for serv in ${SOCKFILE_LIST}; do
 	RUMP_SERVER=${serv} ./rumpremote halt
 done
 
