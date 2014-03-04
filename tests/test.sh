@@ -135,6 +135,24 @@ cat tests/npf.conf | ./rumpremote dd of=/npf.conf
 }
 definetest Test_npf
 
+Test_cgd()
+{
+export RUMP_SERVER="unix://csock-cgd-$$"
+rm -f test_disk1
+./rumpdyn/bin/rump_server -lrumpfs_ffs -lrumpdev -lrumpdev_disk -lrumpvfs -lrumpdev_cgd -lrumpkern_crypto -lrumpdev_rnd -d key=/disk1,hostpath=test_disk1,size=$((1000*512)) "${RUMP_SERVER}"
+
+./rumpremote cgdconfig -g -o /cgd.conf -k storedkey aes-cbc 192
+./rumpremote cgdconfig cgd0 /disk1 /cgd.conf
+./rumpremote newfs cgd0a > /dev/null
+
+./rumpremote mkdir /mnt
+./rumpremote mount_ffs /dev/cgd0a /mnt
+./rumpremote mount | grep -q cgd0a
+
+./rumpremote halt
+}
+definetest Test_cgd
+
 # actually run the tests
 for test in ${TESTS}; do
 	runtest ${test}
