@@ -10,6 +10,7 @@ EC=0
 SOCKFILE="unix://csock-$$"
 SOCKFILE1="unix://csock1-$$"
 SOCKFILE2="unix://csock2-$$"
+SOCKFILE_CGD="unix://csock2-cgd-$$"
 
 # start global rump server
 ./rumpdyn/bin/rump_server -lrumpvfs -lrumpnet -lrumpnet_net -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_shmif $SOCKFILE
@@ -137,7 +138,7 @@ definetest Test_npf
 
 Test_cgd()
 {
-export RUMP_SERVER="unix://csock-cgd-$$"
+export RUMP_SERVER="${SOCKFILE_CGD}"
 rm -f test_disk1
 ./rumpdyn/bin/rump_server -lrumpfs_ffs -lrumpdev -lrumpdev_disk -lrumpvfs -lrumpdev_cgd -lrumpkern_crypto -lrumpdev_rnd -d key=/disk1,hostpath=test_disk1,size=$((1000*512)) "${RUMP_SERVER}"
 
@@ -148,8 +149,6 @@ rm -f test_disk1
 ./rumpremote mkdir /mnt
 ./rumpremote mount_ffs /dev/cgd0a /mnt
 ./rumpremote mount | grep -q cgd0a
-
-./rumpremote halt
 }
 definetest Test_cgd
 
@@ -159,7 +158,7 @@ for test in ${TESTS}; do
 done
 
 # shutdown
-for serv in ${SOCKFILE} ${SOCKFILE1} ${SOCKFILE2}; do
+for serv in ${SOCKFILE} ${SOCKFILE1} ${SOCKFILE2} ${SOCKFILE_CGD}; do
 	RUMP_SERVER=${serv} ./rumpremote halt
 done
 
