@@ -144,9 +144,7 @@ echo 'group default {
 ./rumpremote npfctl stop
 ./rumpremote ping -oq -w 2 1.2.3.1 | grep '1 packets received' > /dev/null
 }
-# XXX on Travis, fails with:
-# ./rumpremote: symbol lookup error: ./ping.so: undefined symbol: clock_gettime
-#definetest Test_npf ${SOCKFILE1} ${SOCKFILE2}
+definetest Test_npf ${SOCKFILE1} ${SOCKFILE2}
 
 Test_cgd()
 {
