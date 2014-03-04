@@ -8,9 +8,9 @@ export LD_DYNAMIC_WEAK=1
 EC=0
 
 # start rump server
-SOCKFILE="csock-$$"
-./rumpdyn/bin/rump_server -lrumpvfs -lrumpnet -lrumpnet_net -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_shmif unix://$SOCKFILE
-export RUMP_SERVER="unix://$SOCKFILE"
+SOCKFILE="unix://csock-$$"
+./rumpdyn/bin/rump_server -lrumpvfs -lrumpnet -lrumpnet_net -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_shmif $SOCKFILE
+export RUMP_SERVER="$SOCKFILE"
 
 # tests
 
@@ -131,8 +131,51 @@ fi
 }
 Test_shmif
 
-# cleanup
+# cleanup rump server
 ./rumpremote halt
+
+# TODO does not test for failures properly!
+Test_npf()
+{
+echo "Test npf"
+# create servers
+SOCKFILE1="unix://csock1-$$"
+SOCKFILE2="unix://csock2-$$"
+./rumpdyn/bin/rump_server -lrumpnet_shmif -lrumpnet_netinet -lrumpnet_net -lrumpnet $SOCKFILE1
+./rumpdyn/bin/rump_server -lrumpnet_shmif -lrumpnet_netinet -lrumpnet_net -lrumpnet -lrumpnet_npf -lrumpdev_bpf -lrumpdev -lrumpvfs $SOCKFILE2
+
+# configure network
+export RUMP_SERVER="$SOCKFILE1"
+./rumpremote ifconfig shmif0 create
+./rumpremote ifconfig shmif0 linkstr /tmp/busmem
+./rumpremote ifconfig shmif0 inet 1.2.3.1
+
+export RUMP_SERVER="$SOCKFILE2"
+./rumpremote ifconfig shmif0 create
+./rumpremote ifconfig shmif0 linkstr /tmp/busmem
+./rumpremote ifconfig shmif0 inet 1.2.3.2
+
+./rumpremote ping -c 1 1.2.3.1
+
+cat tests/npf.conf | ./rumpremote dd of=/npf.conf
+./rumpremote npfctl reload /npf.conf
+./rumpremote npfctl rule "test-set" add block proto icmp from 1.2.3.1
+
+./rumpremote ping -oq 1.2.3.1
+
+./rumpremote npfctl start
+./rumpremote ping -oq -w 2 1.2.3.1
+
+./rumpremote npfctl stop
+./rumpremote ping -oq -w 2 1.2.3.1
+
+# shutdown
+export RUMP_SERVER="$SOCKFILE1"
+./rumpremote halt
+export RUMP_SERVER="$SOCKFILE2"
+./rumpremote halt
+}
+Test_npf
 
 # show if passed
 
