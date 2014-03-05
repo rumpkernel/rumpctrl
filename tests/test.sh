@@ -178,7 +178,7 @@ START layout
 
 START queue
 fifo 100" > ${RC}
-./rumpdyn/bin/rump_server -lrumpdev -lrumpdev_disk -lrumpvfs -lrumpdev_raidframe -d "key=/disk1,hostpath=${D1},size=16777216" -d "key=/disk2,hostpath=${D2},size=16777216" -d "key=/raid.conf,hostpath=${RC},size=host,type=reg" $SOCKFILE_RAID
+./rumpdyn/bin/rump_server -lrumpdev -lrumpdev_disk -lrumpvfs -lrumpdev_raidframe -lrumpfs_ffs -d "key=/disk1,hostpath=${D1},size=16777216" -d "key=/disk2,hostpath=${D2},size=16777216" -d "key=/raid.conf,hostpath=${RC},size=host,type=reg" $SOCKFILE_RAID
 export RUMP_SERVER="${SOCKFILE_RAID}"
 
 # create raid device
@@ -193,10 +193,12 @@ export RUMP_SERVER="${SOCKFILE_RAID}"
 # check it
 ./rumpremote fsck_ffs -f /dev/rraid0a | grep 'File system is already clean' > /dev/null
 
-# mount TODO fix
+# mount
 ./rumpremote mkdir /mnt
-#./rumpremote mount_ffs /dev/raid0a /mnt
-#./rumpremote mount | grep raid0a > /dev/null
+./rumpremote mount_ffs /dev/raid0a /mnt
+./rumpremote mount | grep raid0a > /dev/null
+
+./rumpremote umount /mnt
 
 rm $D1 $D2
 }
