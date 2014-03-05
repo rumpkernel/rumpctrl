@@ -190,6 +190,9 @@ export RUMP_SERVER="${SOCKFILE_RAID}"
 # make a file system
 ./rumpremote newfs raid0a | grep 'super-block backups' > /dev/null
 
+# check it
+./rumpremote fsck_ffs -f /dev/rraid0a | grep 'File system is already clean' > /dev/null
+
 # mount TODO fix
 ./rumpremote mkdir /mnt
 #./rumpremote mount_ffs /dev/raid0a /mnt
