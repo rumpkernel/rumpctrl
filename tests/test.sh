@@ -107,7 +107,6 @@ rm -f test_busmem
 }
 definetest Test_shmif
 
-# TODO does not test for failures properly!
 Test_npf()
 {
 # create servers
@@ -128,7 +127,6 @@ export RUMP_SERVER="$SOCKFILE2"
 
 ./rumpremote ping -c 1 1.2.3.1 > /dev/null
 
-IFS=' '
 echo 'group default {
         ruleset "test-set"
         pass all
