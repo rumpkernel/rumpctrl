@@ -11,6 +11,7 @@ SOCKFILE="unix://csock-$$"
 SOCKFILE1="unix://csock1-$$"
 SOCKFILE2="unix://csock2-$$"
 SOCKFILE_CGD="unix://csock2-cgd-$$"
+SOCKFILE_RAID="unix://csock-rf-$$"
 SOCKFILE_LIST="${SOCKFILE}"
 
 # start global rump server
@@ -159,6 +160,44 @@ rm -f test_disk1
 ./rumpremote mount | grep -q cgd0a
 }
 definetest Test_cgd ${SOCKFILE_CGD}
+
+Test_raidframe()
+{
+D1="disk1-$$"
+D2="disk2-$$"
+RC="raid.conf-$$"
+echo "START array
+1 2 0
+
+START disks
+/disk1
+/disk2
+
+START layout
+32 1 1 0
+
+START queue
+fifo 100" > ${RC}
+./rumpdyn/bin/rump_server -lrumpdev -lrumpdev_disk -lrumpvfs -lrumpdev_raidframe -d "key=/disk1,hostpath=${D1},size=16777216" -d "key=/disk2,hostpath=${D2},size=16777216" -d "key=/raid.conf,hostpath=${RC},size=host,type=reg" $SOCKFILE_RAID
+export RUMP_SERVER="${SOCKFILE_RAID}"
+
+# create raid device
+./rumpremote raidctl -C /raid.conf raid0
+./rumpremote raidctl -I 24816 raid0
+
+./rumpremote ls /dev | grep raid0a > /dev/null
+
+# make a file system
+./rumpremote newfs raid0a | grep 'super-block backups' > /dev/null
+
+# mount TODO fix
+./rumpremote mkdir /mnt
+#./rumpremote mount_ffs /dev/raid0a /mnt
+#./rumpremote mount | grep raid0a > /dev/null
+
+rm $D1 $D2
+}
+definetest Test_raidframe ${SOCKFILE_RAID}
 
 # actually run the tests
 for test in ${TESTS}; do
