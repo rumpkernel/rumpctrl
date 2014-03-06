@@ -200,7 +200,7 @@ export RUMP_SERVER="${SOCKFILE_RAID}"
 
 ./rumpremote umount /mnt
 
-rm $D1 $D2
+rm $D1 $D2 $RC
 }
 definetest Test_raidframe ${SOCKFILE_RAID}
 
