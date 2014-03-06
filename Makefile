@@ -50,6 +50,7 @@ NBUTILS+=		sbin/route
 NBUTILS+=		sbin/sysctl
 NBUTILS+=		sbin/umount
 
+NBUTILS+=		usr.sbin/arp
 NBUTILS+=		usr.sbin/ndp
 NBUTILS+=		usr.sbin/npf/npfctl
 NBUTILS+=		usr.sbin/vnconfig
