@@ -6,6 +6,7 @@ ifeq ($(UNAME),Linux)
 endif
 
 # NetBSD needs these to run constructors, not apparently needed elsewhere
+# unfortunately this causes other constructors to not run so not very useful
 ifeq ($(UNAME),NetBSD)
 	CRTBEGIN=/usr/lib/crti.o /usr/lib/crtbeginS.o
 	CRTEND=/usr/lib/crtendS.o /usr/lib/crtn.o
