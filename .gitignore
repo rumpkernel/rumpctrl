@@ -1,0 +1,16 @@
+# misc temp files
+tmp/*
+*~
+*.core
+ktrace.out
+*.so
+*.o
+rump.map
+rump/
+rumpdyn/
+rumpdynobj/
+rumpobj/
+rumpsrc/
+rumptools/
+rumprun
+rumpremote
