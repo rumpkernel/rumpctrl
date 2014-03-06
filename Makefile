@@ -5,6 +5,12 @@ ifeq ($(UNAME),Linux)
 	DLFLAG=-ldl -Wl,--no-as-needed -lrt
 endif
 
+# NetBSD needs these to run constructors, not apparently needed elsewhere
+ifeq ($(UNAME),NetBSD)
+	CRTBEGIN=/usr/lib/crti.o /usr/lib/crtbeginS.o
+	CRTEND=/usr/lib/crtendS.o /usr/lib/crtn.o
+endif
+
 DEFUNDEF=-D__NetBSD__ -U__FreeBSD__ -Ulinux -U__linux -U__linux__ -U__gnu_linux__
 NBCFLAGS=-nostdinc -nostdlib -Irump/include -O2 -g -Wall -fPIC  ${DEFUNDEF}
 HOSTCFLAGS=-O2 -g -Wall -Irumpdyn/include
@@ -98,7 +104,7 @@ halt.so:	halt.o
 	objcopy --globalize-symbol=emul_main_wrapper \
 	    --globalize-symbol=_netbsd_environ \
 	    --globalize-symbol=_netbsd_exit ${OBJDIR}/tmp2_halt.o
-	${CC} ${OBJDIR}/tmp2_halt.o emul.o  -shared -Wl,-dc -Wl,-soname,$@ -nostdlib -o $@
+	${CC} -nostdlib ${CRTBEGIN} ${OBJDIR}/tmp2_halt.o emul.o ${CRTEND} -shared -Wl,-dc -Wl,-soname,$@ -o $@
 
 rump.map:	
 		cat ./rumpsrc/sys/rump/librump/rumpkern/rump_syscalls.c | \
@@ -128,7 +134,7 @@ ${2}.so: rumpsrc/${1}/${2}.ro emul.o exit.o readwrite.o rump.map $${LIBS.${2}} $
 	objcopy --globalize-symbol=emul_main_wrapper \
 	    --globalize-symbol=_netbsd_environ \
 	    --globalize-symbol=_netbsd_exit ${OBJDIR}/tmp2_${2}.o
-	${CC} ${OBJDIR}/tmp2_${2}.o emul.o  -shared -Wl,-dc -Wl,-soname,${2}.so -nostdlib -o ${2}.so
+	${CC} -nostdlib ${CRTBEGIN} ${OBJDIR}/tmp2_${2}.o emul.o ${CRTEND} -shared -Wl,-dc -Wl,-soname,${2}.so -o ${LIBDIR}/${2}.so
 
 clean_${2}:
 	( [ ! -d rumpsrc/${1} ] || ( cd rumpsrc/${1} && ${RUMPMAKE} cleandir && rm -f ${2}.ro ) )
