@@ -139,6 +139,7 @@ do not hesitate to file an issue.  The manual page for each command
 is available from http://man.NetBSD.org/,
 e.g. [`cat`](http://man.NetBSD.org/cgi-bin/man-cgi?cat++NetBSD-current).
 
+* ```arp```
 * ```cat```
 * ```cgdconfig``` not fully tested; uses `getrusage()` for key len calcuation
 * ```cp```
