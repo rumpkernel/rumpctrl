@@ -23,20 +23,16 @@ int rumpclient_fork(void);
 /* host definition, might need fixing for other OS */
 #ifdef __FreeBSD__
 int *
-emul__errno(void)
+__errno(void)
 {
         return __error();
 }
 #elif __NetBSD__
-int *
-emul__errno(void)
-{
-        return __errno();
-}
+/* nothing as __errno is in libc */
 #else
 int * __errno_location(void);
 int *
-emul__errno(void)
+__errno(void)
 {
         return __errno_location();
 }
