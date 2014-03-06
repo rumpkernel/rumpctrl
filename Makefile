@@ -7,10 +7,10 @@ endif
 
 # NetBSD needs these to run constructors, not apparently needed elsewhere
 # unfortunately this causes other constructors to not run so not very useful
-ifeq ($(UNAME),NetBSD)
-	CRTBEGIN=/usr/lib/crti.o /usr/lib/crtbeginS.o
-	CRTEND=/usr/lib/crtendS.o /usr/lib/crtn.o
-endif
+#ifeq ($(UNAME),NetBSD)
+#	CRTBEGIN=/usr/lib/crti.o /usr/lib/crtbeginS.o
+#	CRTEND=/usr/lib/crtendS.o /usr/lib/crtn.o
+#endif
 
 DEFUNDEF=-D__NetBSD__ -U__FreeBSD__ -Ulinux -U__linux -U__linux__ -U__gnu_linux__
 NBCFLAGS=-nostdinc -nostdlib -Irump/include -O2 -g -Wall -fPIC  ${DEFUNDEF}
