@@ -100,30 +100,31 @@ definetest Test_ktrace
 
 Test_shmif()
 {
-rm -f test_busmem
+BM="test_busmem-$$"
 ./rumpremote ifconfig shmif0 create > /dev/null
-./rumpremote ifconfig shmif0 linkstr test_busmem > /dev/null
+./rumpremote ifconfig shmif0 linkstr $BM > /dev/null
 ./rumpremote ifconfig shmif0 inet 1.2.3.4 netmask 0xffffff00 > /dev/null
 ./rumpremote ifconfig shmif0 | grep 'shmif0: flags=8043<UP,BROADCAST,RUNNING,MULTICAST> mtu 1500' > /dev/null
+rm $BM
 }
 definetest Test_shmif
 
 Test_npf()
 {
 # create servers
-rm -f test_busmem
+BM="test_busmem2-$$"
 ./rumpdyn/bin/rump_server -lrumpnet_shmif -lrumpnet_netinet -lrumpnet_net -lrumpnet $SOCKFILE1
 ./rumpdyn/bin/rump_server -lrumpnet_shmif -lrumpnet_netinet -lrumpnet_net -lrumpnet -lrumpnet_npf -lrumpdev_bpf -lrumpdev -lrumpvfs $SOCKFILE2
 
 # configure network
 export RUMP_SERVER="$SOCKFILE1"
 ./rumpremote ifconfig shmif0 create
-./rumpremote ifconfig shmif0 linkstr test_busmem
+./rumpremote ifconfig shmif0 linkstr $BM
 ./rumpremote ifconfig shmif0 inet 1.2.3.1
 
 export RUMP_SERVER="$SOCKFILE2"
 ./rumpremote ifconfig shmif0 create
-./rumpremote ifconfig shmif0 linkstr test_busmem
+./rumpremote ifconfig shmif0 linkstr $BM
 ./rumpremote ifconfig shmif0 inet 1.2.3.2
 
 ./rumpremote ping -c 1 1.2.3.1 > /dev/null
@@ -142,14 +143,15 @@ echo 'group default {
 
 ./rumpremote npfctl stop
 ./rumpremote ping -oq -w 2 1.2.3.1 | grep '1 packets received' > /dev/null
+rm $BM
 }
 definetest Test_npf ${SOCKFILE1} ${SOCKFILE2}
 
 Test_cgd()
 {
 export RUMP_SERVER="${SOCKFILE_CGD}"
-rm -f test_disk1
-./rumpdyn/bin/rump_server -lrumpfs_ffs -lrumpdev -lrumpdev_disk -lrumpvfs -lrumpdev_cgd -lrumpkern_crypto -lrumpdev_rnd -d key=/disk1,hostpath=test_disk1,size=$((1000*512)) "${RUMP_SERVER}"
+DISK="test_disk-$$"
+./rumpdyn/bin/rump_server -lrumpfs_ffs -lrumpdev -lrumpdev_disk -lrumpvfs -lrumpdev_cgd -lrumpkern_crypto -lrumpdev_rnd -d "key=/disk1,hostpath=$DISK,size=$((1000*512))" "${RUMP_SERVER}"
 
 ./rumpremote cgdconfig -g -o /cgd.conf -k storedkey aes-cbc 192
 ./rumpremote cgdconfig cgd0 /disk1 /cgd.conf
@@ -158,6 +160,7 @@ rm -f test_disk1
 ./rumpremote mkdir /mnt
 ./rumpremote mount_ffs /dev/cgd0a /mnt
 ./rumpremote mount | grep -q cgd0a
+rm $DISK
 }
 definetest Test_cgd ${SOCKFILE_CGD}
 
