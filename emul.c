@@ -252,9 +252,11 @@ emul_execve(const char *filename, char *const argv[], char *const envp[])
 STUB(__setitimer50);
 STUB(__sigaction14);
 STUB(__sigprocmask14);
+STUB(__sigsuspend14);
 
 STUB(_lwp_self);
 STUB(__wait450);
 STUB(kill);
 
+STUB_ABORT(undelete);
 STUB_ABORT(_lwp_kill);

@@ -5,13 +5,6 @@ ifeq ($(UNAME),Linux)
 	DLFLAG=-ldl -Wl,--no-as-needed -lrt
 endif
 
-# NetBSD needs these to run constructors, not apparently needed elsewhere
-# unfortunately this causes other constructors to not run so not very useful
-#ifeq ($(UNAME),NetBSD)
-#	CRTBEGIN=/usr/lib/crti.o /usr/lib/crtbeginS.o
-#	CRTEND=/usr/lib/crtendS.o /usr/lib/crtn.o
-#endif
-
 DEFUNDEF=-D__NetBSD__ -U__FreeBSD__ -Ulinux -U__linux -U__linux__ -U__gnu_linux__
 NBCFLAGS=-nostdinc -nostdlib -Irump/include -O2 -g -Wall -fPIC  ${DEFUNDEF}
 HOSTCFLAGS=-O2 -g -Wall -Irumpdyn/include
@@ -63,17 +56,8 @@ NBUTILS+=		usr.bin/ktrace
 CPPFLAGS.umount=	-DSMALL
 
 NBUTILS_BASE= $(notdir ${NBUTILS})
-NBUTILSSO=$(NBUTILS_BASE:%=%.so)
 
-PROGS=rumprun rumpremote
-
-all:		${NBUTILSSO} ${PROGS} halt.so
-
-rumprun.o:	rumprun.c rumprun_common.c
-		${CC} ${HOSTCFLAGS} -c $< -o $@
-
-rumprun:	rumprun.o
-		${CC} $< -o $@ ${RUMPLIBS} -lc ${DLFLAG}
+all:		${NBUTILS_BASE} halt
 
 rumpremote.o:	rumpremote.c rumprun_common.c
 		${CC} ${HOSTCFLAGS} -c $< -o $@
@@ -84,29 +68,31 @@ rumpremote:	rumpremote.o
 emul.o:		emul.c
 		${CC} ${HOSTCFLAGS} -fPIC -c $< -o $@
 
-exit.o:		exit.c
-		${CC} ${HOSTCFLAGS} -fPIC -c $< -o $@
-
 readwrite.o:	readwrite.c
 		${CC} ${HOSTCFLAGS} -fPIC -c $< -o $@
 
 halt.o:		halt.c
 		${CC} ${NBCFLAGS} -c $< -o $@
 
+
+rumpinit.o:	rumpinit.c
+		${CC} ${HOSTCFLAGS} -c $< -o $@
+
+remoteinit.o:	remoteinit.c
+		${CC} ${HOSTCFLAGS} -c $< -o $@
+
 # this should be refactored into a script...
-halt.so:	halt.o
+halt:	halt.o emul.o readwrite.o remoteinit.o rump.map
 	${CC} -Wl,-r -nostdlib $< rump/lib/libc.a -o ${OBJDIR}/tmp1_halt.o
 	objcopy --redefine-syms=extra.map ${OBJDIR}/tmp1_halt.o
 	objcopy --redefine-syms=rump.map ${OBJDIR}/tmp1_halt.o
 	objcopy --redefine-syms=emul.map ${OBJDIR}/tmp1_halt.o
 	objcopy --redefine-sym environ=_netbsd_environ ${OBJDIR}/tmp1_halt.o
 	objcopy --redefine-sym exit=_netbsd_exit ${OBJDIR}/tmp1_halt.o
-	${CC} -Wl,-r -nostdlib -Wl,-dc ${OBJDIR}/tmp1_halt.o exit.o readwrite.o -o ${OBJDIR}/tmp2_halt.o
+	${CC} -Wl,-r -nostdlib -Wl,-dc ${OBJDIR}/tmp1_halt.o readwrite.o -o ${OBJDIR}/tmp2_halt.o
 	objcopy -w -L '*' ${OBJDIR}/tmp2_halt.o
-	objcopy --globalize-symbol=emul_main_wrapper \
-	    --globalize-symbol=_netbsd_environ \
-	    --globalize-symbol=_netbsd_exit ${OBJDIR}/tmp2_halt.o
-	${CC} -nostdlib ${CRTBEGIN} ${OBJDIR}/tmp2_halt.o emul.o ${CRTEND} -shared -Wl,-dc -Wl,-soname,$@ -o $@
+	objcopy --globalize-symbol=main --globalize-symbol=_netbsd_environ ${OBJDIR}/tmp2_halt.o
+	${CC} ${OBJDIR}/tmp2_halt.o emul.o remoteinit.o ${RUMPCLIENT} ${DLFLAG} -o $@
 
 rump.map:	
 		cat ./rumpsrc/sys/rump/librump/rumpkern/rump_syscalls.c | \
@@ -124,19 +110,17 @@ rumpsrc/${1}/${2}.ro:
 
 NBLIBS.${2}:= $(shell cd rumpsrc/${1} && ${RUMPMAKE} -V '$${LDADD}')
 LIBS.${2}=$${NBLIBS.${2}:-l%=rump/lib/lib%.a} rump/lib/libc.a
-${2}.so: rumpsrc/${1}/${2}.ro emul.o exit.o readwrite.o rump.map $${LIBS.${2}} $(filter-out $(wildcard ${OBJDIR}), ${OBJDIR})
+${2}:	rumpsrc/${1}/${2}.ro emul.o readwrite.o remoteinit.o rump.map $${LIBS.${2}} $(filter-out $(wildcard ${OBJDIR}), ${OBJDIR})
 	${CC} -Wl,-r -nostdlib rumpsrc/${1}/${2}.ro $${LIBS.${2}} -o ${OBJDIR}/tmp1_${2}.o
 	objcopy --redefine-syms=extra.map ${OBJDIR}/tmp1_${2}.o
 	objcopy --redefine-syms=rump.map ${OBJDIR}/tmp1_${2}.o
 	objcopy --redefine-syms=emul.map ${OBJDIR}/tmp1_${2}.o
 	objcopy --redefine-sym environ=_netbsd_environ ${OBJDIR}/tmp1_${2}.o
-	objcopy --redefine-sym exit=_netbsd_exit ${OBJDIR}/tmp1_${2}.o
-	${CC} -Wl,-r -nostdlib -Wl,-dc ${OBJDIR}/tmp1_${2}.o exit.o readwrite.o -o ${OBJDIR}/tmp2_${2}.o
+#	objcopy --redefine-sym exit=_netbsd_exit ${OBJDIR}/tmp1_${2}.o
+	${CC} -Wl,-r -nostdlib -Wl,-dc ${OBJDIR}/tmp1_${2}.o readwrite.o -o ${OBJDIR}/tmp2_${2}.o
 	objcopy -w -L '*' ${OBJDIR}/tmp2_${2}.o
-	objcopy --globalize-symbol=emul_main_wrapper \
-	    --globalize-symbol=_netbsd_environ \
-	    --globalize-symbol=_netbsd_exit ${OBJDIR}/tmp2_${2}.o
-	${CC} -nostdlib ${CRTBEGIN} ${OBJDIR}/tmp2_${2}.o emul.o ${CRTEND} -shared -Wl,-dc -Wl,-soname,${2}.so -o ${2}.so
+	objcopy --globalize-symbol=main --globalize-symbol=_netbsd_environ ${OBJDIR}/tmp2_${2}.o
+	${CC} ${OBJDIR}/tmp2_${2}.o emul.o remoteinit.o ${RUMPCLIENT} ${DLFLAG} -o ${2}
 
 clean_${2}:
 	( [ ! -d rumpsrc/${1} ] || ( cd rumpsrc/${1} && ${RUMPMAKE} cleandir && rm -f ${2}.ro ) )
