@@ -132,7 +132,7 @@ endef
 $(foreach util,${NBUTILS},$(eval $(call NBUTIL_templ,${util},$(notdir ${util}))))
 
 clean: $(foreach util,${NBUTILS_BASE},clean_${util})
-		rm -f *.o *.so *~ rump.map ${PROGS} ${OBJDIR}/*
+		rm -f *.o *~ rump.map ${PROGS} ${OBJDIR}/* ${BINDIR}/*
 
 cleanrump:	clean
 		rm -rf obj rump rumpobj rumptools rumpdyn rumpdynobj
