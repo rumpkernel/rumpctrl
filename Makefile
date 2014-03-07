@@ -1,5 +1,7 @@
 OBJDIR=	obj-rr
 
+BINDIR=bin
+
 UNAME := $(shell uname -s)
 ifeq ($(UNAME),Linux)
 	DLFLAG=-ldl -Wl,--no-as-needed -lrt
@@ -92,7 +94,8 @@ halt:	halt.o emul.o readwrite.o remoteinit.o rump.map
 	${CC} -Wl,-r -nostdlib -Wl,-dc ${OBJDIR}/tmp1_halt.o readwrite.o -o ${OBJDIR}/tmp2_halt.o
 	objcopy -w -L '*' ${OBJDIR}/tmp2_halt.o
 	objcopy --globalize-symbol=main --globalize-symbol=_netbsd_environ ${OBJDIR}/tmp2_halt.o
-	${CC} ${OBJDIR}/tmp2_halt.o emul.o remoteinit.o ${RUMPCLIENT} ${DLFLAG} -o $@
+	mkdir -p ${BINDIR}
+	${CC} ${OBJDIR}/tmp2_halt.o emul.o remoteinit.o ${RUMPCLIENT} ${DLFLAG} -o ${BINDIR}/$@
 
 rump.map:	
 		cat ./rumpsrc/sys/rump/librump/rumpkern/rump_syscalls.c | \
@@ -120,7 +123,8 @@ ${2}:	rumpsrc/${1}/${2}.ro emul.o readwrite.o remoteinit.o rump.map $${LIBS.${2}
 	${CC} -Wl,-r -nostdlib -Wl,-dc ${OBJDIR}/tmp1_${2}.o readwrite.o -o ${OBJDIR}/tmp2_${2}.o
 	objcopy -w -L '*' ${OBJDIR}/tmp2_${2}.o
 	objcopy --globalize-symbol=main --globalize-symbol=_netbsd_environ ${OBJDIR}/tmp2_${2}.o
-	${CC} ${OBJDIR}/tmp2_${2}.o emul.o remoteinit.o ${RUMPCLIENT} ${DLFLAG} -o ${2}
+	mkdir -p ${BINDIR}
+	${CC} ${OBJDIR}/tmp2_${2}.o emul.o remoteinit.o ${RUMPCLIENT} ${DLFLAG} -o ${BINDIR}/${2}
 
 clean_${2}:
 	( [ ! -d rumpsrc/${1} ] || ( cd rumpsrc/${1} && ${RUMPMAKE} cleandir && rm -f ${2}.ro ) )
