@@ -93,7 +93,6 @@ halt:	halt.o emul.o readwrite.o remoteinit.o rump.map
 	objcopy --redefine-syms=rump.map ${OBJDIR}/tmp1_halt.o
 	objcopy --redefine-syms=emul.map ${OBJDIR}/tmp1_halt.o
 	objcopy --redefine-sym environ=_netbsd_environ ${OBJDIR}/tmp1_halt.o
-	objcopy --redefine-sym exit=_netbsd_exit ${OBJDIR}/tmp1_halt.o
 	${CC} -Wl,-r -nostdlib -Wl,-dc ${OBJDIR}/tmp1_halt.o readwrite.o -o ${OBJDIR}/tmp2_halt.o
 	objcopy -w -L '*' ${OBJDIR}/tmp2_halt.o
 	objcopy --globalize-symbol=main --globalize-symbol=_netbsd_environ ${OBJDIR}/tmp2_halt.o
@@ -122,7 +121,6 @@ ${2}:	rumpsrc/${1}/${2}.ro emul.o readwrite.o remoteinit.o nullenv.o rump.map $$
 	objcopy --redefine-syms=rump.map ${OBJDIR}/tmp1_${2}.o
 	objcopy --redefine-syms=emul.map ${OBJDIR}/tmp1_${2}.o
 	objcopy --redefine-sym environ=_netbsd_environ ${OBJDIR}/tmp1_${2}.o
-#	objcopy --redefine-sym exit=_netbsd_exit ${OBJDIR}/tmp1_${2}.o
 	${CC} -Wl,-r -nostdlib -Wl,-dc ${OBJDIR}/tmp1_${2}.o readwrite.o -o ${OBJDIR}/tmp2_${2}.o
 	objcopy -w -L '*' ${OBJDIR}/tmp2_${2}.o
 	objcopy --globalize-symbol=main --globalize-symbol=_netbsd_environ ${OBJDIR}/tmp2_${2}.o
