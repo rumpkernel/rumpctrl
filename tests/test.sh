@@ -46,65 +46,65 @@ runtest ()
 
 Test_ifconfig()
 {
-./rumprun ifconfig | grep lo0 > /dev/null
+./bin/ifconfig | grep lo0 > /dev/null
 }
 definetest Test_ifconfig
 
 Test_sysctl()
 {
-./rumprun sysctl kern.hostname | grep 'kern.hostname = rump-' > /dev/null
+./bin/sysctl kern.hostname | grep 'kern.hostname = rump-' > /dev/null
 }
 definetest Test_sysctl
 
 Test_df()
 {
-./rumprun df | grep rumpfs > /dev/null
+./bin/df | grep rumpfs > /dev/null
 }
 definetest Test_df
 
 Test_cat()
 {
-./rumprun cat /dev/null > /dev/null
+./bin/cat /dev/null > /dev/null
 }
 definetest Test_cat
 
 Test_ping()
 {
-./rumprun ping -o 127.0.0.1 | grep '64 bytes from 127.0.0.1: icmp_seq=0' > /dev/null
+./bin/ping -o 127.0.0.1 | grep '64 bytes from 127.0.0.1: icmp_seq=0' > /dev/null
 }
 definetest Test_ping
 
 Test_ping6()
 {
-./rumprun ping6 -c 1 ::1 | grep '16 bytes from ::1, icmp_seq=0' > /dev/null
+./bin/ping6 -c 1 ::1 | grep '16 bytes from ::1, icmp_seq=0' > /dev/null
 }
 definetest Test_ping6
 
 Test_directories()
 {
-./rumpremote mkdir /tmp > /dev/null
-./rumpremote ls / | grep tmp > /dev/null
-./rumpremote rmdir /tmp > /dev/null
-./rumpremote ls / | grep -v tmp > /dev/null
+./bin/mkdir /tmp > /dev/null
+./bin/ls / | grep tmp > /dev/null
+./bin/rmdir /tmp > /dev/null
+./bin/ls / | grep -v tmp > /dev/null
 }
 definetest Test_directories
 
 Test_ktrace()
 {
 # no kdump support yet so does not test output is sane
-./rumpremote ktrace ./rumpremote ls > /dev/null
-./rumpremote ls / | grep ktrace.out > /dev/null
-./rumpremote rm ktrace.out > /dev/null
+./bin/ktrace ./rumpremote ls > /dev/null
+./bin/ls / | grep ktrace.out > /dev/null
+./bin/rm ktrace.out > /dev/null
 }
 definetest Test_ktrace
 
 Test_shmif()
 {
 BM="test_busmem-$$"
-./rumpremote ifconfig shmif0 create > /dev/null
-./rumpremote ifconfig shmif0 linkstr $BM > /dev/null
-./rumpremote ifconfig shmif0 inet 1.2.3.4 netmask 0xffffff00 > /dev/null
-./rumpremote ifconfig shmif0 | grep 'shmif0: flags=8043<UP,BROADCAST,RUNNING,MULTICAST> mtu 1500' > /dev/null
+./bin/ifconfig shmif0 create > /dev/null
+./bin/ifconfig shmif0 linkstr $BM > /dev/null
+./bin/ifconfig shmif0 inet 1.2.3.4 netmask 0xffffff00 > /dev/null
+./bin/ifconfig shmif0 | grep 'shmif0: flags=8043<UP,BROADCAST,RUNNING,MULTICAST> mtu 1500' > /dev/null
 rm $BM
 }
 definetest Test_shmif
@@ -118,31 +118,31 @@ BM="test_busmem2-$$"
 
 # configure network
 export RUMP_SERVER="$SOCKFILE1"
-./rumpremote ifconfig shmif0 create
-./rumpremote ifconfig shmif0 linkstr $BM
-./rumpremote ifconfig shmif0 inet 1.2.3.1
+./bin/ifconfig shmif0 create
+./bin/ifconfig shmif0 linkstr $BM
+./bin/ifconfig shmif0 inet 1.2.3.1
 
 export RUMP_SERVER="$SOCKFILE2"
-./rumpremote ifconfig shmif0 create
-./rumpremote ifconfig shmif0 linkstr $BM
-./rumpremote ifconfig shmif0 inet 1.2.3.2
+./bin/ifconfig shmif0 create
+./bin/ifconfig shmif0 linkstr $BM
+./bin/ifconfig shmif0 inet 1.2.3.2
 
-./rumpremote ping -c 1 1.2.3.1 > /dev/null
+./bin/ping -c 1 1.2.3.1 > /dev/null
 
 echo 'group default {
         ruleset "test-set"
         pass all
-}' | ./rumpremote dd of=/npf.conf 2> /dev/null
-./rumpremote npfctl reload /npf.conf
-./rumpremote npfctl rule "test-set" add block proto icmp from 1.2.3.1 > /dev/null
+}' | ./bin/dd of=/npf.conf 2> /dev/null
+./bin/npfctl reload /npf.conf
+./bin/npfctl rule "test-set" add block proto icmp from 1.2.3.1 > /dev/null
 
-./rumpremote ping -oq 1.2.3.1 | grep '1 packets received' > /dev/null
+./bin/ping -oq 1.2.3.1 | grep '1 packets received' > /dev/null
 
-./rumpremote npfctl start
-./rumpremote ping -oq -w 2 1.2.3.1 | grep '0 packets received' > /dev/null
+./bin/npfctl start
+./bin/ping -oq -w 2 1.2.3.1 | grep '0 packets received' > /dev/null
 
-./rumpremote npfctl stop
-./rumpremote ping -oq -w 2 1.2.3.1 | grep '1 packets received' > /dev/null
+./bin/npfctl stop
+./bin/ping -oq -w 2 1.2.3.1 | grep '1 packets received' > /dev/null
 rm $BM
 }
 definetest Test_npf ${SOCKFILE1} ${SOCKFILE2}
@@ -153,13 +153,13 @@ export RUMP_SERVER="${SOCKFILE_CGD}"
 DISK="test_disk-$$"
 ./rumpdyn/bin/rump_server -lrumpfs_ffs -lrumpdev -lrumpdev_disk -lrumpvfs -lrumpdev_cgd -lrumpkern_crypto -lrumpdev_rnd -d "key=/disk1,hostpath=$DISK,size=$((1000*512))" "${RUMP_SERVER}"
 
-./rumpremote cgdconfig -g -o /cgd.conf -k storedkey aes-cbc 192
-./rumpremote cgdconfig cgd0 /disk1 /cgd.conf
-./rumpremote newfs cgd0a > /dev/null
+./bin/cgdconfig -g -o /cgd.conf -k storedkey aes-cbc 192
+./bin/cgdconfig cgd0 /disk1 /cgd.conf
+./bin/newfs cgd0a > /dev/null
 
-./rumpremote mkdir /mnt
-./rumpremote mount_ffs /dev/cgd0a /mnt
-./rumpremote mount | grep -q cgd0a
+./bin/mkdir /mnt
+./bin/mount_ffs /dev/cgd0a /mnt
+./bin/mount | grep -q cgd0a
 rm $DISK
 }
 definetest Test_cgd ${SOCKFILE_CGD}
@@ -185,23 +185,23 @@ fifo 100" > ${RC}
 export RUMP_SERVER="${SOCKFILE_RAID}"
 
 # create raid device
-./rumpremote raidctl -C /raid.conf raid0
-./rumpremote raidctl -I 24816 raid0
+./bin/raidctl -C /raid.conf raid0
+./bin/raidctl -I 24816 raid0
 
-./rumpremote ls /dev | grep raid0a > /dev/null
+./bin/ls /dev | grep raid0a > /dev/null
 
 # make a file system
-./rumpremote newfs raid0a | grep 'super-block backups' > /dev/null
+./bin/newfs raid0a | grep 'super-block backups' > /dev/null
 
 # check it
-./rumpremote fsck_ffs -f /dev/rraid0a | grep 'File system is already clean' > /dev/null
+./bin/fsck_ffs -f /dev/rraid0a | grep 'File system is already clean' > /dev/null
 
 # mount
-./rumpremote mkdir /mnt
-./rumpremote mount_ffs /dev/raid0a /mnt
-./rumpremote mount | grep raid0a > /dev/null
+./bin/mkdir /mnt
+./bin/mount_ffs /dev/raid0a /mnt
+./bin/mount | grep raid0a > /dev/null
 
-./rumpremote umount /mnt
+./bin/umount /mnt
 
 rm $D1 $D2 $RC
 }
