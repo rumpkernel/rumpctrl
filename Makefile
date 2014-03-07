@@ -83,6 +83,9 @@ rumpinit.o:	rumpinit.c
 remoteinit.o:	remoteinit.c
 		${CC} ${HOSTCFLAGS} -c $< -o $@
 
+nullenv.o:	nullenv.c
+		${CC} ${HOSTCFLAGS} -c $< -o $@
+
 # this should be refactored into a script...
 halt:	halt.o emul.o readwrite.o remoteinit.o rump.map
 	${CC} -Wl,-r -nostdlib $< rump/lib/libc.a -o ${OBJDIR}/tmp1_halt.o
@@ -113,7 +116,7 @@ rumpsrc/${1}/${2}.ro:
 
 NBLIBS.${2}:= $(shell cd rumpsrc/${1} && ${RUMPMAKE} -V '$${LDADD}')
 LIBS.${2}=$${NBLIBS.${2}:-l%=rump/lib/lib%.a} rump/lib/libc.a
-${2}:	rumpsrc/${1}/${2}.ro emul.o readwrite.o remoteinit.o rump.map $${LIBS.${2}} $(filter-out $(wildcard ${OBJDIR}), ${OBJDIR})
+${2}:	rumpsrc/${1}/${2}.ro emul.o readwrite.o remoteinit.o nullenv.o rump.map $${LIBS.${2}} $(filter-out $(wildcard ${OBJDIR}), ${OBJDIR})
 	${CC} -Wl,-r -nostdlib rumpsrc/${1}/${2}.ro $${LIBS.${2}} -o ${OBJDIR}/tmp1_${2}.o
 	objcopy --redefine-syms=extra.map ${OBJDIR}/tmp1_${2}.o
 	objcopy --redefine-syms=rump.map ${OBJDIR}/tmp1_${2}.o
@@ -124,7 +127,7 @@ ${2}:	rumpsrc/${1}/${2}.ro emul.o readwrite.o remoteinit.o rump.map $${LIBS.${2}
 	objcopy -w -L '*' ${OBJDIR}/tmp2_${2}.o
 	objcopy --globalize-symbol=main --globalize-symbol=_netbsd_environ ${OBJDIR}/tmp2_${2}.o
 	mkdir -p ${BINDIR}
-	${CC} ${OBJDIR}/tmp2_${2}.o emul.o remoteinit.o ${RUMPCLIENT} ${DLFLAG} -o ${BINDIR}/${2}
+	${CC} ${OBJDIR}/tmp2_${2}.o emul.o remoteinit.o nullenv.o ${RUMPCLIENT} ${DLFLAG} -o ${BINDIR}/${2}
 
 clean_${2}:
 	( [ ! -d rumpsrc/${1} ] || ( cd rumpsrc/${1} && ${RUMPMAKE} cleandir && rm -f ${2}.ro ) )

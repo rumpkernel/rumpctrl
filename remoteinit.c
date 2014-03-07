@@ -11,10 +11,6 @@
 
 void rumprun_init (void) __attribute__((constructor (101)));
 
-extern char **_netbsd_environ;
-
-static char *the_env[1] = { NULL } ;
-
 static void
 die(const char *fmt, ...)
 {
@@ -39,6 +35,4 @@ rumprun_init()
         while ((fd = rump_sys_kqueue()) < 3)
                 continue;
         rump_sys_close(fd);
-
-	_netbsd_environ = the_env;
 }
