@@ -92,7 +92,7 @@ definetest Test_directories
 Test_ktrace()
 {
 # no kdump support yet so does not test output is sane
-./bin/ktrace ./rumpremote ls > /dev/null
+./bin/ktrace ./bin/ls > /dev/null
 ./bin/ls / | grep ktrace.out > /dev/null
 ./bin/rm ktrace.out > /dev/null
 }
@@ -214,7 +214,7 @@ done
 
 # shutdown
 for serv in ${SOCKFILE_LIST}; do
-	RUMP_SERVER=${serv} ./rumpremote halt
+	RUMP_SERVER=${serv} ./bin/halt
 done
 
 # show if passed
