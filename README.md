@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/rumpkernel/rumprun.png)](https://travis-ci.org/rumpkernel/rumprun.png?branch=master)
+[![Build Status](https://travis-ci.org/rumpkernel/rumprun.png?branch=master)](https://travis-ci.org/rumpkernel/rumprun.png)
 
 Rumprun is a wrapper for running programs that were written for a normal POSIX (NetBSD) system to run them under a rump kernel.  Rumprun is especially useful for running NetBSD configuration tools on non-NetBSD systems for the purposes of configuring rump kernels.
 
