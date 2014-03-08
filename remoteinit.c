@@ -9,7 +9,8 @@
 #include <rump/rumpclient.h>
 #include <rump/rump_syscalls.h>
 
-void rumprun_init (void) __attribute__((constructor (101)));
+/* we are not supposed to use values below 100 but NetBSD libc does */
+void rumprun_init (void) __attribute__((constructor (1)));
 
 static void
 die(const char *fmt, ...)
