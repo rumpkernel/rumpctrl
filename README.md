@@ -141,7 +141,7 @@ e.g. [`cat`](http://man.NetBSD.org/cgi-bin/man-cgi?cat++NetBSD-current).
 
 * ```arp```
 * ```cat```
-* ```cgdconfig``` not fully tested; uses `getrusage()` for key len calcuation
+* ```cgdconfig```
 * ```cp```
 * ```dd```
 * ```disklabel```
@@ -156,12 +156,12 @@ e.g. [`cat`](http://man.NetBSD.org/cgi-bin/man-cgi?cat++NetBSD-current).
 * ```mkdir```
 * ```mknod```
 * ```modstat```
+* ```mount``` mount -vv needs some more work (it fork+exec's)
 * ```mount_ffs```
-* ```mount``` mount -vv will not work as it forks
 * ```mv```
 * ```ndp```
 * ```newfs```
-* ```npfctl``` requires rump kernel component to be built without `_NPF_TESTING`
+* ```npfctl```
 * ```pcictl``` for future use, no pci bus support in userspace rump kernels yet
 * ```ping```
 * ```ping6``` uses signals not timeouts so only first ping working
