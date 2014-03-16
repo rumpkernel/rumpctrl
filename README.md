@@ -150,6 +150,7 @@ e.g. [`cat`](http://man.NetBSD.org/cgi-bin/man-cgi?cat++NetBSD-current).
 * ```disklabel```
 * ```df```
 * ```dump```
+* ```dumpfs```
 * ```fsck```
 * ```fsck_ffs```
 * ```ifconfig```
