@@ -52,6 +52,7 @@ NBUTILS+=		sbin/sysctl
 NBUTILS+=		sbin/umount
 
 NBUTILS+=		usr.sbin/arp
+NBUTILS+=		usr.sbin/dumpfs
 NBUTILS+=		usr.sbin/ndp
 NBUTILS+=		usr.sbin/npf/npfctl
 NBUTILS+=		usr.sbin/vnconfig
