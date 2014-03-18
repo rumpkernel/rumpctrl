@@ -28,10 +28,12 @@ NBUTILS+=		bin/ln
 NBUTILS+=		bin/ls
 NBUTILS+=		bin/mkdir
 NBUTILS+=		bin/mv
+NBUTILS+=		bin/pax
 NBUTILS+=		bin/rm
 NBUTILS+=		bin/rmdir
 
 NBUTILS+=		sbin/cgdconfig
+NBUTILS+=		sbin/dhcpcd
 NBUTILS+=		sbin/disklabel
 NBUTILS+=		sbin/dump
 NBUTILS+=		sbin/fsck
@@ -53,6 +55,7 @@ NBUTILS+=		sbin/umount
 
 NBUTILS+=		usr.sbin/arp
 NBUTILS+=		usr.sbin/dumpfs
+NBUTILS+=		usr.sbin/makefs
 NBUTILS+=		usr.sbin/ndp
 NBUTILS+=		usr.sbin/npf/npfctl
 NBUTILS+=		usr.sbin/vnconfig
