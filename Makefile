@@ -33,7 +33,6 @@ NBUTILS+=		bin/rm
 NBUTILS+=		bin/rmdir
 
 NBUTILS+=		sbin/cgdconfig
-NBUTILS+=		sbin/dhcpcd
 NBUTILS+=		sbin/disklabel
 NBUTILS+=		sbin/dump
 NBUTILS+=		sbin/fsck
