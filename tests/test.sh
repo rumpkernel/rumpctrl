@@ -15,7 +15,7 @@ SOCKFILE_RAID="unix://csock-rf-$$"
 SOCKFILE_LIST="${SOCKFILE}"
 
 # start global rump server
-./rumpdyn/bin/rump_server -lrumpvfs -lrumpnet -lrumpnet_net -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_shmif $SOCKFILE
+./rumpdyn/bin/rump_server -lrumpvfs -lrumpnet -lrumpnet_net -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_shmif -lrumpkern_time $SOCKFILE
 export RUMP_SERVER="$SOCKFILE"
 
 TESTS=''
@@ -113,8 +113,8 @@ Test_npf()
 {
 # create servers
 BM="test_busmem2-$$"
-./rumpdyn/bin/rump_server -lrumpnet_shmif -lrumpnet_netinet -lrumpnet_net -lrumpnet $SOCKFILE1
-./rumpdyn/bin/rump_server -lrumpnet_shmif -lrumpnet_netinet -lrumpnet_net -lrumpnet -lrumpnet_npf -lrumpdev_bpf -lrumpdev -lrumpvfs $SOCKFILE2
+./rumpdyn/bin/rump_server -lrumpnet_shmif -lrumpnet_netinet -lrumpnet_net -lrumpnet -lrumpkern_time $SOCKFILE1
+./rumpdyn/bin/rump_server -lrumpnet_shmif -lrumpnet_netinet -lrumpnet_net -lrumpnet -lrumpnet_npf -lrumpdev_bpf -lrumpdev -lrumpvfs -lrumpkern_time $SOCKFILE2
 
 # configure network
 export RUMP_SERVER="$SOCKFILE1"
@@ -151,7 +151,7 @@ Test_cgd()
 {
 export RUMP_SERVER="${SOCKFILE_CGD}"
 DISK="test_disk-$$"
-./rumpdyn/bin/rump_server -lrumpfs_ffs -lrumpdev -lrumpdev_disk -lrumpvfs -lrumpdev_cgd -lrumpkern_crypto -lrumpdev_rnd -d "key=/disk1,hostpath=$DISK,size=$((1000*512))" "${RUMP_SERVER}"
+./rumpdyn/bin/rump_server -lrumpfs_ffs -lrumpdev -lrumpdev_disk -lrumpvfs -lrumpdev_cgd -lrumpkern_crypto -lrumpdev_rnd -lrumpkern_time -d "key=/disk1,hostpath=$DISK,size=$((1000*512))" "${RUMP_SERVER}"
 
 ./rumpremote cgdconfig -g -o /cgd.conf -k storedkey aes-cbc 192
 ./rumpremote cgdconfig cgd0 /disk1 /cgd.conf
