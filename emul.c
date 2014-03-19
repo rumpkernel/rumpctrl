@@ -60,64 +60,6 @@ struct _netbsd_rusage {
   long    ru_nivcsw;
 };
 
-int
-__gettimeofday50(struct _netbsd_timeval *ntv, void *ntz)
-{
-	struct timeval tv;
-	int ok = gettimeofday(&tv, NULL);
-	ntv->tv_sec = tv.tv_sec;
-	ntv->tv_usec = tv.tv_usec;
-	return ok;
-}
-
-int
-__nanosleep50(struct _netbsd_timespec *nreq, struct _netbsd_timespec *nrem)
-{
-	struct timespec req, rem;
-	req.tv_sec = nreq->tv_sec;
-	req.tv_nsec = nreq->tv_nsec;
-	int ok = nanosleep(&req, &rem);
-	nrem->tv_sec = rem.tv_sec;
-	nrem->tv_nsec = rem.tv_nsec;
-	return ok;
-}
-
-static int clockmap[4] = {
-  CLOCK_REALTIME,
-#ifdef CLOCK_VIRTUAL
-  CLOCK_VIRTUAL,
-#else
-  -1,
-#endif
-#ifdef CLOCK_PROF
-  CLOCK_PROF,
-#else
-  -1,
-#endif
-  CLOCK_MONOTONIC,
-};
-
-int
-__clock_gettime50(_netbsd_clockid_t clock_id, struct _netbsd_timespec *res)
-{
-	int host_clock_id;
-        struct timespec ts;
-	int rv;
-	if (clock_id < 0 || clock_id >= 4) {
-		errno = _NETBSD_EINVAL;
-		return -1;
-	}
-	host_clock_id = clockmap[clock_id];
-	if (host_clock_id == -1) {
-		errno = _NETBSD_ENOSYS;
-		return -1;
-	}
-	rv = clock_gettime(host_clock_id, &ts);
-	res->tv_sec = ts.tv_sec;
-	res->tv_nsec = ts.tv_nsec;
-	return rv;
-}
-
 #define _NETBSD_MAP_SHARED       0x0001
 #define _NETBSD_MAP_PRIVATE      0x0002
 #define _NETBSD_MAP_FILE         0x0000
@@ -237,7 +179,6 @@ emul_execve(const char *filename, char *const argv[], char *const envp[])
 
 #define STUB_ABORT(name) void name(void); void name(void) { abort(); }
 
-STUB(__setitimer50);
 STUB(__sigaction14);
 STUB(__sigprocmask14);
 STUB(__sigsuspend14);
