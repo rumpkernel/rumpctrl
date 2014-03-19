@@ -5,5 +5,9 @@ madvise		emul_madvise
 setpriority	emul_setpriority
 execve		emul_execve
 __errno		emul__errno
+__getrusage50	emul__getrusage50
+__vfork14	emul__vfork14
+__fork		emul__fork
+_mmap		emul__mmap
 rump___sysimpl_read	rumprun_read_wrapper
 rump___sysimpl_write	rumprun_write_wrapper

@@ -94,7 +94,7 @@ emul_mmap(void *addr, size_t length, int prot, int nflags, int fd, _netbsd_off_t
 
 /* not sure why we have both, may need to fix */
 void *
-_mmap(void *addr, size_t length, int prot, int nflags, int fd, _netbsd_off_t offset)
+emul__mmap(void *addr, size_t length, int prot, int nflags, int fd, _netbsd_off_t offset)
 {
 	return emul_mmap(addr, length, prot, nflags, fd, offset);
 }
@@ -120,13 +120,13 @@ emul_setpriority(int which, int who, int prio) {
 }
 
 int
-__fork(void)
+emul__fork(void)
 {
 	return rumpclient_fork();
 }
 
 int
-__vfork14(void)
+emul__vfork14(void)
 {
 	return rumpclient_fork();
 }
@@ -137,7 +137,7 @@ static int rusage_map[2] = {
 };
 
 int
-__getrusage50(int who, struct _netbsd_rusage *nrusage)
+emul__getrusage50(int who, struct _netbsd_rusage *nrusage)
 {
 	struct rusage rusage;
 	int ok;
