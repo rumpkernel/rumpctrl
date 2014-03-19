@@ -70,6 +70,9 @@ rumpremote:	rumpremote.o
 emul.o:		emul.c
 		${CC} ${HOSTCFLAGS} -fPIC -c $< -o $@
 
+exit.o:		exit.c
+		${CC} ${HOSTCFLAGS} -fPIC -c $< -o $@
+
 readwrite.o:	readwrite.c
 		${CC} ${HOSTCFLAGS} -fPIC -c $< -o $@
 
@@ -115,17 +118,19 @@ rumpsrc/${1}/${2}.ro:
 
 NBLIBS.${2}:= $(shell cd rumpsrc/${1} && ${RUMPMAKE} -V '$${LDADD}')
 LIBS.${2}=$${NBLIBS.${2}:-l%=rump/lib/lib%.a} rump/lib/libc.a
-${2}:	rumpsrc/${1}/${2}.ro emul.o readwrite.o remoteinit.o nullenv.o rump.map $${LIBS.${2}} $(filter-out $(wildcard ${OBJDIR}), ${OBJDIR})
+${2}:	rumpsrc/${1}/${2}.ro emul.o readwrite.o remoteinit.o nullenv.o exit.o rump.map $${LIBS.${2}} $(filter-out $(wildcard ${OBJDIR}), ${OBJDIR})
 	${CC} -Wl,-r -nostdlib rumpsrc/${1}/${2}.ro $${LIBS.${2}} -o ${OBJDIR}/tmp1_${2}.o
 	objcopy --redefine-syms=extra.map ${OBJDIR}/tmp1_${2}.o
 	objcopy --redefine-syms=rump.map ${OBJDIR}/tmp1_${2}.o
 	objcopy --redefine-syms=emul.map ${OBJDIR}/tmp1_${2}.o
 	objcopy --redefine-sym environ=_netbsd_environ ${OBJDIR}/tmp1_${2}.o
+	objcopy --redefine-sym main=_netbsd_main ${OBJDIR}/tmp1_${2}.o
+	objcopy --redefine-sym __progname=_netbsd__progname ${OBJDIR}/tmp1_${2}.o
 	${CC} -Wl,-r -nostdlib -Wl,-dc ${OBJDIR}/tmp1_${2}.o readwrite.o -o ${OBJDIR}/tmp2_${2}.o
 	objcopy -w --localize-symbol='*' ${OBJDIR}/tmp2_${2}.o
-	objcopy --globalize-symbol=main -w --globalize-symbol='_netbsd_*' ${OBJDIR}/tmp2_${2}.o
+	objcopy -w --globalize-symbol='_netbsd_*' ${OBJDIR}/tmp2_${2}.o
 	mkdir -p ${BINDIR}
-	${CC} ${OBJDIR}/tmp2_${2}.o emul.o remoteinit.o nullenv.o ${RUMPCLIENT} ${DLFLAG} -o ${BINDIR}/${2}
+	${CC} ${OBJDIR}/tmp2_${2}.o emul.o exit.o remoteinit.o nullenv.o ${RUMPCLIENT} ${DLFLAG} -o ${BINDIR}/${2}
 
 clean_${2}:
 	( [ ! -d rumpsrc/${1} ] || ( cd rumpsrc/${1} && ${RUMPMAKE} cleandir && rm -f ${2}.ro ) )

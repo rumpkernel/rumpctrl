@@ -2,27 +2,27 @@
 #include <stdio.h>
 #include <setjmp.h>
 
-extern char *__progname;
+extern char *_netbsd__progname;
 
 static jmp_buf buf;
 
-int main(int argc, char **argv);
+int _netbsd_main(int argc, char **argv);
 
 int
-emul_main_wrapper(int argc, char **argv)
+main(int argc, char **argv)
 {
 	int ret;
 
-	__progname = argv[0];
+	_netbsd__progname = argv[0];
 
 	if (! (ret = setjmp(buf))) {
-        	return main(argc, argv);
+        	return _netbsd_main(argc, argv);
 	}
 	return ret;
 }
 
 void
-_exit(int status)
+emul__exit(int status)
 {
 	longjmp(buf, status);
 }
