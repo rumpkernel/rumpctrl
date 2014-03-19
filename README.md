@@ -152,11 +152,16 @@ e.g. [`cat`](http://man.NetBSD.org/cgi-bin/man-cgi?cat++NetBSD-current).
 * ```dump```
 * ```dumpfs```
 * ```fsck```
+* ```fsck_ext2fs```
 * ```fsck_ffs```
+* ```fsck_lfs```
+* ```fsck_msdos```
+* ```fsck_v7fs```
 * ```ifconfig```
 * ```ktrace``` there is no kdump support yet. you can cat `ktrace.out` to host
 * ```ln```
 * ```ls```
+* ```makefs```
 * ```mkdir```
 * ```mknod```
 * ```modstat```
@@ -165,7 +170,14 @@ e.g. [`cat`](http://man.NetBSD.org/cgi-bin/man-cgi?cat++NetBSD-current).
 * ```mv```
 * ```ndp```
 * ```newfs```
+* ```newfs_ext2fs```
+* ```newfs_lfs```
+* ```newfs_msdos```
+* ```newfs_sysvbfs```
+* ```newfs_udf```
+* ```newfs_v7fs```
 * ```npfctl```
+* ```pax```
 * ```pcictl``` for future use, no pci bus support in userspace rump kernels yet
 * ```ping```
 * ```ping6``` uses signals not timeouts so only first ping working
