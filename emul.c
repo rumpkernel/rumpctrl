@@ -186,13 +186,13 @@ emul_getenv(const char *name)
 
 #define STUB_ABORT(name) void name(void); void name(void) { abort(); }
 
-STUB(__sigaction14);
-STUB(__sigprocmask14);
-STUB(__sigsuspend14);
+STUB(emul___sigaction14);
+STUB(emul___sigprocmask14);
+STUB(emul___sigsuspend14);
 
-STUB(_lwp_self);
-STUB(__wait450);
-STUB(kill);
+STUB(emul__lwp_self);
+STUB(emul___wait450);
+STUB(emul_kill);
 
-STUB_ABORT(undelete);
-STUB_ABORT(_lwp_kill);
+STUB_ABORT(emul_undelete);
+STUB_ABORT(emul__lwp_kill);
