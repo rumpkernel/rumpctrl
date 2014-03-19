@@ -15,7 +15,7 @@ SOCKFILE_RAID="unix://csock-rf-$$"
 SOCKFILE_LIST="${SOCKFILE}"
 
 # start global rump server
-./rumpdyn/bin/rump_server -lrumpvfs -lrumpfs_kernfs -lrumpdev -lrumpnet -lrumpnet_net -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_shmif $SOCKFILE
+./rumpdyn/bin/rump_server -lrumpvfs -lrumpfs_kernfs -lrumpdev -lrumpnet -lrumpnet_net -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_shmif -lrumpkern_time $SOCKFILE
 export RUMP_SERVER="$SOCKFILE"
 
 TESTS=''
