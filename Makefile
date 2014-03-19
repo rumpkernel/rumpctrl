@@ -126,6 +126,7 @@ ${2}:	rumpsrc/${1}/${2}.ro emul.o readwrite.o remoteinit.o nullenv.o exit.o rump
 	objcopy --redefine-sym environ=_netbsd_environ ${OBJDIR}/tmp1_${2}.o
 	objcopy --redefine-sym main=_netbsd_main ${OBJDIR}/tmp1_${2}.o
 	objcopy --redefine-sym __progname=_netbsd__progname ${OBJDIR}/tmp1_${2}.o
+	objcopy --redefine-sym exit=_netbsd_exit ${OBJDIR}/tmp1_${2}.o
 	${CC} -Wl,-r -nostdlib -Wl,-dc ${OBJDIR}/tmp1_${2}.o readwrite.o -o ${OBJDIR}/tmp2_${2}.o
 	objcopy -w --localize-symbol='*' ${OBJDIR}/tmp2_${2}.o
 	objcopy -w --globalize-symbol='_netbsd_*' ${OBJDIR}/tmp2_${2}.o
