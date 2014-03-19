@@ -117,9 +117,11 @@ rumpsrc/${1}/${2}.ro:
 	    ${RUMPMAKE} LIBCRT0= BUILDRUMP_CFLAGS="-fPIC -std=gnu99 -D__NetBSD__ ${CPPFLAGS.${2}}" ${2}.ro )
 
 NBLIBS.${2}:= $(shell cd rumpsrc/${1} && ${RUMPMAKE} -V '$${LDADD}')
-LIBS.${2}=$${NBLIBS.${2}:-l%=rump/lib/lib%.a} rump/lib/libc.a
+LIBS.${2}=$${NBLIBS.${2}:-l%=rump/lib/lib%.a}
 ${2}:	rumpsrc/${1}/${2}.ro emul.o readwrite.o remoteinit.o nullenv.o exit.o rump.map $${LIBS.${2}} $(filter-out $(wildcard ${OBJDIR}), ${OBJDIR})
-	${CC} -Wl,-r -nostdlib rumpsrc/${1}/${2}.ro $${LIBS.${2}} -o ${OBJDIR}/tmp1_${2}.o
+	${CC} -Wl,-r -nostdlib rumpsrc/${1}/${2}.ro $${LIBS.${2}} -o ${OBJDIR}/tmp0_${2}.o
+	objcopy --redefine-syms=env.map ${OBJDIR}/tmp0_${2}.o
+	${CC} -Wl,-r ${OBJDIR}/tmp0_${2}.o -nostdlib rump/lib/libc.a -o ${OBJDIR}/tmp1_${2}.o
 	objcopy --redefine-syms=extra.map ${OBJDIR}/tmp1_${2}.o
 	objcopy --redefine-syms=rump.map ${OBJDIR}/tmp1_${2}.o
 	objcopy --redefine-syms=emul.map ${OBJDIR}/tmp1_${2}.o
