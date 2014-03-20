@@ -4,7 +4,7 @@
 
 # Just a script to run the handful of commands required to build NetBSD libc, headers
 
-LIBLIBS="c crypt ipsec m npf pthread prop util pci y"
+LIBLIBS="c crypt ipsec m npf pthread prop rmt util pci y z"
 MORELIBS="external/bsd/flex/lib crypto/external/bsd/openssl/lib/libcrypto
 	external/bsd/libpcap/lib"
 LIBS=""

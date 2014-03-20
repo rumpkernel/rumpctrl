@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/rumpkernel/rumprun.png)](https://travis-ci.org/rumpkernel/rumprun)
+[![Build Status](https://travis-ci.org/rumpkernel/rumprun.png?branch=master)](https://travis-ci.org/rumpkernel/rumprun)
 
 Rumprun is a wrapper for running programs that were written for a normal POSIX (NetBSD) system to run them under a rump kernel.  Rumprun is especially useful for running NetBSD configuration tools on non-NetBSD systems for the purposes of configuring rump kernels.
 
@@ -6,7 +6,10 @@ For more information about the rump kernel see [http://www.rumpkernel.org/](http
 
 Rumprun takes NetBSD program (see Makefile) and compiles it using the NetBSD ABI, and then dynamically opens the compiled program.  The system calls that the program makes are being served by a rump kernel instead of the host kernel.
 
-Currently tested on Linux and FreeBSD, and should be generally portable. Unfortunately there are some issues with constructors not being called on NetBSD, so not everything works correctly. A good deal of NetBSD utilities will already work (see end of this file for list of ones built out-of-the-box).
+Currently tested on Linux and FreeBSD, and should be generally
+portable. On a NetBSD host, there are some issues with constructors
+not being called. A good deal of NetBSD utilities will already work
+(see end of this file for list of ones built out-of-the-box).
 
 Building
 ========
@@ -141,27 +144,40 @@ e.g. [`cat`](http://man.NetBSD.org/cgi-bin/man-cgi?cat++NetBSD-current).
 
 * ```arp```
 * ```cat```
-* ```cgdconfig``` not fully tested; uses `getrusage()` for key len calcuation
+* ```cgdconfig```
 * ```cp```
 * ```dd```
 * ```disklabel```
 * ```df```
 * ```dump```
+* ```dumpfs```
 * ```fsck```
+* ```fsck_ext2fs```
 * ```fsck_ffs```
+* ```fsck_lfs```
+* ```fsck_msdos```
+* ```fsck_v7fs```
 * ```ifconfig```
 * ```ktrace``` there is no kdump support yet. you can cat `ktrace.out` to host
 * ```ln```
 * ```ls```
+* ```makefs```
 * ```mkdir```
 * ```mknod```
 * ```modstat```
+* ```mount``` mount -vv needs some more work (it fork+exec's)
 * ```mount_ffs```
-* ```mount``` mount -vv will not work as it forks
 * ```mv```
 * ```ndp```
 * ```newfs```
-* ```npfctl``` requires rump kernel component to be built without `_NPF_TESTING`
+* ```newfs_ext2fs```
+* ```newfs_lfs```
+* ```newfs_msdos```
+* ```newfs_sysvbfs```
+* ```newfs_udf```
+* ```newfs_v7fs```
+* ```npfctl```
+* ```pax```
 * ```pcictl``` for future use, no pci bus support in userspace rump kernels yet
 * ```ping```
 * ```ping6``` uses signals not timeouts so only first ping working
