@@ -69,17 +69,13 @@ NBUTILS_BASE= $(notdir ${NBUTILS})
 all:		${NBUTILS_BASE} halt
 
 emul.o:		emul.c
-		${CC} ${HOSTCFLAGS} -fPIC -c $< -o $@
+		${CC} ${HOSTCFLAGS} -c $< -o $@
 
 exit.o:		exit.c
-		${CC} ${HOSTCFLAGS} -fPIC -c $< -o $@
+		${CC} ${HOSTCFLAGS} -c $< -o $@
 
 readwrite.o:	readwrite.c
-		${CC} ${HOSTCFLAGS} -fPIC -c $< -o $@
-
-halt.o:		halt.c
-		${CC} ${NBCFLAGS} -c $< -o $@
-
+		${CC} ${HOSTCFLAGS} -c $< -o $@
 
 rumpinit.o:	rumpinit.c
 		${CC} ${HOSTCFLAGS} -c $< -o $@
@@ -89,6 +85,9 @@ remoteinit.o:	remoteinit.c
 
 nullenv.o:	nullenv.c
 		${CC} ${HOSTCFLAGS} -c $< -o $@
+
+halt.o:		halt.c
+		${CC} ${NBCFLAGS} -c $< -o $@
 
 halt:	halt.o emul.o readwrite.o remoteinit.o exit.o nullenv.o rump.map
 	./process.sh halt halt.o
