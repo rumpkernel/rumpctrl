@@ -4,11 +4,10 @@ Rumprun is a wrapper for running programs that were written for a normal POSIX (
 
 For more information about the rump kernel see [http://www.rumpkernel.org/](http://www.rumpkernel.org/)
 
-Rumprun takes NetBSD program (see Makefile) and compiles it using the NetBSD ABI, and then dynamically opens the compiled program.  The system calls that the program makes are being served by a rump kernel instead of the host kernel.
+Rumprun takes NetBSD program (see Makefile) and compiles it using the NetBSD ABI.  The system calls that the program makes are being served by a rump kernel instead of the host kernel.
 
-Currently tested on Linux and FreeBSD, and should be generally
-portable. On a NetBSD host, there are some issues with constructors
-not being called. A good deal of NetBSD utilities will already work
+Currently tested on Linux and NetBSD, and should be generally
+portable. A good deal of NetBSD utilities will already work
 (see end of this file for list of ones built out-of-the-box).
 
 Building
