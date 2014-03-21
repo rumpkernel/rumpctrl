@@ -13,7 +13,7 @@ mkdir -p ${BINDIR} ${OBJDIR}
 
 UNAME=`uname -s`
 
-[ ${UNAME} = Linux ] && DLFLAG="-ldl -Wl,--no-as-needed -lrt"
+[ ${UNAME} = Linux ] && DLFLAG="-ldl -lrt"
 
 RUMPCLIENT="-Lrumpdyn/lib -Wl,-R${PWD}/rumpdyn/lib -lrumpclient"
 
