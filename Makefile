@@ -5,7 +5,7 @@ BINDIR=bin
 DEFUNDEF=-D__NetBSD__ -U__FreeBSD__ -Ulinux -U__linux -U__linux__ -U__gnu_linux__
 NBCFLAGS=-nostdinc -nostdlib -Irump/include -O2 -g -Wall -fPIC  ${DEFUNDEF}
 HOSTCFLAGS=-O2 -g -Wall -Irumpdyn/include
-RUMPLIBS=-Lrumpdyn/lib -Wl,--no-as-needed -lrumpkern_time -lrumpvfs -lrumpfs_kernfs -lrumpdev -lrumpnet_local -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_net -lrumpnet -lrump -lrumpuser
+RUMPLIBS=-Lrumpdyn/lib -Wl,--no-as-needed -lrumpkern_time -lrumpvfs -lrumpfs_kernfs -lrumpdev -lrumpnet_local -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_net -lrumpnet -lrump -lrumpuser rumpkern_time
 
 RUMPMAKE:=$(shell echo `pwd`/rumptools/rumpmake)
 
@@ -89,8 +89,8 @@ nullenv.o:	nullenv.c
 halt.o:		halt.c
 		${CC} ${NBCFLAGS} -c $< -o $@
 
-halt:	halt.o emul.o readwrite.o remoteinit.o exit.o nullenv.o rump.map
-	./process.sh halt halt.o
+halt:		halt.o emul.o readwrite.o remoteinit.o exit.o nullenv.o rump.map
+		./mkremote.sh halt halt.o
 
 rump.map:	
 		cat ./rumpsrc/sys/rump/librump/rumpkern/rump_syscalls.c | \
@@ -109,7 +109,7 @@ rumpsrc/${1}/${2}.ro:
 NBLIBS.${2}:= $(shell cd rumpsrc/${1} && ${RUMPMAKE} -V '$${LDADD}')
 LIBS.${2}=$${NBLIBS.${2}:-l%=rump/lib/lib%.a}
 ${2}:	rumpsrc/${1}/${2}.ro emul.o readwrite.o remoteinit.o nullenv.o exit.o rump.map $${LIBS.${2}} $(filter-out $(wildcard ${OBJDIR}), ${OBJDIR})
-	./process.sh ${2} rumpsrc/${1}/${2}.ro $${LIBS.${2}}
+	./mkremote.sh ${2} rumpsrc/${1}/${2}.ro $${LIBS.${2}}
 
 clean_${2}:
 	( [ ! -d rumpsrc/${1} ] || ( cd rumpsrc/${1} && ${RUMPMAKE} cleandir && rm -f ${2}.ro ) )
