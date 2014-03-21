@@ -35,11 +35,7 @@ fi
 ./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${STDJ} \
     -s rumpsrc -T rumptools -o rumpdynobj -d rumpdyn -V MKSTATICLIB=no fullbuild
 
-# Now build a static but -fPIC libc.
-# We force -fPIC so we can link into a shared library
-export BUILDRUMP_CFLAGS=-fPIC
-export BUILDRUMP_AFLAGS=-fPIC
-export BUILDRUMP_LDFLAGS=-fPIC
+# Now build a static libc.
 
 # build tools
 ./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${STDJ} -s rumpsrc \
