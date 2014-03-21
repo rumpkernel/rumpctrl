@@ -155,6 +155,7 @@ $(foreach util,${NBUTILS},$(eval $(call NBUTIL_templ,${util},$(notdir ${util})))
 
 clean: $(foreach util,${NBUTILS_BASE},clean_${util})
 		rm -f *.o *~ rump.map ${PROGS} ${OBJDIR}/* ${BINDIR}/*
+		rm test_disk-* test_busmem* disk1-* disk2-* csock-* csock1-* csock2-* raid.conf-*
 
 cleanrump:	clean
 		rm -rf obj rump rumpobj rumptools rumpdyn rumpdynobj
