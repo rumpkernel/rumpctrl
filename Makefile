@@ -74,12 +74,6 @@ NBUTILS_BASE= $(notdir ${NBUTILS})
 
 all:		${NBUTILS_BASE} halt
 
-rumpremote.o:	rumpremote.c rumprun_common.c
-		${CC} ${HOSTCFLAGS} -c $< -o $@
-
-rumpremote:	rumpremote.o
-		${CC} $< -o $@ ${RUMPCLIENT} -lc ${DLFLAG}
-
 emul.o:		emul.c
 		${CC} ${HOSTCFLAGS} -fPIC -c $< -o $@
 
