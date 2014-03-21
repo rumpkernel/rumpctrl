@@ -2,16 +2,10 @@ OBJDIR=	obj-rr
 
 BINDIR=bin
 
-UNAME := $(shell uname -s)
-ifeq ($(UNAME),Linux)
-	DLFLAG=-ldl -Wl,--no-as-needed -lrt
-endif
-
 DEFUNDEF=-D__NetBSD__ -U__FreeBSD__ -Ulinux -U__linux -U__linux__ -U__gnu_linux__
 NBCFLAGS=-nostdinc -nostdlib -Irump/include -O2 -g -Wall -fPIC  ${DEFUNDEF}
 HOSTCFLAGS=-O2 -g -Wall -Irumpdyn/include
 RUMPLIBS=-Lrumpdyn/lib -Wl,--no-as-needed -lrumpkern_time -lrumpvfs -lrumpfs_kernfs -lrumpdev -lrumpnet_local -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_net -lrumpnet -lrump -lrumpuser
-RUMPCLIENT=-Lrumpdyn/lib -Wl,-R$(PWD)/rumpdyn/lib -lrumpclient
 
 RUMPMAKE:=$(shell echo `pwd`/rumptools/rumpmake)
 
@@ -72,7 +66,8 @@ CPPFLAGS.umount=	-DSMALL
 
 NBUTILS_BASE= $(notdir ${NBUTILS})
 
-all:		${NBUTILS_BASE} halt
+# TODO fix halt
+all:		${NBUTILS_BASE}
 
 emul.o:		emul.c
 		${CC} ${HOSTCFLAGS} -fPIC -c $< -o $@
@@ -96,18 +91,8 @@ remoteinit.o:	remoteinit.c
 nullenv.o:	nullenv.c
 		${CC} ${HOSTCFLAGS} -c $< -o $@
 
-# this should be refactored into a script...
-halt:	halt.o emul.o readwrite.o remoteinit.o rump.map
-	${CC} -Wl,-r -nostdlib $< rump/lib/libc.a -o ${OBJDIR}/tmp1_halt.o
-	objcopy --redefine-syms=extra.map ${OBJDIR}/tmp1_halt.o
-	objcopy --redefine-syms=rump.map ${OBJDIR}/tmp1_halt.o
-	objcopy --redefine-syms=emul.map ${OBJDIR}/tmp1_halt.o
-	objcopy --redefine-sym environ=_netbsd_environ ${OBJDIR}/tmp1_halt.o
-	${CC} -Wl,-r -nostdlib -Wl,-dc ${OBJDIR}/tmp1_halt.o readwrite.o -o ${OBJDIR}/tmp2_halt.o
-	objcopy -w -L '*' ${OBJDIR}/tmp2_halt.o
-	objcopy --globalize-symbol=main --globalize-symbol=_netbsd_environ ${OBJDIR}/tmp2_halt.o
-	mkdir -p ${BINDIR}
-	${CC} ${OBJDIR}/tmp2_halt.o emul.o remoteinit.o ${RUMPCLIENT} ${DLFLAG} -o ${BINDIR}/$@
+halt:	halt.o emul.o readwrite.o remoteinit.o exit.o nullenv.o rump.map
+	./process.sh halt halt.o
 
 rump.map:	
 		cat ./rumpsrc/sys/rump/librump/rumpkern/rump_syscalls.c | \
@@ -126,21 +111,7 @@ rumpsrc/${1}/${2}.ro:
 NBLIBS.${2}:= $(shell cd rumpsrc/${1} && ${RUMPMAKE} -V '$${LDADD}')
 LIBS.${2}=$${NBLIBS.${2}:-l%=rump/lib/lib%.a}
 ${2}:	rumpsrc/${1}/${2}.ro emul.o readwrite.o remoteinit.o nullenv.o exit.o rump.map $${LIBS.${2}} $(filter-out $(wildcard ${OBJDIR}), ${OBJDIR})
-	${CC} -Wl,-r -nostdlib rumpsrc/${1}/${2}.ro $${LIBS.${2}} -o ${OBJDIR}/tmp0_${2}.o
-	objcopy --redefine-syms=env.map ${OBJDIR}/tmp0_${2}.o
-	${CC} -Wl,-r ${OBJDIR}/tmp0_${2}.o -nostdlib rump/lib/libc.a -o ${OBJDIR}/tmp1_${2}.o
-	objcopy --redefine-syms=extra.map ${OBJDIR}/tmp1_${2}.o
-	objcopy --redefine-syms=rump.map ${OBJDIR}/tmp1_${2}.o
-	objcopy --redefine-syms=emul.map ${OBJDIR}/tmp1_${2}.o
-	objcopy --redefine-sym environ=_netbsd_environ ${OBJDIR}/tmp1_${2}.o
-	objcopy --redefine-sym main=_netbsd_main ${OBJDIR}/tmp1_${2}.o
-	objcopy --redefine-sym __progname=_netbsd__progname ${OBJDIR}/tmp1_${2}.o
-	objcopy --redefine-sym exit=_netbsd_exit ${OBJDIR}/tmp1_${2}.o
-	${CC} -Wl,-r -nostdlib -Wl,-dc ${OBJDIR}/tmp1_${2}.o readwrite.o -o ${OBJDIR}/tmp2_${2}.o
-	objcopy -w --localize-symbol='*' ${OBJDIR}/tmp2_${2}.o
-	objcopy -w --globalize-symbol='_netbsd_*' ${OBJDIR}/tmp2_${2}.o
-	mkdir -p ${BINDIR}
-	${CC} ${OBJDIR}/tmp2_${2}.o emul.o exit.o remoteinit.o nullenv.o ${RUMPCLIENT} ${DLFLAG} -o ${BINDIR}/${2}
+	./process.sh ${2} rumpsrc/${1}/${2}.ro $${LIBS.${2}}
 
 clean_${2}:
 	( [ ! -d rumpsrc/${1} ] || ( cd rumpsrc/${1} && ${RUMPMAKE} cleandir && rm -f ${2}.ro ) )
@@ -149,7 +120,7 @@ $(foreach util,${NBUTILS},$(eval $(call NBUTIL_templ,${util},$(notdir ${util})))
 
 clean: $(foreach util,${NBUTILS_BASE},clean_${util})
 		rm -f *.o *~ rump.map ${PROGS} ${OBJDIR}/* ${BINDIR}/*
-		rm test_disk-* test_busmem* disk1-* disk2-* csock-* csock1-* csock2-* raid.conf-*
+		rm -f test_disk-* test_busmem* disk1-* disk2-* csock-* csock1-* csock2-* raid.conf-*
 
 cleanrump:	clean
 		rm -rf obj rump rumpobj rumptools rumpdyn rumpdynobj
