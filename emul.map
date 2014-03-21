@@ -20,3 +20,4 @@ __wait450	emul___wait450
 kill		emul_kill
 undelete	emul_undelete
 _lwp_kill	emul__lwp_kill
+uuidgen		emul_uuidgen
