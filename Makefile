@@ -66,8 +66,7 @@ CPPFLAGS.umount=	-DSMALL
 
 NBUTILS_BASE= $(notdir ${NBUTILS})
 
-# TODO fix halt
-all:		${NBUTILS_BASE}
+all:		${NBUTILS_BASE} halt
 
 emul.o:		emul.c
 		${CC} ${HOSTCFLAGS} -fPIC -c $< -o $@
