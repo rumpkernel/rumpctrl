@@ -58,7 +58,6 @@ access by setting the env variable `$RUMP_SERVER`.
 To configure one shmif interface:
 
 ````
-$ export LD_LIBRARY_PATH=.:rumpdyn/lib
 $ export RUMP_SERVER=unix://csock
 $ ./bin/ifconfig shmif0 create
 $ ./bin/ifconfig shmif0 linkstr busmem
