@@ -66,7 +66,10 @@ CPPFLAGS.umount=	-DSMALL
 
 NBUTILS_BASE= $(notdir ${NBUTILS})
 
-all:		${NBUTILS_BASE} halt
+all:		${NBUTILS_BASE} halt rumpremote.sh
+
+rumpremote.sh: rumpremote.sh.in
+		sed 's,XXXPATHXXX,$(PWD),' $< > $@
 
 emul.o:		emul.c
 		${CC} ${HOSTCFLAGS} -c $< -o $@
@@ -117,7 +120,7 @@ endef
 $(foreach util,${NBUTILS},$(eval $(call NBUTIL_templ,${util},$(notdir ${util}))))
 
 clean: $(foreach util,${NBUTILS_BASE},clean_${util})
-		rm -f *.o *~ rump.map ${PROGS} ${OBJDIR}/* ${BINDIR}/*
+		rm -f *.o *~ rump.map ${PROGS} ${OBJDIR}/* ${BINDIR}/* rumpremote.sh
 		rm -f test_disk-* test_busmem* disk1-* disk2-* csock-* csock1-* csock2-* raid.conf-*
 
 cleanrump:	clean
