@@ -9,6 +9,8 @@ Rumprun takes NetBSD program (see Makefile) and compiles it using the NetBSD ABI
 Currently tested on Linux and NetBSD, and should be generally
 portable. A good deal of NetBSD utilities will already work
 (see end of this file for list of ones built out-of-the-box).
+Currently only known to work on i386 and amd64 architectures,
+but others are being worked on as they need small fixes.
 
 Building
 ========
