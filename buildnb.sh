@@ -32,13 +32,13 @@ if [ ! -d rumpsrc ]; then
 fi
 
 # Build rump kernel
-./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${STDJ} \
+./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${STDJ} $* \
     -s rumpsrc -T rumptools -o rumpdynobj -d rumpdyn -V MKSTATICLIB=no fullbuild
 
 # Now build a static libc.
 
 # build tools
-./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${STDJ} -s rumpsrc \
+./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${STDJ} $* -s rumpsrc \
     -T rumptools -o rumpobj -N -k -V MKPIC=no tools
 
 RMAKE=`pwd`/rumptools/rumpmake
@@ -93,5 +93,5 @@ for lib in ${LIBS}; do
 	makeuserlib ${lib}
 done
 
-./buildrump.sh/buildrump.sh ${BUILD_QUIET} \
+./buildrump.sh/buildrump.sh ${BUILD_QUIET} $* \
     -s rumpsrc -T rumptools -o rumpobj install
