@@ -15,7 +15,7 @@ SOCKFILE_RAID="unix://csock-rf-$$"
 SOCKFILE_LIST="${SOCKFILE}"
 
 # start global rump server
-./rumpdyn/bin/rump_server -lrumpvfs -lrumpfs_kernfs -lrumpdev -lrumpnet -lrumpnet_net -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_shmif -lrumpkern_time $SOCKFILE
+./rumpdyn/bin/rump_server -lrumpvfs -lrumpfs_kernfs -lrumpdev -lrumpnet -lrumpnet_net -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_shmif $SOCKFILE
 
 export RUMP_SERVER="$SOCKFILE"
 
@@ -114,8 +114,8 @@ Test_npf()
 {
 # create servers
 BM="test_busmem2-$$"
-./rumpdyn/bin/rump_server -lrumpnet_shmif -lrumpnet_netinet -lrumpnet_net -lrumpnet -lrumpkern_time $SOCKFILE1
-./rumpdyn/bin/rump_server -lrumpnet_shmif -lrumpnet_netinet -lrumpnet_net -lrumpnet -lrumpnet_npf -lrumpdev_bpf -lrumpdev -lrumpvfs -lrumpkern_time $SOCKFILE2
+./rumpdyn/bin/rump_server -lrumpnet_shmif -lrumpnet_netinet -lrumpnet_net -lrumpnet $SOCKFILE1
+./rumpdyn/bin/rump_server -lrumpnet_shmif -lrumpnet_netinet -lrumpnet_net -lrumpnet -lrumpnet_npf -lrumpdev_bpf -lrumpdev -lrumpvfs $SOCKFILE2
 
 # configure network
 export RUMP_SERVER="$SOCKFILE1"
@@ -152,7 +152,7 @@ Test_cgd()
 {
 export RUMP_SERVER="${SOCKFILE_CGD}"
 DISK="test_disk-$$"
-./rumpdyn/bin/rump_server -lrumpfs_ffs -lrumpdev -lrumpdev_disk -lrumpvfs -lrumpdev_cgd -lrumpkern_crypto -lrumpdev_rnd -lrumpkern_time -d "key=/disk1,hostpath=$DISK,size=$((1000*512))" "${RUMP_SERVER}"
+./rumpdyn/bin/rump_server -lrumpfs_ffs -lrumpdev -lrumpdev_disk -lrumpvfs -lrumpdev_cgd -lrumpkern_crypto -lrumpdev_rnd -d "key=/disk1,hostpath=$DISK,size=$((1000*512))" "${RUMP_SERVER}"
 
 ./bin/cgdconfig -g -o /cgd.conf -k storedkey aes-cbc 192
 ./bin/cgdconfig cgd0 /disk1 /cgd.conf
@@ -182,7 +182,7 @@ START layout
 
 START queue
 fifo 100" > ${RC}
-./rumpdyn/bin/rump_server -lrumpdev -lrumpdev_disk -lrumpvfs -lrumpdev_raidframe -lrumpfs_ffs -lrumpkern_time -d "key=/disk1,hostpath=${D1},size=16777216" -d "key=/disk2,hostpath=${D2},size=16777216" -d "key=/raid.conf,hostpath=${RC},size=host,type=reg" $SOCKFILE_RAID
+./rumpdyn/bin/rump_server -lrumpdev -lrumpdev_disk -lrumpvfs -lrumpdev_raidframe -lrumpfs_ffs -d "key=/disk1,hostpath=${D1},size=16777216" -d "key=/disk2,hostpath=${D2},size=16777216" -d "key=/raid.conf,hostpath=${RC},size=host,type=reg" $SOCKFILE_RAID
 export RUMP_SERVER="${SOCKFILE_RAID}"
 
 # create raid device
