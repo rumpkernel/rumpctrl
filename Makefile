@@ -58,6 +58,7 @@ NBUTILS+=		usr.sbin/ndp
 NBUTILS+=		usr.sbin/npf/npfctl
 NBUTILS+=		usr.sbin/vnconfig
 NBUTILS+=		usr.sbin/pcictl
+NBUTILS+=		usr.sbin/wlanctl
 
 #NBUTILS+=		usr.bin/kdump
 NBUTILS+=		usr.bin/ktrace
