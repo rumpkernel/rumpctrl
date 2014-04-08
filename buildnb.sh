@@ -5,8 +5,12 @@
 # Just a script to run the handful of commands required to build NetBSD libc, headers
 
 LIBLIBS="c crypt ipsec m npf pthread prop rmt util pci y z"
-MORELIBS="external/bsd/flex/lib crypto/external/bsd/openssl/lib/libcrypto
+MORELIBS="external/bsd/flex/lib
+	crypto/external/bsd/openssl/lib/libcrypto
+	crypto/external/bsd/openssl/lib/libdes
+	crypto/external/bsd/openssl/lib/libssl
 	external/bsd/libpcap/lib"
+
 LIBS=""
 for lib in ${LIBLIBS}; do
 	LIBS="${LIBS} rumpsrc/lib/lib${lib}"
