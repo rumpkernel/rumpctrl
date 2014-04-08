@@ -67,7 +67,7 @@ CPPFLAGS.umount=	-DSMALL
 
 NBUTILS_BASE= $(notdir ${NBUTILS})
 
-all:		${NBUTILS_BASE} halt rumpremote.sh
+all:		${NBUTILS_BASE} bin/halt rumpremote.sh
 
 rumpremote.sh: rumpremote.sh.in
 		sed 's,XXXPATHXXX,$(PWD),' $< > $@
@@ -93,7 +93,7 @@ nullenv.o:	nullenv.c
 halt.o:		halt.c
 		${CC} ${NBCFLAGS} -c $< -o $@
 
-halt:		halt.o emul.o readwrite.o remoteinit.o exit.o nullenv.o rump.map
+bin/halt:	halt.o emul.o readwrite.o remoteinit.o exit.o nullenv.o rump.map
 		./mkremote.sh halt halt.o
 
 rump.map:	
@@ -109,8 +109,10 @@ rumpsrc/${1}/${2}.ro:
 
 NBLIBS.${2}:= $(shell cd rumpsrc/${1} && ${RUMPMAKE} -V '$${LDADD}')
 LIBS.${2}=$${NBLIBS.${2}:-l%=rump/lib/lib%.a}
-${2}:	rumpsrc/${1}/${2}.ro emul.o readwrite.o remoteinit.o nullenv.o exit.o rump.map $${LIBS.${2}} $(filter-out $(wildcard ${OBJDIR}), ${OBJDIR})
+bin/${2}: rumpsrc/${1}/${2}.ro emul.o readwrite.o remoteinit.o nullenv.o exit.o rump.map $${LIBS.${2}}
 	./mkremote.sh ${2} rumpsrc/${1}/${2}.ro $${LIBS.${2}}
+
+${2}:	bin/${2}
 
 clean_${2}:
 	( [ ! -d rumpsrc/${1} ] || ( cd rumpsrc/${1} && ${RUMPMAKE} cleandir && rm -f ${2}.ro ) )
