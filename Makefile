@@ -102,9 +102,6 @@ rump.map:
 			sed -e 's/rsys_aliases(//g' -e 's/);//g' -e 's/\(.*\),\(.*\)/\1@\2/g' | \
 			awk -F @ '$$1 ~ /^(read|write)$$/{$$2="rumprun_" $$1 "_wrapper"}{printf "%s\t%s\n", $$1, $$2}' > $@
 
-${OBJDIR}:
-	mkdir -p $@
-
 define NBUTIL_templ
 rumpsrc/${1}/${2}.ro:
 	( cd rumpsrc/${1} && \
