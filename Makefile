@@ -63,6 +63,9 @@ NBUTILS+=		usr.sbin/wlanctl
 #NBUTILS+=		usr.bin/kdump
 NBUTILS+=		usr.bin/ktrace
 
+NBUTILS+=		external/bsd/wpa/bin/wpa_passphrase
+NBUTILS+=		external/bsd/wpa/bin/wpa_supplicant
+
 CPPFLAGS.umount=	-DSMALL
 
 NBUTILS_BASE= $(notdir ${NBUTILS})
