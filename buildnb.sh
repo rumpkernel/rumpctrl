@@ -43,7 +43,7 @@ fi
 
 # build tools
 ./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${STDJ} $* -s rumpsrc \
-    -T rumptools -o rumpobj -N -k -V MKPIC=no tools
+    -T rumptools -o rumpobj -N -k -V MKPIC=no -V BUILDRUMP_SYSROOT=yes tools
 
 RMAKE=`pwd`/rumptools/rumpmake
 RMAKE_INST=`pwd`/rumptools/_buildrumpsh-rumpmake
