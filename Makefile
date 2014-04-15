@@ -93,6 +93,9 @@ remoteinit.o:	remoteinit.c
 nullenv.o:	nullenv.c
 		${CC} ${HOSTCFLAGS} -c $< -o $@
 
+netbsd_init.o:	netbsd_init.c
+		${CC} ${NBCFLAGS} -c $< -o $@
+
 halt.o:		halt.c
 		${CC} ${NBCFLAGS} -c $< -o $@
 
@@ -112,7 +115,7 @@ rumpsrc/${1}/${2}.ro:
 
 NBLIBS.${2}:= $(shell cd rumpsrc/${1} && ${RUMPMAKE} -V '$${LDADD}')
 LIBS.${2}=$${NBLIBS.${2}:-l%=rump/lib/lib%.a}
-bin/${2}: rumpsrc/${1}/${2}.ro emul.o readwrite.o remoteinit.o nullenv.o exit.o rump.map $${LIBS.${2}}
+bin/${2}: rumpsrc/${1}/${2}.ro emul.o readwrite.o remoteinit.o nullenv.o exit.o netbsd_init.o rump.map $${LIBS.${2}}
 	./mkremote.sh ${2} rumpsrc/${1}/${2}.ro $${LIBS.${2}}
 
 ${2}:	bin/${2}

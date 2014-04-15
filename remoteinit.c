@@ -9,6 +9,8 @@
 #include <rump/rumpclient.h>
 #include <rump/rump_syscalls.h>
 
+#include "netbsd_init.h"
+
 /* we are not supposed to use values below 100 but NetBSD libc does */
 void rumprun_init (void) __attribute__((constructor (1)));
 
@@ -32,6 +34,8 @@ rumprun_init()
         ret = rumpclient_init();
         if (ret != 0)
                 die("rumpclient init failed");
+	_netbsd_init(isatty(STDOUT_FILENO));
+
         /* this has to be the greatest hack ever */
         while ((fd = rump_sys_kqueue()) < 3)
                 continue;
