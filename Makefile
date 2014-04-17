@@ -94,7 +94,7 @@ nullenv.o:	nullenv.c
 
 NBCC=./rump/bin/rump-cc
 
-netbsd_init.o:	netbsd_init.c
+netbsd_init.o:	netbsd_init.c tools
 		${NBCC} ${NBCFLAGS} -c $< -o $@
 
 halt.o:		halt.c tools
