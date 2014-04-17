@@ -1,0 +1,10 @@
+%rename cpp_options old_cpp_options
+
+*cpp_options:
+-nostdinc -D__NetBSD__ -U__FreeBSD__ -Ulinux -U__linux -U__linux__ -U__gnu_linux__ -isystem @PATH@/rump/include -isystem include%s %(old_cpp_options)
+
+*cc1:
+%(cc1_cpu) -nostdinc -isystem @PATH@/rump/include -isystem include%s
+
+*link:
+-nostdlib %s

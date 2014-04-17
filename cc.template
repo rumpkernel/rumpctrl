@@ -1,0 +1,2 @@
+#!/bin/sh
+exec "${REALCC:-cc}" "$@" -specs "@PATH@/rump/lib/rump-cc.specs"

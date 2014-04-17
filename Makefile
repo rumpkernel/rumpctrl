@@ -2,8 +2,7 @@ OBJDIR=	obj-rr
 
 BINDIR=bin
 
-DEFUNDEF=-D__NetBSD__ -U__FreeBSD__ -Ulinux -U__linux -U__linux__ -U__gnu_linux__
-NBCFLAGS=${CFLAGS} -nostdinc -nostdlib -Irump/include -O2 -g -Wall -fPIC  ${DEFUNDEF}
+NBCFLAGS=${CFLAGS} -O2 -g -Wall
 HOSTCFLAGS=${CFLAGS} -O2 -g -Wall -Irumpdyn/include
 RUMPLIBS=-Lrumpdyn/lib -Wl,--no-as-needed -lrumpkern_time -lrumpvfs -lrumpfs_kernfs -lrumpdev -lrumpnet_local -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_net -lrumpnet -lrump -lrumpuser rumpkern_time
 
@@ -70,7 +69,7 @@ CPPFLAGS.umount=	-DSMALL
 
 NBUTILS_BASE= $(notdir ${NBUTILS})
 
-all:		${NBUTILS_BASE} bin/halt rumpremote.sh
+all:		${NBUTILS_BASE} bin/halt rumpremote.sh tools
 
 rumpremote.sh: rumpremote.sh.in
 		sed 's,XXXPATHXXX,$(PWD),' $< > $@
@@ -93,11 +92,13 @@ remoteinit.o:	remoteinit.c
 nullenv.o:	nullenv.c
 		${CC} ${HOSTCFLAGS} -c $< -o $@
 
-netbsd_init.o:	netbsd_init.c
-		${CC} ${NBCFLAGS} -c $< -o $@
+NBCC=./rump/bin/rump-cc
 
-halt.o:		halt.c
-		${CC} ${NBCFLAGS} -c $< -o $@
+netbsd_init.o:	netbsd_init.c
+		${NBCC} ${NBCFLAGS} -c $< -o $@
+
+halt.o:		halt.c tools
+		${NBCC} ${NBCFLAGS} -c $< -o $@
 
 bin/halt:	halt.o emul.o readwrite.o remoteinit.o exit.o nullenv.o rump.map
 		./mkremote.sh halt halt.o
@@ -124,6 +125,19 @@ clean_${2}:
 	( [ ! -d rumpsrc/${1} ] || ( cd rumpsrc/${1} && ${RUMPMAKE} cleandir && rm -f ${2}.ro ) )
 endef
 $(foreach util,${NBUTILS},$(eval $(call NBUTIL_templ,${util},$(notdir ${util}))))
+
+# the compiler objects
+.PHONY: tools
+tools:			rump/bin/rump-cc rump/lib/rump-cc.specs
+
+INSTALL_PATH=${PWD}
+
+rump/bin/rump-cc:	cc.template
+			cat $< | sed "s|@PATH@|${INSTALL_PATH}|g" > $@
+			chmod +x $@
+
+rump/lib/rump-cc.specs:	spec.template
+			cat $< | sed "s|@PATH@|${PWD}|g" | sed "s|@LDLIBS@|${COMPLIBS}|g" > $@
 
 clean: $(foreach util,${NBUTILS_BASE},clean_${util})
 		rm -f *.o *~ rump.map ${PROGS} ${OBJDIR}/* ${BINDIR}/* rumpremote.sh
