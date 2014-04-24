@@ -5,3 +5,4 @@ _pread		rump___sysimpl_pread
 _pwrite		rump___sysimpl_pwrite
 _ftruncate	rump___sysimpl_ftruncate
 _readlink	rump___sysimpl_readlink
+h_errno		netbsd_h_errno
