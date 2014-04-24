@@ -69,7 +69,7 @@ CPPFLAGS.umount=	-DSMALL
 
 NBUTILS_BASE= $(notdir ${NBUTILS})
 
-all:		${NBUTILS_BASE} bin/halt rumpremote.sh tools
+all:		${NBUTILS_BASE} bin/halt rumpremote.sh rump/lib/rump-cc.specs
 
 rumpremote.sh: rumpremote.sh.in
 		sed 's,XXXPATHXXX,$(PWD),' $< > $@
@@ -94,10 +94,10 @@ nullenv.o:	nullenv.c
 
 NBCC=./rump/bin/rump-cc
 
-netbsd_init.o:	netbsd_init.c tools
+netbsd_init.o:	netbsd_init.c ${NBCC}
 		${NBCC} ${NBCFLAGS} -c $< -o $@
 
-halt.o:		halt.c tools
+halt.o:		halt.c ${NBCC}
 		${NBCC} ${NBCFLAGS} -c $< -o $@
 
 bin/halt:	halt.o emul.o readwrite.o remoteinit.o exit.o nullenv.o rump.map
@@ -126,13 +126,9 @@ clean_${2}:
 endef
 $(foreach util,${NBUTILS},$(eval $(call NBUTIL_templ,${util},$(notdir ${util}))))
 
-# the compiler objects
-.PHONY: tools
-tools:			rump/bin/rump-cc rump/lib/rump-cc.specs
-
 INSTALL_PATH=${PWD}
 
-rump/bin/rump-cc:	cc.template
+${NBCC}:		cc.template
 			cat $< | sed "s|@PATH@|${INSTALL_PATH}|g" > $@
 			chmod +x $@
 
