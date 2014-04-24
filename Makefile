@@ -142,6 +142,7 @@ rump/lib/rump-cc.specs:	spec.template
 clean: $(foreach util,${NBUTILS_BASE},clean_${util})
 		rm -f *.o *~ rump.map ${PROGS} ${OBJDIR}/* ${BINDIR}/* rumpremote.sh
 		rm -f test_disk-* test_busmem* disk1-* disk2-* csock-* csock1-* csock2-* raid.conf-*
+		rm -f ${NBCC} rump/lib/rump-cc.specs
 
 cleanrump:	clean
 		rm -rf obj rump rumpobj rumptools rumpdyn rumpdynobj
