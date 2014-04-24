@@ -73,7 +73,7 @@ MAKEDEFS.npfctl=	USE_SSP=no
 
 NBUTILS_BASE= $(notdir ${NBUTILS})
 
-all:		${NBUTILS_BASE} bin/halt rumpremote.sh rump/lib/rump-cc.specs
+all:		${NBUTILS_BASE} bin/halt rumpremote.sh
 
 rumpremote.sh: rumpremote.sh.in
 		sed 's,XXXPATHXXX,$(PWD),' $< > $@
@@ -132,7 +132,7 @@ $(foreach util,${NBUTILS},$(eval $(call NBUTIL_templ,${util},$(notdir ${util})))
 
 INSTALL_PATH=${PWD}
 
-${NBCC}:		cc.template
+${NBCC}:		cc.template rump/lib/rump-cc.specs
 			cat $< | sed "s|@PATH@|${INSTALL_PATH}|g" > $@
 			chmod +x $@
 
