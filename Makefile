@@ -67,6 +67,10 @@ NBUTILS+=		external/bsd/wpa/bin/wpa_supplicant
 
 CPPFLAGS.umount=	-DSMALL
 
+# long story short: stpncpy and ssp don't mix with old compilers,
+# so as a "temporary" workaround never use ssp when building npfctl
+MAKEDEFS.npfctl=	USE_SSP=no
+
 NBUTILS_BASE= $(notdir ${NBUTILS})
 
 all:		${NBUTILS_BASE} bin/halt rumpremote.sh rump/lib/rump-cc.specs
@@ -112,7 +116,7 @@ rump.map:
 define NBUTIL_templ
 rumpsrc/${1}/${2}.ro:
 	( cd rumpsrc/${1} && \
-	    ${RUMPMAKE} LIBCRT0= BUILDRUMP_CFLAGS="-fPIC -std=gnu99 -D__NetBSD__ ${CPPFLAGS.${2}}" ${2}.ro )
+	    ${RUMPMAKE} LIBCRT0= BUILDRUMP_CFLAGS="-fPIC -std=gnu99 -D__NetBSD__ ${CPPFLAGS.${2}}" ${MAKEDEFS.${2}} ${2}.ro )
 
 NBLIBS.${2}:= $(shell cd rumpsrc/${1} && ${RUMPMAKE} -V '$${LDADD}')
 LIBS.${2}=$${NBLIBS.${2}:-l%=rump/lib/lib%.a}
