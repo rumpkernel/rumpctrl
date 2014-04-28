@@ -103,8 +103,8 @@ halt.o:		halt.c ${NBCC}
 bin/halt:	halt.o emul.o readwrite.o remoteinit.o exit.o nullenv.o rump.map
 		./mkremote.sh halt halt.o
 
-rump.map:	
-		cat rumpsrc/sys/rump/rump.sysmap | awk '{printf("%s\t%s\n",$$3,$$4)}' | \
+rump.map:	rumpsrc/sys/rump/rump.sysmap
+		awk '{printf("%s\t%s\n",$$3,$$4)}' $< | \
 			awk -F '\t' '$$1 ~ /^(read|write)$$/{$$2="rumprun_" $$1 "_wrapper"}{printf("%s\t%s\n",$$1,$$2)}' > $@
 
 define NBUTIL_templ
