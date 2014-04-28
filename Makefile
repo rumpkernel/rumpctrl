@@ -104,10 +104,8 @@ bin/halt:	halt.o emul.o readwrite.o remoteinit.o exit.o nullenv.o rump.map
 		./mkremote.sh halt halt.o
 
 rump.map:	
-		cat ./rumpsrc/sys/rump/librump/rumpkern/rump_syscalls.c | \
-			grep rsys_aliases | grep -v -- '#define' | \
-			sed -e 's/rsys_aliases(//g' -e 's/);//g' -e 's/\(.*\),\(.*\)/\1@\2/g' | \
-			awk -F @ '$$1 ~ /^(read|write)$$/{$$2="rumprun_" $$1 "_wrapper"}{printf "%s\t%s\n", $$1, $$2}' > $@
+		cat rumpsrc/sys/rump/rump.sysmap | awk '{printf("%s\t%s\n",$$3,$$4)}' | \
+			awk -F '\t' '$$1 ~ /^(read|write)$$/{$$2="rumprun_" $$1 "_wrapper"}{printf("%s\t%s\n",$$1,$$2)}' > $@
 
 define NBUTIL_templ
 rumpsrc/${1}/${2}.ro:
