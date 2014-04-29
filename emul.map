@@ -1,4 +1,3 @@
-# for emul.c
 mmap		emul_mmap
 munmap		emul_munmap
 madvise		emul_madvise
