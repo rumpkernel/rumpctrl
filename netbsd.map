@@ -1,0 +1,4 @@
+main	_netbsd_main
+exit	_netbsd_exit
+environ	_netbsd_environ
+__progname	_netbsd__progname
