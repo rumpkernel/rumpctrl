@@ -15,9 +15,6 @@
 
 #include <rump/rumpclient.h>
 
-/* difficult to include headers */
-int rumpclient_fork(void);
-
 /* TODO map errors better, and generally better error handling */
 #define _NETBSD_EINVAL 22
 #define _NETBSD_ENOSYS 78

@@ -1,5 +1,5 @@
 #!/bin/sh
-set -x
+
 set -e
 
 NAME=$1
