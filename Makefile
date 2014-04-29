@@ -80,9 +80,6 @@ emul.o:		emul.c
 readwrite.o:	readwrite.c
 		${CC} ${HOSTCFLAGS} -c $< -o $@
 
-rumpinit.o:	rumpinit.c
-		${CC} ${HOSTCFLAGS} -c $< -o $@
-
 remoteinit.o:	remoteinit.c
 		${CC} ${HOSTCFLAGS} -c $< -o $@
 
