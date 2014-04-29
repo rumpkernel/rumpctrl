@@ -22,8 +22,8 @@ RUMPCLIENT="-Lrumpdyn/lib -Wl,-R${PWD}/rumpdyn/lib -lrumpclient"
 
 CC=${CC-cc}
 
-${CC} ${LDFLAGS} -Wl,-r -nostdlib $LINK -o ${OBJDIR}/tmp0_${NAME}.o
-objcopy --redefine-syms=env.map ${OBJDIR}/tmp0_${NAME}.o
+${CC} ${LDFLAGS} -Wl,-r -nostdlib $LINK -o ${OBJDIR}/${NAME}.o
+objcopy --redefine-syms=env.map ${OBJDIR}/${NAME}.o ${OBJDIR}/tmp0_${NAME}.o
 ${CC} ${LDFLAGS} -Wl,-r ${OBJDIR}/tmp0_${NAME}.o netbsd_init.o -nostdlib rump/lib/libc.a -o ${OBJDIR}/tmp1_${NAME}.o 2>/dev/null
 objcopy --redefine-syms=extra.map ${OBJDIR}/tmp1_${NAME}.o
 objcopy --redefine-syms=rump.map ${OBJDIR}/tmp1_${NAME}.o
