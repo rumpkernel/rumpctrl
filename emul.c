@@ -1,6 +1,8 @@
 /* convert to host format as necessary */
 
 #include <stdint.h>
+#include <stdio.h>
+#include <setjmp.h>
 #include <errno.h>
 #include <stddef.h>
 #include <stdlib.h>
@@ -19,6 +21,38 @@ int rumpclient_fork(void);
 /* TODO map errors better, and generally better error handling */
 #define _NETBSD_EINVAL 22
 #define _NETBSD_ENOSYS 78
+
+static jmp_buf buf;
+
+extern char *_netbsd__progname;
+int _netbsd_main(int argc, char **argv);
+void _netbsd_exit(int status);
+
+static int ret = 0;
+
+/* this will be the entry point, original one renamed to _netbsd_main */
+int
+main(int argc, char **argv)
+{
+	int jret;
+
+	_netbsd__progname = argv[0];
+
+	if (! (jret = setjmp(buf))) {
+		/* exit has not been called, so stdio may not be flushed etc */
+        	_netbsd_exit(_netbsd_main(argc, argv));
+		/* will call _exit so will not reach here */
+	}
+	return ret;
+}
+
+void
+emul__exit(int status)
+{
+
+	ret = status;
+	longjmp(buf, status);
+}
 
 int *
 emul__errno(void)
