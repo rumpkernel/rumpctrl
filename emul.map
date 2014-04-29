@@ -7,7 +7,6 @@ __errno		emul__errno
 __getrusage50	emul__getrusage50
 __vfork14	emul__vfork14
 __fork		emul__fork
-_mmap		emul__mmap
 _exit		emul__exit
 __sigaction14	emul___sigaction14
 __sigprocmask14	emul___sigprocmask14

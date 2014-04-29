@@ -106,9 +106,10 @@ bin/halt:	halt.o emul.o readwrite.o remoteinit.o exit.o nullenv.o rump.map names
 rump.map:	rumpsrc/sys/rump/rump.sysmap
 		awk '{printf("%s\t%s\n",$$3,$$4)}' $< > $@
 
-namespace.map:	rumpsrc/lib/libc/include/namespace.h
+namespace.map:	rumpsrc/lib/libc/include/namespace.h rump.map emul.map
 		grep '#define' $< | grep -v NAMESPACE_H | awk '{printf("%s\t%s\n",$$2,$$3)}' > fns.map
-		awk 'NR==FNR{a[$$1]=$$1;next}a[$$1]' rump.map fns.map | awk '{printf("%s\t%s\n",$$2,$$1)}' > $@
+		cat rump.map emul.map > all.map
+		awk 'NR==FNR{a[$$1]=$$1;next}a[$$1]' all.map fns.map | awk '{printf("%s\t%s\n",$$2,$$1)}' > $@
 
 define NBUTIL_templ
 rumpsrc/${1}/${2}.ro:
@@ -137,7 +138,7 @@ rump/lib/rump-cc.specs:	spec.template
 			cat $< | sed "s|@PATH@|${PWD}|g" | sed "s|@LDLIBS@|${COMPLIBS}|g" > $@
 
 clean: $(foreach util,${NBUTILS_BASE},clean_${util})
-		rm -f *.o *~ rump.map fns.map namespace.map ${PROGS} ${OBJDIR}/* ${BINDIR}/* rumpremote.sh
+		rm -f *.o *~ rump.map namespace.map fns.map all.map ${PROGS} ${OBJDIR}/* ${BINDIR}/* rumpremote.sh
 		rm -f test_disk-* test_busmem* disk1-* disk2-* csock-* csock1-* csock2-* raid.conf-*
 		rm -f ${NBCC} rump/lib/rump-cc.specs
 

@@ -87,13 +87,6 @@ emul_mmap(void *addr, size_t length, int prot, int nflags, int fd, _netbsd_off_t
 	return memp;
 }
 
-/* not sure why we have both, may need to fix */
-void *
-emul__mmap(void *addr, size_t length, int prot, int nflags, int fd, _netbsd_off_t offset)
-{
-	return emul_mmap(addr, length, prot, nflags, fd, offset);
-}
-
 int
 emul_munmap(void *addr, size_t len)
 {
