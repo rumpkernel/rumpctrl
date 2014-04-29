@@ -1,8 +1,1 @@
-# these have different names so need to map by hand
-_read		rump___sysimpl_read
-_lseek		rump___sysimpl_lseek
-_pread		rump___sysimpl_pread
-_pwrite		rump___sysimpl_pwrite
-_ftruncate	rump___sysimpl_ftruncate
-_readlink	rump___sysimpl_readlink
 h_errno		netbsd_h_errno
