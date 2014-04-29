@@ -27,6 +27,7 @@ objcopy --redefine-syms=env.map ${OBJDIR}/tmp0_${NAME}.o
 ${CC} ${LDFLAGS} -Wl,-r ${OBJDIR}/tmp0_${NAME}.o netbsd_init.o -nostdlib rump/lib/libc.a -o ${OBJDIR}/tmp1_${NAME}.o 2>/dev/null
 objcopy --redefine-syms=extra.map ${OBJDIR}/tmp1_${NAME}.o
 objcopy --redefine-syms=rump.map ${OBJDIR}/tmp1_${NAME}.o
+objcopy --redefine-syms=readwrite.map ${OBJDIR}/tmp1_${NAME}.o
 objcopy --redefine-syms=emul.map ${OBJDIR}/tmp1_${NAME}.o
 objcopy --redefine-sym environ=_netbsd_environ ${OBJDIR}/tmp1_${NAME}.o
 objcopy --redefine-sym main=_netbsd_main ${OBJDIR}/tmp1_${NAME}.o

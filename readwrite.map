@@ -1,0 +1,2 @@
+rump___sysimpl_read	rumprun_read_wrapper
+rump___sysimpl_write	rumprun_write_wrapper
