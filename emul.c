@@ -152,14 +152,6 @@ emul_execve(const char *filename, char *const argv[], char *const envp[])
 	return rumpclient_exec(filename, argv, environ);
 }
 
-/* environment - use host environment */
-char *
-emul_getenv(const char *name)
-{
-
-	return getenv(name);
-}
-
 /*
  * BEGIN stubs
  */
