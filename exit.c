@@ -2,10 +2,9 @@
 #include <stdio.h>
 #include <setjmp.h>
 
-extern char *_netbsd__progname;
-
 static jmp_buf buf;
 
+extern char *_netbsd__progname;
 int _netbsd_main(int argc, char **argv);
 void _netbsd_exit(int status);
 
