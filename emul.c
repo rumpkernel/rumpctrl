@@ -36,11 +36,6 @@ struct _netbsd_timeval {
 	_netbsd_suseconds_t tv_usec;
 };
 
-struct _netbsd_timespec {
-	_netbsd_time_t tv_sec;
-	long   tv_nsec;
-};
-
 struct _netbsd_rusage {
   struct _netbsd_timeval ru_utime;
   struct _netbsd_timeval ru_stime;
