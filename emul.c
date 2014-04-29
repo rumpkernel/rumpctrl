@@ -22,6 +22,7 @@
 static jmp_buf buf;
 
 extern char *_netbsd__progname;
+extern char **_netbsd_environ;
 int _netbsd_main(int argc, char **argv);
 void _netbsd_exit(int status);
 
@@ -49,6 +50,18 @@ emul__exit(int status)
 
 	ret = status;
 	longjmp(buf, status);
+}
+
+/* this is the NetBSD initial environ array; when we fully just use host environ this can go away */
+/* it is not quite clear why it is not being initialised properly, we should call the initialiser... */
+static char *the_env[1] = { NULL } ;
+
+void nullenv_init (void) __attribute__((constructor (102)));
+
+void
+nullenv_init()
+{
+	_netbsd_environ = the_env;
 }
 
 int *
