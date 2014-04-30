@@ -16,6 +16,7 @@
 #include <rump/rumpclient.h>
 
 /* TODO map errors better, and generally better error handling */
+#define _NETBSD_ENOENT 2
 #define _NETBSD_EINVAL 22
 #define _NETBSD_ENOSYS 78
 
@@ -193,7 +194,46 @@ extern char **environ;
 int
 emul_execve(const char *filename, char *const argv[], char *const envp[])
 {
+
 	return rumpclient_exec(filename, argv, environ);
+}
+
+/* use host environment */
+char *
+emul_getenv(const char *name)
+{
+
+	return getenv(name);
+}
+
+int
+emul_putenv(char *string)
+{
+
+	return putenv(string);
+}
+
+int
+emul_setenv(const char *name, const char *value, int overwrite)
+{
+
+	return setenv(name, value, overwrite);
+}
+
+int
+emul_unsetenv(const char *name)
+{
+
+	return unsetenv(name);
+}
+
+/* TODO, just lie for now */
+int
+emul_getenv_r(const char *name, char *buf, size_t len)
+{
+
+	errno = _NETBSD_ENOENT;
+	return -1;
 }
 
 /*

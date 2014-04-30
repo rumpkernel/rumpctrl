@@ -1,1 +1,6 @@
-getenv		host_getenv
+# note several modified names...
+getenv		emul_getenv
+__putenv50	emul_putenv
+setenv		emul_setenv
+__unsetenv13	emul_unsetenv
+getenv_r	emul_getenv_r

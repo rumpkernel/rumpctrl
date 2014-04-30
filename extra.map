@@ -1,4 +1,2 @@
 # h_errno may clash
 h_errno		netbsd_h_errno
-# getenv we need to rename netbsd symbol as force host symbol
-getenv		netbsd_getenv
