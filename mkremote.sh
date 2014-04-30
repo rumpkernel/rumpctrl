@@ -30,7 +30,6 @@ objcopy --redefine-syms=extra.map ${OBJDIR}/tmp1_${NAME}.o
 objcopy --redefine-syms=rump.map ${OBJDIR}/tmp1_${NAME}.o
 objcopy --redefine-syms=readwrite.map ${OBJDIR}/tmp1_${NAME}.o
 objcopy --redefine-syms=emul.map ${OBJDIR}/tmp1_${NAME}.o
-objcopy --redefine-syms=host2.map ${OBJDIR}/tmp1_${NAME}.o
 objcopy --redefine-syms=netbsd.map ${OBJDIR}/tmp1_${NAME}.o
 ${CC} ${LDFLAGS} -Wl,-r -nostdlib -Wl,-dc ${OBJDIR}/tmp1_${NAME}.o readwrite.o -o ${OBJDIR}/tmp2_${NAME}.o  2>/dev/null
 objcopy -w --localize-symbol='*' ${OBJDIR}/tmp2_${NAME}.o
