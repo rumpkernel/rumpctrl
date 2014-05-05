@@ -35,6 +35,8 @@ if [ ! -d rumpsrc ]; then
 	cp -Rp nbusersrc/* rumpsrc/
 fi
 
+[ "$1" = "justcheckout" ] && { echo ">> $0 done" ; exit 0; }
+
 # Build rump kernel
 ./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${STDJ} $* \
     -s rumpsrc -T rumptools -o rumpdynobj -d rumpdyn -V MKSTATICLIB=no fullbuild
