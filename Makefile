@@ -34,6 +34,7 @@ NBUTILS+=		sbin/mknod
 NBUTILS+=		sbin/modstat
 NBUTILS+=		sbin/mount
 NBUTILS+=		sbin/mount_ffs
+NBUTILS+=		sbin/mount_tmpfs
 NBUTILS+=		sbin/newfs
 NBUTILS+=		sbin/newfs_ext2fs
 NBUTILS+=		sbin/newfs_lfs
