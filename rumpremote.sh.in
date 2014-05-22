@@ -18,6 +18,7 @@ if ${rrCANDO}; then
 	unalias -a
 
 	alias listcmds='for x in $(echo ${RRPATH}/bin/*);do echo ${x##*/};done'
+	alias cd='cd not available in rumpremote mode'
 
 	# save current values
 	rrPATH="${PATH}"
@@ -38,5 +39,6 @@ if ${rrCANDO}; then
 		unset rrPATH
 		unalias listcmds
 		unalias unload_rumpremote
+		unalias cd
 	'
 fi
