@@ -12,6 +12,7 @@ NBUTILS+=		bin/cat
 NBUTILS+=		bin/cp
 NBUTILS+=		bin/dd
 NBUTILS+=		bin/df
+NBUTILS+=		bin/ed
 NBUTILS+=		bin/ln
 NBUTILS+=		bin/ls
 NBUTILS+=		bin/mkdir
