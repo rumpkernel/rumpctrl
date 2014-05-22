@@ -1,5 +1,17 @@
 #!/bin/sh
 
+# figure out where gmake lies or if the system just lies
+if [ -z "${MAKE}" ]; then
+	MAKE=make
+	type gmake >/dev/null && MAKE=gmake
+fi
+${MAKE} --version | grep -q 'GNU Make'
+if [ $? -ne 0 ]; then
+	echo ">> ERROR: GNU Make required, \"${MAKE}\" is not"
+	echo ">> Please install GNU Make and/or set \${MAKE} to point to it"
+	exit 1
+fi
+
 # modified version of buildxen.sh from https://github.com/rumpkernel/rumpuser-xen
 
 # Just a script to run the handful of commands required to build NetBSD libc, headers
@@ -101,3 +113,5 @@ done
 
 ./buildrump.sh/buildrump.sh ${BUILD_QUIET} $* \
     -s rumpsrc -T rumptools -o rumpobj install
+
+${MAKE}

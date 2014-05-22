@@ -9,13 +9,11 @@ Quickstart, run the following commands:
 
 ````
 ./buildnb.sh
-make
 . ./rumpremote.sh
 rumpremote_listcmds
 ````
 
-This will fetch and build all dependencies and list available rumprun
-commands. GNU make (gmake) is required.
+This will fetch and build dependencies and list available rumprun commands.
 
 See [the wiki](http://wiki.rumpkernel.org/Repo:-rumprun) for more
 information and instructions.
