@@ -11,7 +11,7 @@ Quickstart, run the following commands:
 ./buildnb.sh
 make
 . ./rumpremote.sh
-rumprun_listcmds
+rumpremote_listcmds
 ````
 
 This will fetch and build all dependencies and list available rumprun

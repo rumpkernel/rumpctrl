@@ -17,7 +17,7 @@ if ${rrCANDO}; then
 	# XXX: not restored
 	unalias -a
 
-	alias rumprun_listcmds='for x in $(echo ${RRPATH}/bin/*);
+	alias rumpremote_listcmds='for x in $(echo ${RRPATH}/bin/*);
 	    do echo ${x##*/};done | column'
 	alias cd='cd not available in rumpremote mode'
 
@@ -32,14 +32,14 @@ if ${rrCANDO}; then
 	PATH="${RRPATH}/bin:${PATH}"
 	export PATH
 
-	alias unload_rumpremote='
+	alias rumpremote_unload='
 		PS1="${rrPS1}"
 		PATH="${rrPATH}"
 		unset RUMPREMOTE_LOADED
 		unset rrPS1
 		unset rrPATH
-		unalias rumprun_listcmds
-		unalias unload_rumpremote
+		unalias rumpremote_listcmds
+		unalias rumpremote_unload
 		unalias cd
 	'
 fi
