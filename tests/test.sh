@@ -83,10 +83,11 @@ definetest Test_ping6
 
 Test_directories()
 {
-./bin/mkdir /tmp > /dev/null
-./bin/ls / | grep tmp > /dev/null
-./bin/rmdir /tmp > /dev/null
-./bin/ls / | grep -v tmp > /dev/null
+dirname=definitely_nonexisting_directory
+./bin/mkdir /${dirname} > /dev/null
+./bin/ls / | grep ${dirname} > /dev/null
+./bin/rmdir /${dirname} > /dev/null
+./bin/ls / | grep -v ${dirname} > /dev/null
 }
 definetest Test_directories
 
