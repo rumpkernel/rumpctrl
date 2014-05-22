@@ -17,7 +17,8 @@ if ${rrCANDO}; then
 	# XXX: not restored
 	unalias -a
 
-	alias listcmds='for x in $(echo ${RRPATH}/bin/*);do echo ${x##*/};done'
+	alias rumprun_listcmds='for x in $(echo ${RRPATH}/bin/*);
+	    do echo ${x##*/};done | column'
 	alias cd='cd not available in rumpremote mode'
 
 	# save current values
@@ -37,7 +38,7 @@ if ${rrCANDO}; then
 		unset RUMPREMOTE_LOADED
 		unset rrPS1
 		unset rrPATH
-		unalias listcmds
+		unalias rumprun_listcmds
 		unalias unload_rumpremote
 		unalias cd
 	'
