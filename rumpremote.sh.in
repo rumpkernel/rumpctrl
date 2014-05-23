@@ -9,6 +9,18 @@ rrCANDO=true
 # sed replacement is not run with /g ...
 [ "XXXPATHXXX" = "XXXPATHXXX" ] && { echo "not preprocessed"; rrCANDO=false; }
 
+rumpremote_hascmd ()
+{
+	[ -z "${1}" ] && { echo '#f'; false; return; }
+	PATH=${RRPATH}/bin type $1 > /dev/null 2>&1
+	if [ $? -eq 0 ]; then
+		echo '#t'
+	else
+		echo '#f'
+		false
+	fi
+}
+
 if ${rrCANDO}; then
 	RRPATH=XXXPATHXXX
 	RUMPREMOTE_LOADED=yes
@@ -41,5 +53,8 @@ if ${rrCANDO}; then
 		unalias rumpremote_listcmds
 		unalias rumpremote_unload
 		unalias cd
+		unset -f rumpremote_hascmd
 	'
+elif [ ! -z "${RUMPREMOTE_LOADED}" ]; then
+        unset -f rumpremote_unload
 fi
