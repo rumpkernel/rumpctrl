@@ -19,7 +19,7 @@ if ${rrCANDO}; then
 
 	alias rumpremote_listcmds='for x in $(echo ${RRPATH}/bin/*);
 	    do echo ${x##*/};done | column'
-	alias cd='cd not available in rumpremote mode'
+	alias cd='echo ERROR: cd not available in rumpremote mode'
 
 	# save current values
 	rrPATH="${PATH}"
