@@ -29,15 +29,10 @@ die(const char *fmt, ...)
 void
 rumprun_init()
 {
-        int ret, fd;
+        int ret;
 
         ret = rumpclient_init();
         if (ret != 0)
                 die("rumpclient init failed");
 	_netbsd_init(isatty(STDOUT_FILENO));
-
-        /* this has to be the greatest hack ever */
-        while ((fd = rump_sys_kqueue()) < 3)
-                continue;
-        rump_sys_close(fd);
 }
