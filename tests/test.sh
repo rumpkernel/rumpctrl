@@ -12,8 +12,13 @@ SOCKFILE_CGD="unix://csock2-cgd-$$"
 SOCKFILE_RAID="unix://csock-rf-$$"
 SOCKFILE_LIST="${SOCKFILE}"
 
+# create file system test image
+FSIMG=test.ffs.img
+dd of=${FSIMG} bs=1 seek=16M count=0 >/dev/null 2>&1
+
 # start global rump server
-./rumpdyn/bin/rump_server -lrumpvfs -lrumpfs_kernfs -lrumpdev -lrumpnet -lrumpnet_net -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_shmif $SOCKFILE
+export RUMP_MEMLIMIT=2m
+./rumpdyn/bin/rump_server -lrumpvfs -lrumpfs_kernfs -lrumpfs_ffs -lrumpdev_disk -lrumpdev -lrumpnet -lrumpnet_net -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_shmif -d key=/fsimg,hostpath=${FSIMG},size=host -d key=/rfsimg,hostpath=${FSIMG},size=host,type=chr $SOCKFILE
 
 export RUMP_SERVER="$SOCKFILE"
 . ./rumpremote.sh
@@ -120,6 +125,17 @@ Test_shmif()
 	rumpremote_hostcmd rm $BM
 }
 definetest Test_shmif
+
+Test_ffs()
+{
+
+	newfs /rfsimg > /dev/null
+	mkdir /mnt
+	mount_ffs /fsimg /mnt >/dev/null
+	cat /dev/zero | dd of=/mnt/file 2>&1 | grep -q 'No space left on device'
+	umount /mnt
+}
+definetest Test_ffs
 
 Test_npf()
 {
@@ -229,6 +245,7 @@ done
 for serv in ${SOCKFILE_LIST}; do
 	RUMP_SERVER=${serv} halt
 done
+rm ${FSIMG}
 
 # show if passed
 
