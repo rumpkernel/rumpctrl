@@ -4,7 +4,6 @@
 
 # set up environment
 export LD_LIBRARY_PATH=.:rumpdyn/lib
-export LD_DYNAMIC_WEAK=1
 EC=0
 
 SOCKFILE="unix://csock-$$"
