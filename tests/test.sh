@@ -17,8 +17,7 @@ FSIMG=test.ffs.img
 dd of=${FSIMG} bs=1 seek=16M count=0 >/dev/null 2>&1
 
 # start global rump server
-export RUMP_MEMLIMIT=2m
-./rumpdyn/bin/rump_server -lrumpvfs -lrumpfs_kernfs -lrumpfs_ffs -lrumpdev_disk -lrumpdev -lrumpnet -lrumpnet_net -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_shmif -d key=/fsimg,hostpath=${FSIMG},size=host -d key=/rfsimg,hostpath=${FSIMG},size=host,type=chr $SOCKFILE
+./rumpdyn/bin/rump_server -lrumpvfs -lrumpfs_kernfs -lrumpfs_ffs -lrumpdev_disk -lrumpdev -lrumpnet -lrumpnet_net -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_shmif -d key=/fsimg,hostpath=${FSIMG},size=host -d key=/rfsimg,hostpath=${FSIMG},size=host,type=chr -r 2m $SOCKFILE
 
 export RUMP_SERVER="$SOCKFILE"
 . ./rumpremote.sh
