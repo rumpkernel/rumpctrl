@@ -244,7 +244,7 @@ done
 for serv in ${SOCKFILE_LIST}; do
 	RUMP_SERVER=${serv} halt
 done
-rm ${FSIMG}
+rumpremote_hostcmd rm ${FSIMG}
 
 # show if passed
 
