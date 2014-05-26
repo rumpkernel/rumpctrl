@@ -21,6 +21,12 @@ rumpremote_hascmd ()
 	fi
 }
 
+rumpremote_hostcmd ()
+{
+
+	PATH="${rrPATH}" "$@"
+}
+
 if ${rrCANDO}; then
 	RRPATH=XXXPATHXXX
 	RUMPREMOTE_LOADED=yes
@@ -54,7 +60,9 @@ if ${rrCANDO}; then
 		unalias rumpremote_unload
 		unalias cd
 		unset -f rumpremote_hascmd
+		unset -f rumpremote_hostcmd
 	'
 elif [ ! -z "${RUMPREMOTE_LOADED}" ]; then
-        unset -f rumpremote_unload
+        unset -f rumpremote_hascmd
+        unset -f rumpremote_hostcmd
 fi
