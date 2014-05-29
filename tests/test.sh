@@ -14,7 +14,7 @@ SOCKFILE_LIST="${SOCKFILE}"
 
 # create file system test image
 FSIMG=test.ffs.img
-dd of=${FSIMG} bs=1048576 seek=16 count=0 >/dev/null 2>&1
+dd of=${FSIMG} if=/dev/zero bs=1048576 count=16 >/dev/null 2>&1
 
 # start global rump server
 ./rumpdyn/bin/rump_server -lrumpvfs -lrumpfs_kernfs -lrumpfs_ffs -lrumpdev_disk -lrumpdev -lrumpnet -lrumpnet_net -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_shmif -d key=/fsimg,hostpath=${FSIMG},size=host -d key=/rfsimg,hostpath=${FSIMG},size=host,type=chr -r 2m $SOCKFILE
