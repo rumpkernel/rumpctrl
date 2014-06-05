@@ -31,6 +31,22 @@ if ${rrCANDO}; then
 	RRPATH=XXXPATHXXX
 	RUMPREMOTE_LOADED=yes
 
+	# parse args to see if we should set RUMP_SERVER
+	# (yes, this is another bash'ism)
+	#
+	# if the first parameter is -u, set path to unix://${2}
+	# (this way you can tab-complete an existing sucket)
+	if [ ! -z "$*" ]; then
+		case "$1" in
+		-u)
+			export RUMP_SERVER=unix://${2}
+			;;
+		*)
+			export RUMP_SERVER=${1}
+			;;
+		esac
+	fi
+
 	# clear things like "alias ls=---weird-color-stuffs"
 	# XXX: not restored
 	unalias -a
