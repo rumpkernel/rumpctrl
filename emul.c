@@ -17,6 +17,7 @@
 #define _NETBSD_ENOENT 2
 #define _NETBSD_EINVAL 22
 #define _NETBSD_ENOSYS 78
+#define _NETBSD_ENOTSUP	86
 
 static jmp_buf buf;
 
@@ -220,10 +221,10 @@ emul_getenv_r(const char *name, char *buf, size_t len)
 #define STUB(name)                              \
   int name(void); int name(void) {              \
         static int done = 0;                    \
-        errno = ENOTSUP;                        \
-        if (done) return ENOTSUP; done = 1;     \
+        errno = _NETBSD_ENOTSUP;                        \
+        if (done) return errno; done = 1;     \
       /*printk("STUB ``%s'' called\n", #name);*/\
-        return ENOTSUP;}
+        return errno;}
 
 #define STUB_ABORT(name) void name(void); void name(void) { abort(); }
 

@@ -34,5 +34,5 @@ objcopy --redefine-syms=netbsd.map ${OBJDIR}/tmp1_${NAME}.o
 ${CC} ${LDFLAGS} -Wl,-r -nostdlib -Wl,-dc ${OBJDIR}/tmp1_${NAME}.o readwrite.o -o ${OBJDIR}/tmp2_${NAME}.o  2>/dev/null
 objcopy -w --localize-symbol='*' ${OBJDIR}/tmp2_${NAME}.o
 objcopy -w --globalize-symbol='_netbsd_*' ${OBJDIR}/tmp2_${NAME}.o
-${CC} ${CFLAGS} ${OBJDIR}/tmp2_${NAME}.o emul.o rumpinit.o ${RUMPLIBS} ${DLFLAG} -o ${BINDIR}/${NAME}
+${CC} ${CFLAGS} ${OBJDIR}/tmp2_${NAME}.o emul.o stub.o rumpinit.o ${RUMPLIBS} ${DLFLAG} -o ${BINDIR}/${NAME}
 

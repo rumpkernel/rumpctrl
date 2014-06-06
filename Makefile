@@ -79,6 +79,9 @@ rumpremote.sh: rumpremote.sh.in
 emul.o:		emul.c
 		${CC} ${HOSTCFLAGS} -c $< -o $@
 
+stub.o:		stub.c
+		${CC} ${HOSTCFLAGS} -c $< -o $@
+
 rumpclient.o:	rumpclient.c
 		${CC} ${HOSTCFLAGS} -c $< -o $@
 
@@ -122,7 +125,10 @@ LIBS.${2}=$${NBLIBS.${2}:-l%=rump/lib/lib%.a}
 bin/${2}: rumpsrc/${1}/${2}.ro emul.o rumpclient.o readwrite.o remoteinit.o netbsd_init.o ${MAPS} $${LIBS.${2}}
 	./mkremote.sh ${2} rumpsrc/${1}/${2}.ro $${LIBS.${2}}
 
-${2}:	bin/${2}
+bin-rr/${2}: rumpsrc/${1}/${2}.ro emul.o stub.o readwrite.o rumpinit.o netbsd_init.o ${MAPS} $${LIBS.${2}}
+	./mkrun.sh ${2} rumpsrc/${1}/${2}.ro $${LIBS.${2}}
+
+${2}:	bin/${2} bin-rr/${2}
 
 clean_${2}:
 	( [ ! -d rumpsrc/${1} ] || ( cd rumpsrc/${1} && ${RUMPMAKE} cleandir && rm -f ${2}.ro ) )
