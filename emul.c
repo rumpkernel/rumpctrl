@@ -13,8 +13,6 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 
-#include <rump/rumpclient.h>
-
 /* TODO map errors better, and generally better error handling */
 #define _NETBSD_ENOENT 2
 #define _NETBSD_EINVAL 22
@@ -152,18 +150,6 @@ emul_setpriority(int which, int who, int prio) {
 	return 0;
 }
 
-int
-emul__fork(void)
-{
-	return rumpclient_fork();
-}
-
-int
-emul__vfork14(void)
-{
-	return rumpclient_fork();
-}
-
 static int rusage_map[2] = {
   RUSAGE_SELF,
   RUSAGE_CHILDREN,
@@ -187,15 +173,6 @@ emul__getrusage50(int who, struct _netbsd_rusage *nrusage)
 	nrusage->ru_stime.tv_usec = rusage.ru_stime.tv_usec;
 	/* TODO add rest of fields */
 	return ok;
-}
-
-extern char **environ;
-
-int
-emul_execve(const char *filename, char *const argv[], char *const envp[])
-{
-
-	return rumpclient_exec(filename, argv, environ);
 }
 
 /* use host environment */

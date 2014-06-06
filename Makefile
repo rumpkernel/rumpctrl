@@ -79,6 +79,9 @@ rumpremote.sh: rumpremote.sh.in
 emul.o:		emul.c
 		${CC} ${HOSTCFLAGS} -c $< -o $@
 
+rumpclient.o:	rumpclient.c
+		${CC} ${HOSTCFLAGS} -c $< -o $@
+
 readwrite.o:	readwrite.c
 		${CC} ${HOSTCFLAGS} -c $< -o $@
 
@@ -95,7 +98,7 @@ halt.o:		halt.c ${NBCC}
 
 MAPS=rump.map namespace.map host.map netbsd.map readwrite.map emul.map
 
-bin/halt:	halt.o emul.o readwrite.o remoteinit.o ${MAPS}
+bin/halt:	halt.o emul.o rumpclient.o readwrite.o remoteinit.o ${MAPS}
 		./mkremote.sh halt halt.o
 
 rump.map:	rumpsrc/sys/rump/rump.sysmap
@@ -113,7 +116,7 @@ rumpsrc/${1}/${2}.ro:
 
 NBLIBS.${2}:= $(shell cd rumpsrc/${1} && ${RUMPMAKE} -V '$${LDADD}')
 LIBS.${2}=$${NBLIBS.${2}:-l%=rump/lib/lib%.a}
-bin/${2}: rumpsrc/${1}/${2}.ro emul.o readwrite.o remoteinit.o netbsd_init.o ${MAPS} $${LIBS.${2}}
+bin/${2}: rumpsrc/${1}/${2}.ro emul.o rumpclient.o readwrite.o remoteinit.o netbsd_init.o ${MAPS} $${LIBS.${2}}
 	./mkremote.sh ${2} rumpsrc/${1}/${2}.ro $${LIBS.${2}}
 
 ${2}:	bin/${2}
