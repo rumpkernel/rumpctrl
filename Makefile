@@ -88,6 +88,9 @@ readwrite.o:	readwrite.c
 remoteinit.o:	remoteinit.c
 		${CC} ${HOSTCFLAGS} -c $< -o $@
 
+rumpinit.o:	rumpinit.c
+		${CC} ${HOSTCFLAGS} -c $< -o $@
+
 NBCC=./rump/bin/rump-cc
 
 netbsd_init.o:	netbsd_init.c ${NBCC}
