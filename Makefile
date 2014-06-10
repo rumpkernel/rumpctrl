@@ -9,6 +9,7 @@ RUMPLIBS=-Lrumpdyn/lib -Wl,--no-as-needed -lrumpkern_time -lrumpvfs -lrumpfs_ker
 RUMPMAKE:=$(shell echo `pwd`/rumptools/rumpmake)
 
 NBUTILS+=		bin/cat
+NBUTILS+=		bin/chmod
 NBUTILS+=		bin/cp
 NBUTILS+=		bin/dd
 NBUTILS+=		bin/df
@@ -22,6 +23,7 @@ NBUTILS+=		bin/rm
 NBUTILS+=		bin/rmdir
 
 NBUTILS+=		sbin/cgdconfig
+NBUTILS+=		sbin/chown
 NBUTILS+=		sbin/disklabel
 NBUTILS+=		sbin/dump
 NBUTILS+=		sbin/fsck
