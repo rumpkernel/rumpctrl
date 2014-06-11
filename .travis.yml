@@ -6,7 +6,7 @@ before_install:
 env:
   - LD_LIBRARY_PATH=rumpdyn/lib PATH=$PATH:rumpdyn/lib
 
-script: BUILD_QUIET=-qq ./buildnb.sh && ./tests/test.sh
+script: BUILD_QUIET=-qq ./buildnb.sh buildrump && ./tests/test.sh
 
 notifications:
   irc:
