@@ -5,6 +5,7 @@
 STDJ='-j4'
 JUSTCHECKOUT=false
 BUILDRUMP=false
+TESTS=false
 
 # XXX TODO set FLAGS from -F options here to pass to buildrump.sh
 
@@ -13,6 +14,7 @@ do
 	[ ${arg} = "justcheckout" ] && JUSTCHECKOUT=true
 	[ ${arg} = "buildrump" ] && BUILDRUMP=true
 	[ ${arg} = "-q" ] && BUILD_QUIET=-q
+	[ ${arg} = "tests" ] && TESTS=true
 done
 
 # figure out where gmake lies or if the system just lies
@@ -132,4 +134,4 @@ if ${BUILDRUMP}; then
 	export LD_LIBRARY_PATH=${PWD}/rumpdyn/lib
 fi
 
-${MAKE}
+${MAKE} && if ${TESTS}; then tests/test.sh; fi
