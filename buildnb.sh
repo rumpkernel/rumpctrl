@@ -1,5 +1,15 @@
 #!/bin/sh
 
+# process options
+
+STDJ='-j4'
+JUSTCHECKOUT=false
+
+for arg in "$@"
+do
+	[ ${arg} = "justcheckout" ] && JUSTCHECKOUT=true
+done
+
 # figure out where gmake lies or if the system just lies
 if [ -z "${MAKE}" ]; then
 	MAKE=make
@@ -31,7 +41,6 @@ for lib in ${MORELIBS}; do
 	LIBS="${LIBS} rumpsrc/${lib}"
 done
 
-STDJ='-j4'
 : ${BUILD_QUIET:=-q}
 
 set -e
@@ -47,7 +56,7 @@ if [ ! -d rumpsrc ]; then
 	cp -Rp nbusersrc/* rumpsrc/
 fi
 
-[ "$1" = "justcheckout" ] && { echo ">> $0 done" ; exit 0; }
+${JUSTCHECKOUT} && { echo ">> $0 done" ; exit 0; }
 
 # Build rump kernel
 ./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${STDJ} $* \
