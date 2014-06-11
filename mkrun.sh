@@ -18,7 +18,7 @@ UNAME=`uname -s`
 # -lrt not always needed
 [ ${UNAME} = Linux ] && DLFLAG="-ldl -lrt"
 
-RUMPLIBS="-Lrumpdyn/lib -Wl,-R${PWD}/rumpdyn/lib -Wl,--no-as-needed -lrumpvfs -lrumpfs_kernfs -lrumpfs_ffs -lrumpdev_disk -lrumpdev -lrumpnet -lrumpnet_net -lrumpnet_netinet -lrumpnet_netinet6 -lrumpuser -lrump"
+RUMPLIBS="-Wl,--no-as-needed -lrumpvfs -lrumpfs_kernfs -lrumpfs_ffs -lrumpdev_disk -lrumpdev -lrumpnet -lrumpnet_net -lrumpnet_netinet -lrumpnet_netinet6 -lrumpuser -lrump"
 
 CC=${CC-cc}
 

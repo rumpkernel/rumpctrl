@@ -18,7 +18,7 @@ UNAME=`uname -s`
 # -lrt not always needed
 [ ${UNAME} = Linux ] && DLFLAG="-ldl -lrt"
 
-RUMPCLIENT="-Lrumpdyn/lib -Wl,-R${PWD}/rumpdyn/lib -lrumpclient"
+RUMPCLIENT="-lrumpclient"
 
 CC=${CC-cc}
 

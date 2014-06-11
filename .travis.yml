@@ -4,7 +4,7 @@ before_install:
  - git submodule update --init --recursive
 
 env:
-  - LD_LIBRARY_PATH=.:rumpdyn/lib
+  - LD_LIBRARY_PATH=rumpdyn/lib PATH=$PATH:rumpdyn/lib
 
 script: BUILD_QUIET=-qq ./buildnb.sh && ./tests/test.sh
 

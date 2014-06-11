@@ -4,10 +4,15 @@
 
 STDJ='-j4'
 JUSTCHECKOUT=false
+BUILDRUMP=false
+
+# XXX TODO set FLAGS from -F options here to pass to buildrump.sh
 
 for arg in "$@"
 do
 	[ ${arg} = "justcheckout" ] && JUSTCHECKOUT=true
+	[ ${arg} = "buildrump" ] && BUILDRUMP=true
+	[ ${arg} = "-q" ] && BUILD_QUIET=-q
 done
 
 # figure out where gmake lies or if the system just lies
@@ -41,8 +46,6 @@ for lib in ${MORELIBS}; do
 	LIBS="${LIBS} rumpsrc/${lib}"
 done
 
-: ${BUILD_QUIET:=-q}
-
 set -e
 
 # ok, urgh, we need just one tree due to how build systems work (or
@@ -58,14 +61,14 @@ fi
 
 ${JUSTCHECKOUT} && { echo ">> $0 done" ; exit 0; }
 
-# Build rump kernel
-./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${STDJ} $* \
+# Build rump kernel if requested
+${BUILDRUMP} && ./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${STDJ} ${FLAGS} \
     -s rumpsrc -T rumptools -o rumpdynobj -d rumpdyn -V MKSTATICLIB=no fullbuild
 
 # Now build a static libc.
 
 # build tools
-./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${STDJ} $* -s rumpsrc \
+./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${STDJ} ${FLAGS} -s rumpsrc \
     -T rumptools -o rumpobj -N -k -V MKPIC=no -V BUILDRUMP_SYSROOT=yes tools
 
 RMAKE=`pwd`/rumptools/rumpmake
@@ -120,7 +123,13 @@ for lib in ${LIBS}; do
 	makeuserlib ${lib}
 done
 
-./buildrump.sh/buildrump.sh ${BUILD_QUIET} $* \
+./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${FLAGS} \
     -s rumpsrc -T rumptools -o rumpobj install
+
+if ${BUILDRUMP}; then
+	export PATH=${PATH}:${PWD}/rumpdyn/bin
+	export LIBRARY_PATH=${PWD}/rumpdyn/lib
+	export LD_LIBRARY_PATH=${PWD}/rumpdyn/lib
+fi
 
 ${MAKE}
