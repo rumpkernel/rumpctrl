@@ -1,5 +1,17 @@
 #!/bin/sh
 
+# figure out where gmake lies or if the system just lies
+if [ -z "${MAKE}" ]; then
+	MAKE=make
+	type gmake >/dev/null && MAKE=gmake
+fi
+${MAKE} --version | grep -q 'GNU Make'
+if [ $? -ne 0 ]; then
+	echo ">> ERROR: GNU Make required, \"${MAKE}\" is not"
+	echo ">> Please install GNU Make and/or set \${MAKE} to point to it"
+	exit 1
+fi
+
 # process options
 
 STDJ='-j4'
@@ -15,19 +27,9 @@ do
 	[ ${arg} = "buildrump" ] && BUILDRUMP=true
 	[ ${arg} = "-q" ] && BUILD_QUIET=-q
 	[ ${arg} = "tests" ] && TESTS=true
+	if [ ${arg} = "clean" ]; then make distcleanrump; exit 0; fi
 done
 
-# figure out where gmake lies or if the system just lies
-if [ -z "${MAKE}" ]; then
-	MAKE=make
-	type gmake >/dev/null && MAKE=gmake
-fi
-${MAKE} --version | grep -q 'GNU Make'
-if [ $? -ne 0 ]; then
-	echo ">> ERROR: GNU Make required, \"${MAKE}\" is not"
-	echo ">> Please install GNU Make and/or set \${MAKE} to point to it"
-	exit 1
-fi
 
 # modified version of buildxen.sh from https://github.com/rumpkernel/rumpuser-xen
 
@@ -132,6 +134,7 @@ if ${BUILDRUMP}; then
 	export PATH=${PATH}:${PWD}/rumpdyn/bin
 	export LIBRARY_PATH=${PWD}/rumpdyn/lib
 	export LD_LIBRARY_PATH=${PWD}/rumpdyn/lib
+	export RUMPRUN_CPPFLAGS=-I${PWD}/rumpdyn/include
 fi
 
 ${MAKE} && if ${TESTS}; then tests/test.sh; fi

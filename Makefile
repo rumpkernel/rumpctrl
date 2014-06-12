@@ -3,7 +3,7 @@ OBJDIR=	obj-rr
 BINDIR=bin
 
 NBCFLAGS=${CFLAGS} -O2 -g -Wall
-HOSTCFLAGS=${CFLAGS} -O2 -g -Wall -Irump/include
+HOSTCFLAGS=${CFLAGS} -O2 -g -Wall ${RUMPRUN_CPPFLAGS}
 
 RUMPMAKE:=$(shell echo `pwd`/rumptools/rumpmake)
 
