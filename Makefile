@@ -3,8 +3,7 @@ OBJDIR=	obj-rr
 BINDIR=bin
 
 NBCFLAGS=${CFLAGS} -O2 -g -Wall
-HOSTCFLAGS=${CFLAGS} -O2 -g -Wall -Irumpdyn/include
-RUMPLIBS=-Lrumpdyn/lib -Wl,--no-as-needed -lrumpkern_time -lrumpvfs -lrumpfs_kernfs -lrumpdev -lrumpnet_local -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_net -lrumpnet -lrump -lrumpuser rumpkern_time
+HOSTCFLAGS=${CFLAGS} -O2 -g -Wall -Irump/include
 
 RUMPMAKE:=$(shell echo `pwd`/rumptools/rumpmake)
 
