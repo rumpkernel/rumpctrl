@@ -193,18 +193,6 @@ index 08b3b66..644a2c9 100644
  	sockatmark.c
  
  .if (${MKHESIOD} != "no")
-diff --git a/lib/libc/stdio/vfwscanf.c b/lib/libc/stdio/vfwscanf.c
-index 4b38ea9..1a9e353 100644
---- a/lib/libc/stdio/vfwscanf.c
-+++ b/lib/libc/stdio/vfwscanf.c
-@@ -180,6 +180,7 @@ __vfwscanf_unlocked_l(FILE * __restrict fp, locale_t loc,
- 	base = 0;
- 	cclcompl = 0;
- 	mbp = NULL;
-+	p = NULL;
- 	for (;;) {
- 		c = *fmt++;
- 		if (c == 0)
 diff --git a/lib/libc/stdlib/Makefile.inc b/lib/libc/stdlib/Makefile.inc
 index dbea35b..cc0051b 100644
 --- a/lib/libc/stdlib/Makefile.inc
