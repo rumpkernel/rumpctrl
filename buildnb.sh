@@ -27,7 +27,7 @@ do
 	[ ${arg} = "buildrump" ] && BUILDRUMP=true
 	[ ${arg} = "-q" ] && BUILD_QUIET=-q
 	[ ${arg} = "tests" ] && TESTS=true
-	if [ ${arg} = "clean" ]; then make distcleanrump; exit 0; fi
+	if [ ${arg} = "clean" ]; then ${MAKE} distcleanrump; exit 0; fi
 done
 
 
