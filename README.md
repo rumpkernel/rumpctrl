@@ -8,7 +8,7 @@ familiar utilities such as `ifconfig`, `mount`, `sysctl`, and more.
 Quickstart, run the following commands:
 
 ````
-./buildnb.sh
+./buildnb.sh buildrump
 . ./rumpremote.sh
 rumpremote_listcmds
 ````
