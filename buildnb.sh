@@ -159,13 +159,13 @@ done
     -s rumpsrc -T rumptools -o rumpobj install
 
 if ${BUILDRUMP}; then
-	RUMPLOC=${PWD}/rumpdyn/bin
+	RUMPLOC=${PWD}/rumpdyn
 fi
 
 if ${RUMPLOC}; then
-	export PATH=${RUMPLOC}:${PATH}
-	export LIBRARY_PATH=${RUMPLOC}
-	export LD_LIBRARY_PATH=${RUMPLOC}
+	export PATH=${RUMPLOC}/bin:${PATH}
+	export LIBRARY_PATH=${RUMPLOC}/lib
+	export LD_LIBRARY_PATH=${RUMPLOC}/lib
 	export RUMPRUN_CPPFLAGS=-I${RUMPLOC}/include
 fi
 
