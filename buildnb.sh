@@ -1,5 +1,13 @@
 #!/bin/sh
 
+die ()
+{
+
+	echo '>> ERROR:' >&2
+	echo ">> $*" >&2
+	exit 1
+}
+
 # figure out where gmake lies or if the system just lies
 if [ -z "${MAKE}" ]; then
 	MAKE=make
@@ -23,11 +31,27 @@ TESTS=false
 
 for arg in "$@"
 do
-	[ ${arg} = "justcheckout" ] && JUSTCHECKOUT=true
-	[ ${arg} = "buildrump" ] && BUILDRUMP=true
-	[ ${arg} = "-q" ] && BUILD_QUIET=-q
-	[ ${arg} = "tests" ] && TESTS=true
-	if [ ${arg} = "clean" ]; then ${MAKE} distcleanrump; exit 0; fi
+	case ${arg} in
+	"justcheckout")
+		JUSTCHECKOUT=true
+		;;
+	"buildrump")
+		BUILDRUMP=true
+		;;
+	"-q")
+		BUILD_QUIET=-q
+		;;
+	"tests")
+		TESTS=true
+		;;
+	"clean")
+		${MAKE} distcleanrump
+		exit 0
+		;;
+	*)
+		die "unknown option"
+		;;
+	esac
 done
 
 
