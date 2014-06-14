@@ -162,7 +162,7 @@ if ${BUILDRUMP}; then
 	RUMPLOC=${PWD}/rumpdyn
 fi
 
-if ${RUMPLOC}; then
+if [ -n ${RUMPLOC} ]; then
 	export PATH=${RUMPLOC}/bin:${PATH}
 	export LIBRARY_PATH=${RUMPLOC}/lib
 	export LD_LIBRARY_PATH=${RUMPLOC}/lib
