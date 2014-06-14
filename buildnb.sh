@@ -24,7 +24,7 @@ fi
 
 STDJ='-j4'
 JUSTCHECKOUT=false
-BUILDRUMP=false
+BUILDRUMP=true
 TESTS=false
 
 # XXX TODO set FLAGS from -F options here to pass to buildrump.sh
@@ -37,6 +37,9 @@ do
 		;;
 	"buildrump")
 		BUILDRUMP=true
+		;;
+	"nobuildrump")
+		BUILDRUMP=false
 		;;
 	"-q")
 		BUILD_QUIET=-q
