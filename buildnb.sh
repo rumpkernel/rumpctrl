@@ -52,7 +52,8 @@ do
 		exit 0
 		;;
 	*)
-		die "unknown option"
+		RUMPLOC=${arg}
+		BUILDRUMP=false
 		;;
 	esac
 done
@@ -158,10 +159,14 @@ done
     -s rumpsrc -T rumptools -o rumpobj install
 
 if ${BUILDRUMP}; then
-	export PATH=${PWD}/rumpdyn/bin:${PATH}
-	export LIBRARY_PATH=${PWD}/rumpdyn/lib
-	export LD_LIBRARY_PATH=${PWD}/rumpdyn/lib
-	export RUMPRUN_CPPFLAGS=-I${PWD}/rumpdyn/include
+	RUMPLOC=${PWD}/rumpdyn/bin
+fi
+
+if ${RUMPLOC}; then
+	export PATH=${RUMPLOC}:${PATH}
+	export LIBRARY_PATH=${RUMPLOC}
+	export LD_LIBRARY_PATH=${RUMPLOC}
+	export RUMPRUN_CPPFLAGS=-I${RUMPLOC}/include
 fi
 
 ${MAKE} && if ${TESTS}; then tests/test.sh; fi
