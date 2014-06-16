@@ -101,15 +101,13 @@ ${BUILDRUMP} && ./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${STDJ} ${FLAGS} \
 
 # build tools
 ./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${STDJ} ${FLAGS} -s rumpsrc \
-    -T rumptools -o rumpobj -N -k -V MKPIC=no -V BUILDRUMP_SYSROOT=yes tools
+    -T rumptools -o rumpobj -N -k -V MKPIC=no -V BUILDRUMP_SYSROOT=yes \
+    kernelheaders install tools
 
 RMAKE=`pwd`/rumptools/rumpmake
 RMAKE_INST=`pwd`/rumptools/_buildrumpsh-rumpmake
 
-#
-# install full set of headers.
-#
-# first, "mtree" (TODO: fetch/use nbmtree)
+# to install userspace headers we need to "mtree" (TODO: fetch/use nbmtree)
 INCSDIRS='adosfs altq arpa crypto dev filecorefs fs i386 isofs miscfs
 	msdosfs net net80211 netatalk netbt netinet netinet6 netipsec
 	netisdn netkey netmpls netnatm netsmb nfs ntfs openssl pcap ppath prop
@@ -119,16 +117,6 @@ for dir in ${INCSDIRS}; do
 done
 # XXX
 mkdir -p rumpobj/dest.stage/usr/lib/pkgconfig
-
-# then, install
-echo '>> Installing headers.  please wait (may take a while) ...'
-(
-  # sys/ produces a lot of errors due to missing tools/sources
-  # "protect" the user from that spew
-  cd rumpsrc/sys
-  ${RMAKE} -k obj >/dev/null 2>&1
-  ${RMAKE} -k includes >/dev/null 2>&1
-)
 
 # rpcgen lossage
 ( cd rumpsrc/include && ${RMAKE} -k includes > /dev/null 2>&1)
