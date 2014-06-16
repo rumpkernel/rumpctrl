@@ -118,14 +118,12 @@ done
 # XXX
 mkdir -p rumpobj/dest.stage/usr/lib/pkgconfig
 
-# rpcgen lossage
-( cd rumpsrc/include && ${RMAKE} -k includes > /dev/null 2>&1)
-
-# other lossage
-for lib in ${LIBS}; do
-	( cd ${lib} && ${RMAKE} includes >/dev/null 2>&1)
+echo '>> installing userspace headers'
+( cd rumpsrc/include && ${RMAKE} includes )
+for lib in ${LIBS} rumpsrc/lib/librumpclient; do
+	( cd ${lib} && ${RMAKE} obj )
+	( cd ${lib} && ${RMAKE} includes )
 done
-( cd rumpsrc/lib/librumpclient && ${RMAKE} includes >/dev/null 2>&1)
 
 echo '>> done with headers'
 
