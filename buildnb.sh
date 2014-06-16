@@ -58,36 +58,21 @@ do
 	esac
 done
 
+set -e
+. ./buildrump.sh/subr.sh
 
-# modified version of buildxen.sh from https://github.com/rumpkernel/rumpuser-xen
+# get sources
+docheckout rumpsrc nbusersrc
+${JUSTCHECKOUT} && { echo ">> $0 done" ; exit 0; }
 
-# Just a script to run the handful of commands required to build NetBSD libc, headers
-
+# user libs to build
 MORELIBS="external/bsd/flex/lib
-	crypto/external/bsd/openssl/lib/libcrypto
-	crypto/external/bsd/openssl/lib/libdes
-	crypto/external/bsd/openssl/lib/libssl
+	crypto/external/bsd/openssl/lib
 	external/bsd/libpcap/lib"
-
-LIBS="rumpsrc/lib/lib*"
+LIBS="$(echo nbusersrc/lib/lib* | sed 's/nbusersrc/rumpsrc/g')"
 for lib in ${MORELIBS}; do
 	LIBS="${LIBS} rumpsrc/${lib}"
 done
-
-set -e
-
-# ok, urgh, we need just one tree due to how build systems work (or
-# don't work).  So here's what we'll do for now.  Checkout rumpsrc,
-# checkout nbusersrc, and copy nbusersrc over rumpsrc.  Obviously, we cannot
-# update rumpsrc except manually after the copy operation, but that's
-# a price we're just going to be paying for now.
-if [ ! -d rumpsrc ]; then
-	git submodule update --init --recursive
-	./buildrump.sh/buildrump.sh -s rumpsrc checkout
-	cp -Rp nbusersrc/* rumpsrc/
-fi
-
-${JUSTCHECKOUT} && { echo ">> $0 done" ; exit 0; }
 
 # Build rump kernel if requested
 ${BUILDRUMP} && ./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${STDJ} ${FLAGS} \
@@ -98,47 +83,17 @@ ${BUILDRUMP} && ./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${STDJ} ${FLAGS} \
 # build tools
 ./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${STDJ} ${FLAGS} -s rumpsrc \
     -T rumptools -o rumpobj -N -k -V MKPIC=no -V BUILDRUMP_SYSROOT=yes \
-    kernelheaders install tools
+    tools kernelheaders install
 
-RMAKE=`pwd`/rumptools/rumpmake
-RMAKE_INST=`pwd`/rumptools/_buildrumpsh-rumpmake
+# set rumpmake
+RUMPMAKE=$(pwd)/rumptools/rumpmake
 
-# to install userspace headers we need to "mtree" (TODO: fetch/use nbmtree)
-INCSDIRS='adosfs altq arpa crypto dev filecorefs fs i386 isofs miscfs
-	msdosfs net net80211 netatalk netbt netinet netinet6 netipsec
-	netisdn netkey netmpls netnatm netsmb nfs ntfs openssl pcap ppath prop
-	protocols rpc rpcsvc ssp sys ufs uvm x86'
-for dir in ${INCSDIRS}; do
-	mkdir -p rump/include/$dir
-done
-# XXX
-mkdir -p rumpobj/dest.stage/usr/lib/pkgconfig
+usermtree
+userincludes ${RUMPMAKE} rumpsrc ${LIBS} rumpsrc/lib/librumpclient
 
-echo '>> installing userspace headers'
-( cd rumpsrc/include && ${RMAKE} includes )
-for lib in ${LIBS} rumpsrc/lib/librumpclient; do
-	( cd ${lib} && ${RMAKE} obj )
-	( cd ${lib} && ${RMAKE} includes )
-done
-
-echo '>> done with headers'
-
-makeuserlib ()
-{
-
-	( cd $1
-		${RMAKE} obj
-		${RMAKE} MKMAN=no MKLINT=no MKPROFILE=no MKYP=no \
-		    NOGCCERROR=1 ${STDJ} dependall
-		${RMAKE_INST} MKMAN=no MKLINT=no MKPROFILE=no MKYP=no install
-	)
-}
 for lib in ${LIBS}; do
-	makeuserlib ${lib}
+	makeuserlib ${RUMPMAKE} ${lib}
 done
-
-./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${FLAGS} \
-    -s rumpsrc -T rumptools -o rumpobj install
 
 if ${BUILDRUMP}; then
 	RUMPLOC=${PWD}/rumpdyn
