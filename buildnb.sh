@@ -88,7 +88,7 @@ ${BUILDRUMP} && ./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${STDJ} ${FLAGS} \
 # set rumpmake
 RUMPMAKE=$(pwd)/rumptools/rumpmake
 
-usermtree
+usermtree rump
 userincludes ${RUMPMAKE} rumpsrc ${LIBS} rumpsrc/lib/librumpclient
 
 for lib in ${LIBS}; do
