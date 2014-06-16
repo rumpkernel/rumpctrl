@@ -165,7 +165,6 @@ fi
 if [ -n ${RUMPLOC} ]; then
 	export PATH=${RUMPLOC}/bin:${PATH}
 	export LIBRARY_PATH=${RUMPLOC}/lib
-	export LD_LIBRARY_PATH=${RUMPLOC}/lib
 	export RUMPRUN_CPPFLAGS=-I${RUMPLOC}/include
 fi
 
