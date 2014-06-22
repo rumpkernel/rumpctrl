@@ -59,6 +59,7 @@ do
 done
 
 set -e
+[ ! -f ./buildrump.sh/subr.sh ] && git submodule update --init buildrump.sh
 . ./buildrump.sh/subr.sh
 
 # get sources
