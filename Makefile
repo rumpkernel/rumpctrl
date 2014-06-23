@@ -158,7 +158,7 @@ rump/lib/rump-cc.specs:	spec.template
 			cat $< | sed "s|@PATH@|${PWD}|g" | sed "s|@LDLIBS@|${COMPLIBS}|g" > $@
 
 clean: $(foreach util,${NBUTILS_BASE},clean_${util})
-		rm -f *.o *~ rump.map namespace.map fns.map all.map ${PROGS} ${OBJDIR}/* ${BINDIR}/* rumpremote.sh
+		rm -f *.o *~ rump.map namespace.map fns.map all.map weakasm.map ${PROGS} ${OBJDIR}/* ${BINDIR}/* rumpremote.sh
 		rm -f test_disk-* test_busmem* disk1-* disk2-* csock-* csock1-* csock2-* raid.conf-*
 		rm -f ${NBCC} rump/lib/rump-cc.specs
 
