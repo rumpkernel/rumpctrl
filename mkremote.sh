@@ -28,6 +28,7 @@ ${CC} ${LDFLAGS} -Wl,-r ${OBJDIR}/tmp0_${NAME}.o netbsd_init.o -nostdlib rump/li
 objcopy --redefine-syms=namespace.map ${OBJDIR}/tmp1_${NAME}.o
 objcopy --redefine-syms=extra.map ${OBJDIR}/tmp1_${NAME}.o
 objcopy --redefine-syms=rump.map ${OBJDIR}/tmp1_${NAME}.o
+objcopy --redefine-syms=weakasm.map ${OBJDIR}/tmp1_${NAME}.o
 objcopy --redefine-syms=readwrite.map ${OBJDIR}/tmp1_${NAME}.o
 objcopy --redefine-syms=emul.map ${OBJDIR}/tmp1_${NAME}.o
 objcopy --redefine-syms=netbsd.map ${OBJDIR}/tmp1_${NAME}.o

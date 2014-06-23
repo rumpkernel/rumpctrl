@@ -103,7 +103,7 @@ netbsd_init.o:	netbsd_init.c ${NBCC}
 halt.o:		halt.c ${NBCC}
 		${NBCC} ${NBCFLAGS} -c $< -o $@
 
-MAPS=rump.map namespace.map host.map netbsd.map readwrite.map emul.map
+MAPS=rump.map namespace.map host.map netbsd.map readwrite.map emul.map weakasm.map
 
 bin/halt:	halt.o emul.o rumpclient.o readwrite.o remoteinit.o ${MAPS}
 		./mkremote.sh halt halt.o
@@ -115,6 +115,9 @@ namespace.map:	rumpsrc/lib/libc/include/namespace.h rump.map emul.map
 		grep '#define' $< | grep -v NAMESPACE_H | awk '{printf("%s\t%s\n",$$2,$$3)}' > fns.map
 		cat rump.map emul.map > all.map
 		awk 'NR==FNR{a[$$1]=$$1;next}a[$$1]' all.map fns.map | awk '{printf("%s\t%s\n",$$2,$$1)}' > $@
+
+weakasm.map:	rumpsrc/lib/libc/sys/Makefile.inc
+		${RUMPMAKE} -f $< -V '$${WEAKASM}' | xargs -n 1 echo | awk '{sub("\..*", ""); printf("_sys_%s _%s\n", $$1, $$1);}' > $@
 
 define NBUTIL_templ
 rumpsrc/${1}/${2}.ro:
