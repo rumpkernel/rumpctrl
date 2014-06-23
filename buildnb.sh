@@ -84,6 +84,17 @@ ${BUILDRUMP} && ./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${STDJ} ${FLAGS} \
     -T rumptools -o rumpobj -N -k -V MKPIC=no -V BUILDRUMP_SYSROOT=yes \
     tools kernelheaders install
 
+# set some special variables currently required by libpthread.  Doing
+# it this way preserves the ability to compile libpthread during development
+# cycles with just "rumpmake"
+cat >> rumptools/mk.conf << EOF
+.if defined(LIB) && \${LIB} == "pthread"
+PTHREAD_CANCELSTUB=no
+CPPFLAGS+=      -D_PLATFORM_MAKECONTEXT=_lwp_rumprun_makecontext
+CPPFLAGS+=      -D_PLATFORM_GETTCB=_lwp_rumprun_gettcb
+.endif  # LIB == pthread
+EOF
+
 # set rumpmake
 RUMPMAKE=$(pwd)/rumptools/rumpmake
 

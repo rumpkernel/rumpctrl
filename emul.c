@@ -214,6 +214,36 @@ emul_getenv_r(const char *name, char *buf, size_t len)
 	return -1;
 }
 
+#include <ucontext.h>
+
+void
+emul_swapcontext(ucontext_t *old, ucontext_t *new)
+{
+
+	swapcontext(old, new);
+}
+
+int
+rumprun_ucontext(void *ucpvoid, size_t ucpsize,
+	void (*start)(void *), void *arg, void *stack_base, size_t stack_size)
+{
+	ucontext_t *ucp = ucpvoid;
+
+	if (ucpsize < sizeof(*ucp))
+		return E2BIG; /* E2SMALL */
+
+	getcontext(ucp);
+	ucp->uc_stack.ss_sp = stack_base;
+	ucp->uc_stack.ss_size = stack_size;
+	ucp->uc_link = NULL;
+
+	/* XXX: makecontext, per spec, only accepts int args ... */
+	makecontext(ucp, (void *)start, 1, arg);
+
+	return 0;
+}
+
+
 /*
  * BEGIN stubs
  */
