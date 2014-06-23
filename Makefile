@@ -72,6 +72,8 @@ CPPFLAGS.umount=	-DSMALL
 
 NBUTILS_BASE= $(notdir ${NBUTILS})
 
+NBCC=./rump/bin/rump-cc
+
 all:		${NBUTILS_BASE} bin/halt rumpremote.sh
 
 rumpremote.sh: rumpremote.sh.in
@@ -98,18 +100,22 @@ remoteinit.o:	remoteinit.c
 rumpinit.o:	rumpinit.c
 		${CC} ${HOSTCFLAGS} -c $< -o $@
 
-NBCC=./rump/bin/rump-cc
-
 netbsd_init.o:	netbsd_init.c ${NBCC}
 		${NBCC} ${NBCFLAGS} -c $< -o $@
 
 halt.o:		halt.c ${NBCC}
 		${NBCC} ${NBCFLAGS} -c $< -o $@
 
+pthread_test.o:	pthread_test.c ${MAPS} ${NBCC}
+		${NBCC} ${NBCFLAGS} -c $< -o $@
+
 MAPS=rump.map namespace.map host.map netbsd.map readwrite.map emul.map weakasm.map
 
 bin/halt:	halt.o _lwp.o emul.o rumpclient.o readwrite.o remoteinit.o ${MAPS}
 		./mkremote.sh halt halt.o
+
+bin/pthread_test: pthread_test.o _lwp.o emul.o readwrite.o rump.map
+		./mkrun.sh pthread_test pthread_test.o rump/lib/libpthread.a
 
 rump.map:	rumpsrc/sys/rump/rump.sysmap
 		awk '{printf("%s\t%s\n",$$3,$$4)}' $< > $@
