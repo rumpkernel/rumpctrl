@@ -125,7 +125,7 @@ namespace.map:	rumpsrc/lib/libc/include/namespace.h rump.map emul.map
 		cat rump.map emul.map > all.map
 		awk 'NR==FNR{a[$$1]=$$1;next}a[$$1]' all.map fns.map | awk '{printf("%s\t%s\n",$$2,$$1)}' > $@
 
-weakasm.map:	rumpsrc/lib/libc/sys/Makefile.inc
+weakasm.map:	rumpsrc/lib/libc/sys/Makefile.inc ${RUMPMAKE}
 		${RUMPMAKE} -f $< -V '$${WEAKASM}' | xargs -n 1 echo | awk '{sub("\\..*", ""); printf("_sys_%s _%s\n", $$1, $$1);}' > $@
 
 define NBUTIL_templ
