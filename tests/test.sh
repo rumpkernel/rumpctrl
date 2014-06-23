@@ -48,6 +48,13 @@ runtest ()
 
 # tests
 
+Test_pthreads()
+{
+
+	./bin-rr/pthread_test >/dev/null
+}
+definetest Test_pthreads
+
 Test_ifconfig()
 {
 
