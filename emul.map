@@ -11,9 +11,7 @@ _exit		emul__exit
 __sigaction14	emul___sigaction14
 __sigprocmask14	emul___sigprocmask14
 __sigsuspend14	emul___sigsuspend14
-_lwp_self	emul__lwp_self
 __wait450	emul___wait450
 kill		emul_kill
 undelete	emul_undelete
-_lwp_kill	emul__lwp_kill
 uuidgen		emul_uuidgen

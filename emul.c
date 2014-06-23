@@ -262,10 +262,8 @@ STUB(emul___sigaction14);
 STUB(emul___sigprocmask14);
 STUB(emul___sigsuspend14);
 
-STUB(emul__lwp_self);
 STUB(emul___wait450);
 STUB(emul_kill);
 STUB(emul_uuidgen);
 
 STUB_ABORT(emul_undelete);
-STUB_ABORT(emul__lwp_kill);
