@@ -183,7 +183,7 @@ _lwp_rumprun_scheduler(void)
 	TAILQ_REMOVE(&scheds, scd, entries);
 	TAILQ_INSERT_TAIL(&scheds, scd, entries);
 
-	if (__predict_false(prev->scd_state != LSZOMB))
+	if (__predict_true(prev->scd_state != LSZOMB))
 		prev->scd_lwpctl.lc_curcpu = LWPCTL_CPU_NONE;
 	scd->scd_lwpctl.lc_curcpu = 0;
 	scd->scd_lwpctl.lc_pctr++;
