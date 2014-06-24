@@ -114,7 +114,7 @@ MAPS=rump.map namespace.map host.map netbsd.map readwrite.map emul.map weakasm.m
 bin/halt:	halt.o _lwp.o emul.o rumpclient.o readwrite.o remoteinit.o ${MAPS}
 		./mkremote.sh halt halt.o
 
-bin-rr/pthread_test: pthread_test.o _lwp.o emul.o netbsd_init.o readwrite.o ${MAPS}
+bin-rr/pthread_test: pthread_test.o _lwp.o emul.o netbsd_init.o readwrite.o stub.o rumpinit.o ${MAPS}
 		./mkrun.sh pthread_test pthread_test.o rump/lib/libpthread.a
 
 rump.map:	rumpsrc/sys/rump/rump.sysmap
