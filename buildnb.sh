@@ -22,7 +22,8 @@ fi
 
 # process options
 
-STDJ='-j4'
+EXTRAFLAGS='-j4'
+CHECKOUT=true
 JUSTCHECKOUT=false
 BUILDRUMP=true
 TESTS=false
@@ -34,6 +35,9 @@ do
 	case ${arg} in
 	"justcheckout")
 		JUSTCHECKOUT=true
+		;;
+	"-H")
+		EXTRAFLAGS="${EXTRAFLAGS} -H"
 		;;
 	"buildrump")
 		BUILDRUMP=true
@@ -63,7 +67,7 @@ set -e
 . ./buildrump.sh/subr.sh
 
 # get sources
-docheckout rumpsrc nbusersrc
+${CHECKOUT} && docheckout rumpsrc nbusersrc
 ${JUSTCHECKOUT} && { echo ">> $0 done" ; exit 0; }
 
 # user libs to build
@@ -76,7 +80,7 @@ for lib in ${MORELIBS}; do
 done
 
 # Build rump kernel if requested
-${BUILDRUMP} && ./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${STDJ} ${FLAGS} \
+${BUILDRUMP} && ./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${EXTRAFLAGS} ${FLAGS} \
     -s rumpsrc -T rumptools -o rumpdynobj -d rumpdyn -V MKSTATICLIB=no fullbuild
 
 # build tools (for building libs)
