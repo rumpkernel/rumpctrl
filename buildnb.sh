@@ -84,7 +84,7 @@ ${BUILDRUMP} && ./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${EXTRAFLAGS} ${FLAGS
     -s rumpsrc -T rumptools -o rumpdynobj -d rumpdyn -V MKSTATICLIB=no fullbuild
 
 # build tools (for building libs)
-./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${STDJ} ${FLAGS} -s rumpsrc \
+./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${EXTRAFLAGS} ${FLAGS} -s rumpsrc \
     -T rumptools -o rumpobj -F CFLAGS="-nostdinc -isystem ${PWD}/rump/include" \
     -N -k -V MKPIC=no -V BUILDRUMP_SYSROOT=yes \
     tools kernelheaders install
