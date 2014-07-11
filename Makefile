@@ -124,16 +124,16 @@ weakasm.map:	rumpsrc/lib/libc/sys/Makefile.inc ${RUMPMAKE}
 		${RUMPMAKE} -f $< -V '$${WEAKASM}' | xargs -n 1 echo | awk '{sub("\\..*", ""); printf("_sys_%s _%s\n", $$1, $$1);}' > $@
 
 define NBUTIL_templ
-rumpsrc/${1}/${2}.ro:
+rumpobj/${1}/${2}.ro:
 	( cd rumpsrc/${1} && ${RUMPMAKE} obj && \
 	    ${RUMPMAKE} LIBCRT0= BUILDRUMP_CFLAGS="-fPIC -std=gnu99 -D__NetBSD__ ${CPPFLAGS.${2}}" ${2}.ro )
 
 NBLIBS.${2}:= $(shell cd rumpsrc/${1} && ${RUMPMAKE} -V '$${LDADD}')
 LIBS.${2}=$${NBLIBS.${2}:-l%=rump/lib/lib%.a}
-bin/${2}: rumpsrc/${1}/${2}.ro _lwp.o emul.o rumpclient.o readwrite.o remoteinit.o netbsd_init.o ${MAPS} $${LIBS.${2}}
+bin/${2}: rumpobj/${1}/${2}.ro _lwp.o emul.o rumpclient.o readwrite.o remoteinit.o netbsd_init.o ${MAPS} $${LIBS.${2}}
 	./mkremote.sh ${2} rumpobj/${1}/${2}.ro $${LIBS.${2}}
 
-bin-rr/${2}: rumpsrc/${1}/${2}.ro _lwp.o emul.o stub.o readwrite.o rumpinit.o netbsd_init.o ${MAPS} $${LIBS.${2}}
+bin-rr/${2}: rumpobj/${1}/${2}.ro _lwp.o emul.o stub.o readwrite.o rumpinit.o netbsd_init.o ${MAPS} $${LIBS.${2}}
 	./mkrun.sh ${2} rumpobj/${1}/${2}.ro $${LIBS.${2}}
 
 ${2}:	bin/${2} bin-rr/${2}
