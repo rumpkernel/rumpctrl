@@ -1,12 +1,6 @@
 [submodule "buildrump.sh"]
 	path = buildrump.sh
 	url = https://github.com/rumpkernel/buildrump.sh.git
-[submodule "nblib"]
-	path = nblib
-	url = https://github.com/rumpkernel/xen-nblibc.git
-[submodule "nbusersrc"]
-	path = nbusersrc
-	url = https://github.com/rumpkernel/netbsd-userspace-src
 [submodule "rumpsrc"]
 	path = rumpsrc
 	url = http://github.com/rumpkernel/src-netbsd
