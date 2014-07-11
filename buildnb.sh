@@ -67,7 +67,11 @@ set -e
 . ./buildrump.sh/subr.sh
 
 # get sources
-${CHECKOUT} && docheckout rumpsrc nbusersrc
+if ${CHECKOUT}; then
+	if git submodule status rumpsrc | grep -q '^-' ; then
+		git submodule update --init --recursive rumpsrc
+	fi
+fi
 ${JUSTCHECKOUT} && { echo ">> $0 done" ; exit 0; }
 
 # user libs to build

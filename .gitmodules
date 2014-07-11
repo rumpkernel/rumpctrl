@@ -7,3 +7,6 @@
 [submodule "nbusersrc"]
 	path = nbusersrc
 	url = https://github.com/rumpkernel/netbsd-userspace-src
+[submodule "rumpsrc"]
+	path = rumpsrc
+	url = http://github.com/rumpkernel/src-netbsd
