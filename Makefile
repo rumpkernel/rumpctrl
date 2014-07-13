@@ -145,11 +145,11 @@ $(foreach util,${NBUTILS},$(eval $(call NBUTIL_templ,${util},$(notdir ${util})))
 
 INSTALL_PATH=${PWD}
 
-${NBCC}:		cc.template rump/lib/rump-cc.specs
+${NBCC}:		cc.in rump/lib/rump-cc.specs
 			cat $< | sed "s|@PATH@|${INSTALL_PATH}|g" > $@
 			chmod +x $@
 
-rump/lib/rump-cc.specs:	spec.template
+rump/lib/rump-cc.specs:	specs.in
 			cat $< | sed "s|@PATH@|${PWD}|g" | sed "s|@LDLIBS@|${COMPLIBS}|g" > $@
 
 clean: $(foreach util,${NBUTILS_BASE},clean_${util})
