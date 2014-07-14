@@ -6,5 +6,8 @@
 *cc1:
 %(cc1_cpu) -nostdinc -isystem @PATH@/rump/include -isystem include%s
 
+*linker:
+@PATH@/ld --stunt-intermediate %g.link1 %g.link2
+
 *link:
 -nostdlib %s

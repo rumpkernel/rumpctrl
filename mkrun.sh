@@ -13,7 +13,7 @@ OBJDIR="obj-rr"
 
 mkdir -p ${BINDIR} ${OBJDIR}
 
-UNAME=`uname -s`
+UNAME=$(uname -s)
 
 # -lrt not always needed
 [ ${UNAME} = Linux ] && DLFLAG="-ldl -lrt"
