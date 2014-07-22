@@ -22,7 +22,8 @@ fi
 
 # process options
 
-EXTRAFLAGS='-j4'
+STDJ='-j4'
+EXTRAFLAGS="${STDJ}"
 CHECKOUT=true
 JUSTCHECKOUT=false
 BUILDRUMP=true
