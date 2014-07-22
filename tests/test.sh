@@ -10,6 +10,7 @@ SOCKFILE1="unix://csock1-$$"
 SOCKFILE2="unix://csock2-$$"
 SOCKFILE_CGD="unix://csock2-cgd-$$"
 SOCKFILE_RAID="unix://csock-rf-$$"
+SOCKFILE_VND="unix://csock-vnd-$$"
 SOCKFILE_LIST="${SOCKFILE}"
 
 # create file system test image
@@ -241,6 +242,21 @@ fifo 100" > ${RC}
 	rumpremote_hostcmd rm $D1 $D2 $RC
 }
 definetest Test_raidframe ${SOCKFILE_RAID}
+
+Test_vnd()
+{
+	export RUMP_SERVER="${SOCKFILE_VND}"
+	rump_server -lrumpfs_ffs -lrumpdev -lrumpdev_disk -lrumpvfs -lrumpdev_vnd "${RUMP_SERVER}"
+
+	newfs -F -s 1m /ffs.img > /dev/null
+	vnconfig vnd0 /ffs.img
+	mkdir /mnt
+	mount_ffs /dev/vnd0a /mnt
+	mount | grep vnd0a > /dev/null
+	umount /mnt
+	vnconfig -u vnd0
+}
+definetest Test_vnd ${SOCKFILE_VND}
 
 # actually run the tests
 for test in ${TESTS}; do
