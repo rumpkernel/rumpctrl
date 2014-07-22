@@ -3,7 +3,7 @@
 # Initial test script to sanity check
 
 # set up environment
-EC=0
+ERRORCOUNT=0
 
 SOCKFILE="unix://csock-$$"
 SOCKFILE1="unix://csock1-$$"
@@ -40,7 +40,7 @@ runtest ()
 	if [ $? -ne 0 ]
 	then 
 		echo "ERROR"
-		EC=$((${EC} + 1))
+		ERRORCOUNT=$((${ERRORCOUNT} + 1))
 	else
 		echo "passed"
 	fi 
@@ -255,9 +255,9 @@ rumpremote_hostcmd rm ${FSIMG}
 
 # show if passed
 
-if [ $EC -ne 0 ]
+if [ ${ERRORCOUNT} -ne 0 ]
 then
-	echo "FAIL: $EC tests failed"
+	echo "FAIL: ${ERRORCOUNT} test(s) failed"
 	exit 1
 else
 	echo "PASSED"
