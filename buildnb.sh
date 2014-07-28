@@ -126,3 +126,7 @@ if [ -n ${RUMPLOC} ]; then
 fi
 
 ${MAKE} && if ${TESTS}; then tests/test.sh; fi
+
+echo
+echo ">> $0 ran successfully"
+exit 0
