@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/rumpkernel/rumprun.png?branch=master)](https://travis-ci.org/rumpkernel/rumprun)
+[![Build Status](https://travis-ci.org/rumpkernel/rumprun-posix.png?branch=master)](https://travis-ci.org/rumpkernel/rumprun-posix)
 
 Rumprun-posix facilitates compiling and running programs against rump
 kernels on POSIX-like userspace platform.  Rumprun-posix is especially
