@@ -61,12 +61,9 @@ if [ x"$outfile" = x ]; then outfile=a.out; fi
 mkremote()
 {
 
-set -x
-
 # -lrt not always needed TODO work out at build time
 UNAME=$(uname -s)
 [ ${UNAME} = Linux ] && DLFLAG="-ldl -lrt"
-# XXX embed LIBRARY_PATH and LIBC into script
 LIBRARY_PATH=@PATH@/rumpdyn/lib
 RUMPCLIENT="-L${LIBRARY_PATH} -Wl,-R${LIBRARY_PATH} -lrumpclient ${DLFLAG}"
 LIBC=@PATH@/rump/lib/libc.a
@@ -90,7 +87,6 @@ ${CC} ${LDFLAGS} -Wl,-r -nostdlib -Wl,-dc ${TMPFILE3} _lwp.o readwrite.o -o ${TM
 ${OBJCOPY} --redefine-syms=errno.map ${TMPFILE4}
 ${OBJCOPY} -w --localize-symbol='*' ${TMPFILE4}
 ${OBJCOPY} -w --globalize-symbol='_netbsd_*' ${TMPFILE4}
-#${LD} ${outargs} ${CRTS} ${TMPFILE4} emul.o rumpclient.o remoteinit.o ${RUMPCLIENT} -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed ${CRTE} -o ${outfile}
 ${CC} ${TMPFILE4} emul.o rumpclient.o remoteinit.o ${RUMPCLIENT} -o ${outfile}
 }
 
