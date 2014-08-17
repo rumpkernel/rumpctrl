@@ -1,0 +1,104 @@
+#!/bin/sh
+
+set -e
+
+fail () { echo >&2 "stunt ld: $*"; exit 127; }
+
+noshift () { fail "no arg for $a"; }
+
+echo "stunt ld: $*"
+
+ALLARGS=$*
+
+CC=${REALCC:-cc}
+LD=${LD:-ld}
+OBJCOPY=${OBJCOPY:-objcopy}
+
+LIBC=false
+
+while [ $# != 0 ]; do
+	a=$1; shift
+	case "$a" in
+	-m)
+		march="$1"; shift || noshift
+		outargs="$outargs $a $march"
+		;;
+	-o)
+        	outfile="$1"; shift || noshift
+        	;;
+	--as-needed|--no-as-needed)
+		;;
+	--stunt-intermediate)
+        	inter1="$1"; shift || noshift
+        	inter2="$1"; shift || noshift
+        	;;
+	-lc)
+		LINKLIBC=true
+		;;
+	-lgcc|-lgcc_s)
+		# added later
+		;;
+	[^-]*|-L*|-l*|--whole-archive|--no-whole-archive)
+		outargs="$outargs $a"
+		;;
+	*crt1.o|*crti.o|*crtbegin.o)
+		CRTS="${CRTS} $a"
+		;;
+	*crtend.o|*crtn.o)
+		CRTE="${CRTE} $a"
+		;;
+	*.o|*.ro|*.a)
+		INFILES="${INFILES} $a"
+		;;
+	*)
+		outargs="$outargs $a"
+		;;
+	esac
+done
+
+if [ x"$outfile" = x ]; then outfile=a.out; fi
+
+mkremote()
+{
+
+set -x
+
+# -lrt not always needed TODO work out at build time
+UNAME=$(uname -s)
+[ ${UNAME} = Linux ] && DLFLAG="-ldl -lrt"
+# XXX embed LIBRARY_PATH and LIBC into script
+LIBRARY_PATH=@PATH@/rumpdyn/lib
+RUMPCLIENT="-L${LIBRARY_PATH} -Wl,-R${LIBRARY_PATH} -lrumpclient ${DLFLAG}"
+LIBC=@PATH@/rump/lib/libc.a
+
+TMPFILE1=$(mktemp --suffix=.o)
+TMPFILE2=$(mktemp --suffix=.o)
+TMPFILE3=$(mktemp --suffix=.o)
+TMPFILE4=$(mktemp --suffix=.o)
+
+${CC} ${LDFLAGS} -Wl,-r -nostdlib ${INFILES} -o ${TMPFILE1}
+${OBJCOPY} --redefine-syms=host.map ${TMPFILE1} ${TMPFILE2}
+${CC} ${LDFLAGS} -Wl,-r ${TMPFILE2} netbsd_init.o -nostdlib ${LIBC} -o ${TMPFILE3} 2>/dev/null
+${OBJCOPY} --redefine-syms=namespace.map ${TMPFILE3}
+${OBJCOPY} --redefine-syms=extra.map ${TMPFILE3}
+${OBJCOPY} --redefine-syms=rump.map ${TMPFILE3}
+${OBJCOPY} --redefine-syms=weakasm.map ${TMPFILE3}
+${OBJCOPY} --redefine-syms=readwrite.map ${TMPFILE3}
+${OBJCOPY} --redefine-syms=emul.map ${TMPFILE3}
+${OBJCOPY} --redefine-syms=netbsd.map ${TMPFILE3}
+${CC} ${LDFLAGS} -Wl,-r -nostdlib -Wl,-dc ${TMPFILE3} _lwp.o readwrite.o -o ${TMPFILE4}  2>/dev/null
+${OBJCOPY} --redefine-syms=errno.map ${TMPFILE4}
+${OBJCOPY} -w --localize-symbol='*' ${TMPFILE4}
+${OBJCOPY} -w --globalize-symbol='_netbsd_*' ${TMPFILE4}
+#${LD} ${outargs} ${CRTS} ${TMPFILE4} emul.o rumpclient.o remoteinit.o ${RUMPCLIENT} -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed ${CRTE} -o ${outfile}
+${CC} ${TMPFILE4} emul.o rumpclient.o remoteinit.o ${RUMPCLIENT} -o ${outfile}
+}
+
+if ${LINKLIBC}
+then
+	mkremote
+else
+	${LD} ${ALLARGS}
+fi
+
+
