@@ -6,8 +6,6 @@ fail () { echo >&2 "stunt ld: $*"; exit 127; }
 
 noshift () { fail "no arg for $a"; }
 
-echo "stunt ld: $*"
-
 ALLARGS=$*
 
 CC=${REALCC:-cc}
@@ -74,20 +72,20 @@ TMPFILE3=$(mktemp --suffix=.o)
 TMPFILE4=$(mktemp --suffix=.o)
 
 ${CC} ${LDFLAGS} -Wl,-r -nostdlib ${INFILES} -o ${TMPFILE1}
-${OBJCOPY} --redefine-syms=host.map ${TMPFILE1} ${TMPFILE2}
-${CC} ${LDFLAGS} -Wl,-r ${TMPFILE2} netbsd_init.o -nostdlib ${LIBC} -o ${TMPFILE3} 2>/dev/null
-${OBJCOPY} --redefine-syms=namespace.map ${TMPFILE3}
-${OBJCOPY} --redefine-syms=extra.map ${TMPFILE3}
-${OBJCOPY} --redefine-syms=rump.map ${TMPFILE3}
-${OBJCOPY} --redefine-syms=weakasm.map ${TMPFILE3}
-${OBJCOPY} --redefine-syms=readwrite.map ${TMPFILE3}
-${OBJCOPY} --redefine-syms=emul.map ${TMPFILE3}
-${OBJCOPY} --redefine-syms=netbsd.map ${TMPFILE3}
-${CC} ${LDFLAGS} -Wl,-r -nostdlib -Wl,-dc ${TMPFILE3} _lwp.o readwrite.o -o ${TMPFILE4}  2>/dev/null
-${OBJCOPY} --redefine-syms=errno.map ${TMPFILE4}
+${OBJCOPY} --redefine-syms=@PATH@/host.map ${TMPFILE1} ${TMPFILE2}
+${CC} ${LDFLAGS} -Wl,-r ${TMPFILE2} @PATH@/netbsd_init.o -nostdlib ${LIBC} -o ${TMPFILE3} 2>/dev/null
+${OBJCOPY} --redefine-syms=@PATH@/namespace.map ${TMPFILE3}
+${OBJCOPY} --redefine-syms=@PATH@/extra.map ${TMPFILE3}
+${OBJCOPY} --redefine-syms=@PATH@/rump.map ${TMPFILE3}
+${OBJCOPY} --redefine-syms=@PATH@/weakasm.map ${TMPFILE3}
+${OBJCOPY} --redefine-syms=@PATH@/readwrite.map ${TMPFILE3}
+${OBJCOPY} --redefine-syms=@PATH@/emul.map ${TMPFILE3}
+${OBJCOPY} --redefine-syms=@PATH@/netbsd.map ${TMPFILE3}
+${CC} ${LDFLAGS} -Wl,-r -nostdlib -Wl,-dc ${TMPFILE3} @PATH@/_lwp.o @PATH@/readwrite.o -o ${TMPFILE4}  2>/dev/null
+${OBJCOPY} --redefine-syms=@PATH@/errno.map ${TMPFILE4}
 ${OBJCOPY} -w --localize-symbol='*' ${TMPFILE4}
 ${OBJCOPY} -w --globalize-symbol='_netbsd_*' ${TMPFILE4}
-${CC} ${TMPFILE4} emul.o rumpclient.o remoteinit.o ${RUMPCLIENT} -o ${outfile}
+${CC} ${LDFLAGS} ${TMPFILE4} @PATH@/emul.o @PATH@/rumpclient.o @PATH@/remoteinit.o ${RUMPCLIENT} -o ${outfile}
 }
 
 if ${LINKLIBC}
