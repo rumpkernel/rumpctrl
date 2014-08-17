@@ -107,7 +107,7 @@ pthread_test.o:	pthread_test.c ${MAPS} ${NBCC}
 MAPS=rump.map namespace.map host.map netbsd.map readwrite.map emul.map weakasm.map
 
 bin/halt:	halt.o _lwp.o emul.o rumpclient.o readwrite.o remoteinit.o ${MAPS}
-		./mkremote.sh halt halt.o
+		${NBCC} ${NBCFLAGS} -o bin/halt halt.o
 
 bin-rr/pthread_test: pthread_test.o _lwp.o emul.o netbsd_init.o readwrite.o stub.o rumpinit.o ${MAPS}
 		./mkrun.sh pthread_test pthread_test.o rump/lib/libpthread.a
@@ -131,7 +131,7 @@ rumpobj/${1}/${2}.ro:
 NBLIBS.${2}:= $(shell cd rumpsrc/${1} && ${RUMPMAKE} -V '$${LDADD}')
 LIBS.${2}=$${NBLIBS.${2}:-l%=rump/lib/lib%.a}
 bin/${2}: rumpobj/${1}/${2}.ro _lwp.o emul.o rumpclient.o readwrite.o remoteinit.o netbsd_init.o ${MAPS} $${LIBS.${2}}
-	./mkremote.sh ${2} rumpobj/${1}/${2}.ro $${LIBS.${2}}
+	${NBCC} ${NBCFLAGS} -o bin/${2} rumpobj/${1}/${2}.ro $${LIBS.${2}}
 
 bin-rr/${2}: rumpobj/${1}/${2}.ro _lwp.o emul.o stub.o readwrite.o rumpinit.o netbsd_init.o ${MAPS} $${LIBS.${2}}
 	./mkrun.sh ${2} rumpobj/${1}/${2}.ro $${LIBS.${2}}
@@ -145,12 +145,12 @@ $(foreach util,${NBUTILS},$(eval $(call NBUTIL_templ,${util},$(notdir ${util})))
 
 INSTALL_PATH=${PWD}
 
-${NBCC}:		cc.in rump/lib/rump-cc.specs
-			cat $< | sed "s|@PATH@|${INSTALL_PATH}|g" > $@
-			chmod +x $@
+${NBCC}:	cc.in rump/lib/rump-cc.specs
+		cat $< | sed "s|@PATH@|${INSTALL_PATH}|g" > $@
+		chmod +x $@
 
 rump/lib/rump-cc.specs:	specs.in
-			cat $< | sed "s|@PATH@|${PWD}|g" | sed "s|@LDLIBS@|${COMPLIBS}|g" > $@
+		cat $< | sed "s|@PATH@|${PWD}|g" | sed "s|@LDLIBS@|${COMPLIBS}|g" > $@
 
 clean: $(foreach util,${NBUTILS_BASE},clean_${util})
 		rm -f *.o *~ rump.map namespace.map fns.map all.map weakasm.map ${PROGS} ${OBJDIR}/* ${BINDIR}/* rumpremote.sh
