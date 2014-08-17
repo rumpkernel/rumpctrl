@@ -1,19 +1,20 @@
-[![Build Status](https://travis-ci.org/rumpkernel/rumprun.png?branch=master)](https://travis-ci.org/rumpkernel/rumprun)
+[![Build Status](https://travis-ci.org/rumpkernel/rumprun-posix.png?branch=master)](https://travis-ci.org/rumpkernel/rumprun-posix)
 
-Rumprun facilitates compiling and running userspace programs against rump
-kernels.  It is especially useful for the configuration of rump kernels.
-This repository provides both the rumprun framework and a selection of
-familiar utilities such as `ifconfig`, `mount`, `sysctl`, and more.
+Rumprun-posix facilitates compiling and running programs against rump
+kernels on POSIX-like userspace platform.  Rumprun-posix is especially
+useful for the configuration of userspace rump kernels.  This repository
+provides both the build framework and a selection of familiar utilities
+such as `ifconfig`, `mount`, `sysctl`, and more.
 
 Quickstart, run the following commands:
 
 ````
-./buildnb.sh buildrump
+./buildnb.sh
 . ./rumpremote.sh
 rumpremote_listcmds
 ````
 
-This will fetch and build dependencies and list available rumprun commands.
+This will fetch and build dependencies and list bundled commands.
 
-See [the wiki](http://wiki.rumpkernel.org/Repo:-rumprun) for more
+See [the wiki](http://wiki.rumpkernel.org/Repo:-rumprun-posix) for more
 information and instructions.

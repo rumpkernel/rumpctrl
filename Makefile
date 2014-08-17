@@ -165,4 +165,4 @@ cleanrump:	clean
 		rm -rf obj rump rumpobj rumptools rumpdyn rumpdynobj
 
 distcleanrump:	clean cleanrump
-		rm -rf rumpsrc ./${OBJDIR}
+		rm -rf ./${OBJDIR}

@@ -22,7 +22,8 @@ fi
 
 # process options
 
-EXTRAFLAGS='-j4'
+STDJ='-j4'
+EXTRAFLAGS="${STDJ}"
 CHECKOUT=true
 JUSTCHECKOUT=false
 BUILDRUMP=true
@@ -78,7 +79,7 @@ ${JUSTCHECKOUT} && { echo ">> $0 done" ; exit 0; }
 MORELIBS="external/bsd/flex/lib
 	crypto/external/bsd/openssl/lib
 	external/bsd/libpcap/lib"
-LIBS="$(echo nbusersrc/lib/lib* | sed 's/nbusersrc/rumpsrc/g')"
+LIBS="$(ls -d rumpsrc/lib/lib* | grep -v librump)"
 for lib in ${MORELIBS}; do
 	LIBS="${LIBS} rumpsrc/${lib}"
 done
@@ -125,3 +126,7 @@ if [ -n ${RUMPLOC} ]; then
 fi
 
 ${MAKE} && if ${TESTS}; then tests/test.sh; fi
+
+echo
+echo ">> $0 ran successfully"
+exit 0
