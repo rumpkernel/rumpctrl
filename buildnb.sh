@@ -126,9 +126,9 @@ if [ -n ${RUMPLOC} ]; then
 	export RUMPRUN_CPPFLAGS=-I${RUMPLOC}/include
 fi
 
-${MAKE} && if ${TESTS}; then tests/test.sh; fi
-
 mkdir -p bin
+
+${MAKE} && if ${TESTS}; then tests/test.sh; fi
 
 echo
 echo ">> $0 ran successfully"
