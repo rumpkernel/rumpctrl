@@ -8,6 +8,10 @@ die ()
 	exit 1
 }
 
+if ! ${CC:-cc} --version | grep -q 'Free Software Foundation'; then
+	die '>> rumprun-posix currently requires CC=gcc'
+fi
+
 # figure out where gmake lies or if the system just lies
 if [ -z "${MAKE}" ]; then
 	MAKE=make
