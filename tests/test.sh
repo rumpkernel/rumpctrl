@@ -127,7 +127,7 @@ Test_shmif()
 	ifconfig shmif0 linkstr $BM > /dev/null
 	ifconfig shmif0 inet 1.2.3.4 netmask 0xffffff00 > /dev/null
 	ifconfig shmif0 \
-	   | grep 'shmif0: flags=8043<UP,BROADCAST,RUNNING,MULTICAST> mtu 1500'\
+	   | grep 'shmif0: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST>'\
 	     > /dev/null
 	rumpremote_hostcmd rm $BM
 }
