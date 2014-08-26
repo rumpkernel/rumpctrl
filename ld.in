@@ -66,10 +66,10 @@ LIBRARY_PATH=@PATH@/rumpdyn/lib
 RUMPCLIENT="-L${LIBRARY_PATH} -Wl,-R${LIBRARY_PATH} -lrumpclient ${DLFLAG}"
 LIBC=@PATH@/rump/lib/libc.a
 
-TMPFILE1=$(mktemp).o
-TMPFILE2=$(mktemp).o
-TMPFILE3=$(mktemp).o
-TMPFILE4=$(mktemp).o
+TMPFILE1=$(mktemp obj-rr/XXXXXXXXXXX).o
+TMPFILE2=$(mktemp obj-rr/XXXXXXXXXXX).o
+TMPFILE3=$(mktemp obj-rr/XXXXXXXXXXX).o
+TMPFILE4=$(mktemp obj-rr/XXXXXXXXXXX).o
 
 ${CC} ${LDFLAGS} -Wl,-r -nostdlib ${INFILES} -o ${TMPFILE1}
 ${OBJCOPY} --redefine-syms=@PATH@/host.map ${TMPFILE1} ${TMPFILE2}
