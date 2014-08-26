@@ -36,7 +36,7 @@ while [ $# != 0 ]; do
 	-lgcc|-lgcc_s)
 		# added later
 		;;
-	[^-]*|-L*|-l*|--whole-archive|--no-whole-archive)
+	-L*|-l*|-*|--whole-archive|--no-whole-archive)
 		outargs="$outargs $a"
 		;;
 	*crt1.o|*crti.o|*crtbegin.o)
