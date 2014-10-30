@@ -128,7 +128,7 @@ rumpobj/${1}/${2}.ro:
 	( cd rumpsrc/${1} && ${RUMPMAKE} obj && \
 	    ${RUMPMAKE} LIBCRT0= BUILDRUMP_CFLAGS="-fPIC -std=gnu99 -D__NetBSD__ ${CPPFLAGS.${2}}" ${2}.ro )
 
-NBLIBS.${2}:= $(shell cd rumpsrc/${1} && ${RUMPMAKE} -V '$${LDADD}')
+NBLIBS.${2}:= $(shell cd rumpsrc/${1} && ${RUMPMAKE} -V '$${LDADD}' | sed 's/-L\S*//g')
 LIBS.${2}=$${NBLIBS.${2}:-l%=rump/lib/lib%.a}
 bin/${2}: rumpobj/${1}/${2}.ro _lwp.o emul.o rumpclient.o readwrite.o remoteinit.o netbsd_init.o ${MAPS} $${LIBS.${2}}
 	${NBCC} ${NBCFLAGS} -o bin/${2} rumpobj/${1}/${2}.ro $${LIBS.${2}}
