@@ -63,9 +63,11 @@ NBUTILS+=		usr.bin/ktrace
 NBUTILS+=		external/bsd/wpa/bin/wpa_passphrase
 NBUTILS+=		external/bsd/wpa/bin/wpa_supplicant
 
+ifeq (${BUILDZFS},true)
 NBUTILS+=		external/cddl/osnet/sbin/zfs
 NBUTILS+=		external/cddl/osnet/sbin/zpool
 NBUTILS+=		external/cddl/osnet/usr.bin/ztest
+endif
 
 CPPFLAGS.umount=	-DSMALL
 

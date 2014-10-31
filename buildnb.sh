@@ -32,6 +32,7 @@ CHECKOUT=true
 JUSTCHECKOUT=false
 BUILDRUMP=true
 TESTS=false
+BUILDZFS=false
 
 # XXX TODO set FLAGS from -F options here to pass to buildrump.sh
 
@@ -60,12 +61,16 @@ do
 		${MAKE} distcleanrump
 		exit 0
 		;;
+	"zfs")
+		BUILDZFS=true
+		;;
 	*)
 		RUMPLOC=${arg}
 		BUILDRUMP=false
 		;;
 	esac
 done
+export BUILDZFS
 
 set -e
 [ ! -f ./buildrump.sh/subr.sh ] && git submodule update --init buildrump.sh
@@ -83,7 +88,8 @@ ${JUSTCHECKOUT} && { echo ">> $0 done" ; exit 0; }
 MORELIBS="external/bsd/flex/lib
 	crypto/external/bsd/openssl/lib
 	external/bsd/libpcap/lib"
-ZFSLIBS="$(ls -d rumpsrc/external/cddl/osnet/lib/lib* | grep -v libdtrace)"
+${BUILDZFS} && \
+    ZFSLIBS="$(ls -d rumpsrc/external/cddl/osnet/lib/lib* | grep -v libdtrace)"
 LIBS="$(ls -d rumpsrc/lib/lib* | grep -v librump)"
 LIBS="${ZFSLIBS} ${LIBS}"
 for lib in ${MORELIBS}; do
@@ -93,7 +99,7 @@ done
 # Build rump kernel if requested
 ${BUILDRUMP} && ./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${EXTRAFLAGS} ${FLAGS} \
     -s rumpsrc -T rumptools -o rumpdynobj -d rumpdyn -V MKSTATICLIB=no \
-    -V MKZFS=yes fullbuild
+    $(${BUILDZFS} && echo -V MKZFS=yes) fullbuild
 
 # build tools (for building libs)
 ./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${EXTRAFLAGS} ${FLAGS} -s rumpsrc \
