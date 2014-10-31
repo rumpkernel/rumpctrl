@@ -258,6 +258,19 @@ Test_vnd()
 }
 definetest Test_vnd ${SOCKFILE_VND}
 
+Test_zfs()
+{
+
+	ZFSSOCK=unix://zfssock
+	if ! rump_server -lrumpvfs -lrumpkern_solaris -lrumpfs_zfs -lrumpdev_disk -lrumpdev ${ZFSSOCK} > /dev/null 2>&1; then
+		# eh eh.  FIXME
+		printf 'SKIPPED and '
+	else
+		RUMP_SERVER=${ZFSSOCK} halt
+	fi
+}
+definetest Test_zfs
+
 # actually run the tests
 for test in ${TESTS}; do
 	runtest ${test}
