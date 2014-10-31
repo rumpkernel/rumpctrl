@@ -83,14 +83,17 @@ ${JUSTCHECKOUT} && { echo ">> $0 done" ; exit 0; }
 MORELIBS="external/bsd/flex/lib
 	crypto/external/bsd/openssl/lib
 	external/bsd/libpcap/lib"
+ZFSLIBS="$(ls -d rumpsrc/external/cddl/osnet/lib/lib* | grep -v libdtrace)"
 LIBS="$(ls -d rumpsrc/lib/lib* | grep -v librump)"
+LIBS="${ZFSLIBS} ${LIBS}"
 for lib in ${MORELIBS}; do
 	LIBS="${LIBS} rumpsrc/${lib}"
 done
 
 # Build rump kernel if requested
 ${BUILDRUMP} && ./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${EXTRAFLAGS} ${FLAGS} \
-    -s rumpsrc -T rumptools -o rumpdynobj -d rumpdyn -V MKSTATICLIB=no fullbuild
+    -s rumpsrc -T rumptools -o rumpdynobj -d rumpdyn -V MKSTATICLIB=no \
+    -V MKZFS=yes fullbuild
 
 # build tools (for building libs)
 ./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${EXTRAFLAGS} ${FLAGS} -s rumpsrc \
@@ -113,7 +116,7 @@ EOF
 RUMPMAKE=$(pwd)/rumptools/rumpmake
 
 usermtree rump
-userincludes ${RUMPMAKE} rumpsrc ${LIBS} rumpsrc/lib/librumpclient
+userincludes ${RUMPMAKE} rumpsrc ${LIBS} rumpsrc/lib/librumpclient rumpsrc/external/bsd/libelf
 
 for lib in ${LIBS}; do
 	makeuserlib ${RUMPMAKE} ${lib}

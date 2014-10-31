@@ -63,6 +63,10 @@ NBUTILS+=		usr.bin/ktrace
 NBUTILS+=		external/bsd/wpa/bin/wpa_passphrase
 NBUTILS+=		external/bsd/wpa/bin/wpa_supplicant
 
+NBUTILS+=		external/cddl/osnet/sbin/zfs
+NBUTILS+=		external/cddl/osnet/sbin/zpool
+NBUTILS+=		external/cddl/osnet/usr.bin/ztest
+
 CPPFLAGS.umount=	-DSMALL
 
 NBUTILS_BASE= $(notdir ${NBUTILS})
