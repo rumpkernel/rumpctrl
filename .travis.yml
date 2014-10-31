@@ -4,10 +4,10 @@ before_install:
  - git submodule update --init --recursive
 
 env:
- - INCLUDEZFS=''
- - INCLUDEZFS='zfs'
+ - WITHZFS=false
+ - WITHZFS=true
 
-script: ./buildnb.sh -q ${BUILDZFS} buildrump tests
+script: ./buildnb.sh -q $(${WITHZFS} && echo zfs) buildrump tests
 
 notifications:
   irc:
