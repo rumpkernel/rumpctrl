@@ -3,7 +3,11 @@ language: c
 before_install:
  - git submodule update --init --recursive
 
-script: ./buildnb.sh -q buildrump tests
+env:
+ - INCLUDEZFS=''
+ - INCLUDEZFS='zfs'
+
+script: ./buildnb.sh -q ${BUILDZFS} buildrump tests
 
 notifications:
   irc:
