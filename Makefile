@@ -75,12 +75,18 @@ NBUTILS_BASE= $(notdir ${NBUTILS})
 
 NBCC=./rump/bin/rump-cc
 
+ifeq (${BUILDFIBER},true)
+LWP=_lwp_fiber.c
+else
+LWP=_lwp_pthread.c
+endif
+
 all:		${NBUTILS_BASE} bin/halt bin-rr/pthread_test rumpremote.sh
 
 rumpremote.sh: rumpremote.sh.in
 		sed 's,XXXPATHXXX,$(PWD),' $< > $@
 
-_lwp.o:		_lwp.c ${NBCC}
+_lwp.o:		${LWP} ${NBCC}
 		${NBCC} ${NBCFLAGS} -c $< -o $@
 
 emul.o:		emul.c
