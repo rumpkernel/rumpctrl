@@ -33,6 +33,7 @@ JUSTCHECKOUT=false
 BUILDRUMP=true
 TESTS=false
 BUILDZFS=false
+BUILDFIBER=false
 
 # XXX TODO set FLAGS from -F options here to pass to buildrump.sh
 
@@ -63,6 +64,9 @@ do
 		;;
 	"zfs")
 		BUILDZFS=true
+		;;
+	"fiber")
+		BUILDFIBER=true
 		;;
 	*)
 		RUMPLOC=${arg}
@@ -96,8 +100,11 @@ for lib in ${MORELIBS}; do
 	LIBS="${LIBS} rumpsrc/${lib}"
 done
 
+${BUILDFIBER} && FIBERFLAGS="-V RUMPUSER_THREADS=fiber -V RUMP_CURLWP=hypercall"
+
 # Build rump kernel if requested
-${BUILDRUMP} && ./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${EXTRAFLAGS} ${FLAGS} \
+${BUILDRUMP} && ./buildrump.sh/buildrump.sh ${BUILD_QUIET} \
+    ${EXTRAFLAGS} ${FLAGS} ${FIBERFLAGS} \
     -s rumpsrc -T rumptools -o rumpdynobj -d rumpdyn -V MKSTATICLIB=no \
     $(${BUILDZFS} && echo -V MKZFS=yes) fullbuild
 
