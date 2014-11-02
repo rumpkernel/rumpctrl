@@ -79,9 +79,10 @@ ifeq (${BUILDFIBER},true)
 LWP=_lwp_fiber.c
 else
 LWP=_lwp_pthread.c
+HALT=bin/halt
 endif
 
-all:		${NBUTILS_BASE} bin/halt bin-rr/pthread_test rumpremote.sh
+all:		${NBUTILS_BASE} ${HALT} bin-rr/pthread_test rumpremote.sh
 
 rumpremote.sh: rumpremote.sh.in
 		sed 's,XXXPATHXXX,$(PWD),' $< > $@
@@ -148,7 +149,11 @@ bin/${2}: rumpobj/${1}/${2}.ro _lwp.o emul.o rumpclient.o readwrite.o remoteinit
 bin-rr/${2}: rumpobj/${1}/${2}.ro _lwp.o emul.o stub.o readwrite.o rumpinit.o netbsd_init.o ${MAPS} $${LIBS.${2}}
 	./mkrun.sh ${2} rumpobj/${1}/${2}.ro $${LIBS.${2}}
 
+ifeq (${BUILDFIBER},true)
+${2}:	bin-rr/${2}
+else
 ${2}:	bin/${2} bin-rr/${2}
+endif
 
 clean_${2}:
 	( [ ! -d rumpsrc/${1} ] || ( cd rumpsrc/${1} && ${RUMPMAKE} cleandir && rm -f ${2}.ro ) )
