@@ -75,6 +75,7 @@ do
 	esac
 done
 export BUILDZFS
+export BUILDFIBER
 
 set -e
 [ ! -f ./buildrump.sh/subr.sh ] && git submodule update --init buildrump.sh
