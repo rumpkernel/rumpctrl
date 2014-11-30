@@ -7,7 +7,7 @@ env:
  - WITHZFS=false
  - WITHZFS=true
 
-script: ./buildnb.sh -q $(${WITHZFS} && echo zfs) buildrump tests
+script: ./buildnb.sh -qq $(${WITHZFS} && echo zfs) buildrump tests
 
 notifications:
   irc:

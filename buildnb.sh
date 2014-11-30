@@ -55,6 +55,9 @@ do
 	"-q")
 		BUILD_QUIET=-q
 		;;
+	"-qq")
+		BUILD_QUIET=-qq
+		;;
 	"tests")
 		TESTS=true
 		;;
