@@ -92,17 +92,9 @@ if ${CHECKOUT}; then
 fi
 ${JUSTCHECKOUT} && { echo ">> $0 done" ; exit 0; }
 
-# user libs to build
-MORELIBS="external/bsd/flex/lib
-	crypto/external/bsd/openssl/lib
-	external/bsd/libpcap/lib"
 ${BUILDZFS} && \
     ZFSLIBS="$(ls -d rumpsrc/external/cddl/osnet/lib/lib* | grep -v libdtrace)"
-LIBS="$(ls -d rumpsrc/lib/lib* | grep -v librump)"
-LIBS="${ZFSLIBS} ${LIBS}"
-for lib in ${MORELIBS}; do
-	LIBS="${LIBS} rumpsrc/${lib}"
-done
+LIBS="$(stdlibs rumpsrc) ${ZFSLIBS}"
 
 ${BUILDFIBER} && FIBERFLAGS="-V RUMPUSER_THREADS=fiber -V RUMP_CURLWP=hypercall"
 
