@@ -346,6 +346,8 @@ __strong_alias(_write,_lwpnullop);
 
 __strong_alias(pthread__cancel_stub_binder,_lwpnullop);
 
+__strong_alias(__libc_static_tls_setup,_lwpnullop);
+
 int rasctl(void);
 int rasctl(void) { return ENOSYS; }
 
