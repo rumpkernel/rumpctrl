@@ -125,10 +125,10 @@ EOF
 RUMPMAKE=$(pwd)/rumptools/rumpmake
 
 usermtree rump
-userincludes ${RUMPMAKE} rumpsrc ${LIBS} rumpsrc/lib/librumpclient rumpsrc/external/bsd/libelf
+userincludes rumpsrc ${LIBS} rumpsrc/lib/librumpclient rumpsrc/external/bsd/libelf
 
 for lib in ${LIBS}; do
-	makeuserlib ${RUMPMAKE} ${lib}
+	makeuserlib ${lib}
 done
 
 if ${BUILDRUMP}; then
