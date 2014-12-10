@@ -10,16 +10,20 @@ BUILDRUMP=true
 TESTS=false
 BUILDZFS=false
 BUILDFIBER=false
+RUMPSRC=rumpsrc
 
 # XXX TODO set FLAGS from -F options here to pass to buildrump.sh
 
-while getopts '?Hq' opt; do
+while getopts '?Hqs:' opt; do
 	case "$opt" in
 	"H")
 		EXTRAFLAGS="${EXTRAFLAGS} -H"
 		;;
 	"q")
 		BUILD_QUIET=${BUILD_QUIET:=-}q
+		;;
+	"s")
+		RUMPSRC=${OPTARG}
 		;;
 	"?")
 		exit 1
@@ -60,6 +64,7 @@ done
 
 export BUILDZFS
 export BUILDFIBER
+export RUMPSRC
 
 [ ! -f ./buildrump.sh/subr.sh ] && git submodule update --init buildrump.sh
 . ./buildrump.sh/subr.sh
@@ -81,26 +86,26 @@ set -e
 
 # get sources
 if ${CHECKOUT}; then
-	if git submodule status rumpsrc | grep -q '^-' ; then
-		git submodule update --init --recursive rumpsrc
+	if git submodule status ${RUMPSRC} | grep -q '^-' ; then
+		git submodule update --init --recursive ${RUMPSRC}
 	fi
 fi
 ${JUSTCHECKOUT} && { echo ">> $0 done" ; exit 0; }
 
 ${BUILDZFS} && \
-    ZFSLIBS="$(ls -d rumpsrc/external/cddl/osnet/lib/lib* | grep -v libdtrace)"
-LIBS="$(stdlibs rumpsrc) ${ZFSLIBS}"
+    ZFSLIBS="$(ls -d ${RUMPSRC}/external/cddl/osnet/lib/lib* | grep -v libdtrace)"
+LIBS="$(stdlibs ${RUMPSRC}) ${ZFSLIBS}"
 
 ${BUILDFIBER} && FIBERFLAGS="-V RUMPUSER_THREADS=fiber -V RUMP_CURLWP=hypercall"
 
 # Build rump kernel if requested
 ${BUILDRUMP} && ./buildrump.sh/buildrump.sh ${BUILD_QUIET} \
     ${EXTRAFLAGS} ${FLAGS} ${FIBERFLAGS} \
-    -s rumpsrc -T rumptools -o rumpdynobj -d rumpdyn -V MKSTATICLIB=no \
+    -s ${RUMPSRC} -T rumptools -o rumpdynobj -d rumpdyn -V MKSTATICLIB=no \
     $(${BUILDZFS} && echo -V MKZFS=yes) fullbuild
 
 # build tools (for building libs)
-./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${EXTRAFLAGS} ${FLAGS} -s rumpsrc \
+./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${EXTRAFLAGS} ${FLAGS} -s ${RUMPSRC} \
     -T rumptools -o rumpobj -F CFLAGS="-nostdinc -isystem ${PWD}/rump/include" \
     -N -k -V MKPIC=no -V BUILDRUMP_SYSROOT=yes \
     tools kernelheaders install
@@ -120,7 +125,7 @@ EOF
 RUMPMAKE=$(pwd)/rumptools/rumpmake
 
 usermtree rump
-userincludes rumpsrc ${LIBS} rumpsrc/lib/librumpclient rumpsrc/external/bsd/libelf
+userincludes ${RUMPSRC} ${LIBS} ${RUMPSRC}/lib/librumpclient ${RUMPSRC}/external/bsd/libelf
 
 for lib in ${LIBS}; do
 	makeuserlib ${lib}

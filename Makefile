@@ -7,6 +7,8 @@ HOSTCFLAGS=${CFLAGS} -O2 -g -Wall ${RUMPRUN_CPPFLAGS}
 
 RUMPMAKE:=$(shell echo `pwd`/rumptools/rumpmake)
 
+RUMPSRC?= rumpsrc
+
 NBUTILS+=		bin/cat
 NBUTILS+=		bin/chmod
 NBUTILS+=		bin/cp
@@ -125,23 +127,23 @@ bin/halt:	halt.o _lwp.o emul.o rumpclient.o readwrite.o remoteinit.o ${MAPS}
 bin-rr/pthread_test: pthread_test.o _lwp.o emul.o netbsd_init.o readwrite.o stub.o rumpinit.o ${MAPS}
 		./mkrun.sh pthread_test pthread_test.o rump/lib/libpthread.a
 
-rump.map:	rumpsrc/sys/rump/rump.sysmap
+rump.map:	${RUMPSRC}/sys/rump/rump.sysmap
 		awk '{printf("%s\t%s\n",$$3,$$4)}' $< > $@
 
-namespace.map:	rumpsrc/lib/libc/include/namespace.h rump.map emul.map
+namespace.map:	${RUMPSRC}/lib/libc/include/namespace.h rump.map emul.map
 		grep '#define' $< | grep -v NAMESPACE_H | awk '{printf("%s\t%s\n",$$2,$$3)}' > fns.map
 		cat rump.map emul.map > all.map
 		awk 'NR==FNR{a[$$1]=$$1;next}a[$$1]' all.map fns.map | awk '{printf("%s\t%s\n",$$2,$$1)}' > $@
 
-weakasm.map:	rumpsrc/lib/libc/sys/Makefile.inc ${RUMPMAKE}
+weakasm.map:	${RUMPSRC}/lib/libc/sys/Makefile.inc ${RUMPMAKE}
 		${RUMPMAKE} -f $< -V '$${WEAKASM}' | xargs -n 1 echo | awk '{sub("\\..*", ""); printf("_sys_%s _%s\n", $$1, $$1);}' > $@
 
 define NBUTIL_templ
 rumpobj/${1}/${2}.ro:
-	( cd rumpsrc/${1} && ${RUMPMAKE} obj && \
+	( cd ${RUMPSRC}/${1} && ${RUMPMAKE} obj && \
 	    ${RUMPMAKE} LIBCRT0= BUILDRUMP_CFLAGS="-fPIC -std=gnu99 -D__NetBSD__ ${CPPFLAGS.${2}}" ${2}.ro )
 
-NBLIBS.${2}:= $(shell cd rumpsrc/${1} && ${RUMPMAKE} -V '$${LDADD}' | sed 's/-L\S*//g')
+NBLIBS.${2}:= $(shell cd ${RUMPSRC}/${1} && ${RUMPMAKE} -V '$${LDADD}' | sed 's/-L\S*//g')
 LIBS.${2}=$${NBLIBS.${2}:-l%=rump/lib/lib%.a}
 bin/${2}: rumpobj/${1}/${2}.ro _lwp.o emul.o rumpclient.o readwrite.o remoteinit.o netbsd_init.o ${MAPS} $${LIBS.${2}}
 	${NBCC} ${NBCFLAGS} -o bin/${2} rumpobj/${1}/${2}.ro $${LIBS.${2}}
@@ -156,7 +158,7 @@ ${2}:	bin/${2} bin-rr/${2}
 endif
 
 clean_${2}:
-	( [ ! -d rumpsrc/${1} ] || ( cd rumpsrc/${1} && ${RUMPMAKE} cleandir && rm -f ${2}.ro ) )
+	( [ ! -d ${RUMPSRC}/${1} ] || ( cd ${RUMPSRC}/${1} && ${RUMPMAKE} cleandir && rm -f ${2}.ro ) )
 endef
 $(foreach util,${NBUTILS},$(eval $(call NBUTIL_templ,${util},$(notdir ${util}))))
 
