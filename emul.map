@@ -1,6 +1,7 @@
 mmap		emul_mmap
 munmap		emul_munmap
 madvise		emul_madvise
+minherit	emul_minherit
 setpriority	emul_setpriority
 execve		emul_execve
 __getrusage50	emul__getrusage50

@@ -267,4 +267,6 @@ STUB(emul___wait450);
 STUB(emul_kill);
 STUB(emul_uuidgen);
 
+STUB(emul_minherit);
+
 STUB_ABORT(emul_undelete);
