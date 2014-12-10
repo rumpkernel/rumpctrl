@@ -261,6 +261,7 @@ rumprun_ucontext(void *ucpvoid, size_t ucpsize,
 STUB(emul___sigaction14);
 STUB(emul___sigprocmask14);
 STUB(emul___sigsuspend14);
+STUB(emul___sigaction_sigtramp);
 
 STUB(emul___wait450);
 STUB(emul_kill);
