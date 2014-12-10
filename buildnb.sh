@@ -13,26 +13,30 @@ BUILDFIBER=false
 
 # XXX TODO set FLAGS from -F options here to pass to buildrump.sh
 
-for arg in "$@"
-do
+while getopts '?Hq' opt; do
+	case "$opt" in
+	"H")
+		EXTRAFLAGS="${EXTRAFLAGS} -H"
+		;;
+	"q")
+		BUILD_QUIET=${BUILD_QUIET:=-}q
+		;;
+	"?")
+		exit 1
+	esac
+done
+shift $((${OPTIND} - 1))
+
+for arg in "$@"; do
 	case ${arg} in
 	"justcheckout")
 		JUSTCHECKOUT=true
-		;;
-	"-H")
-		EXTRAFLAGS="${EXTRAFLAGS} -H"
 		;;
 	"buildrump")
 		BUILDRUMP=true
 		;;
 	"nobuildrump")
 		BUILDRUMP=false
-		;;
-	"-q")
-		BUILD_QUIET=-q
-		;;
-	"-qq")
-		BUILD_QUIET=-qq
 		;;
 	"tests")
 		TESTS=true
@@ -53,6 +57,7 @@ do
 		;;
 	esac
 done
+
 export BUILDZFS
 export BUILDFIBER
 
