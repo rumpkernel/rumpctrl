@@ -1,29 +1,5 @@
 #!/bin/sh
 
-die ()
-{
-
-	echo '>> ERROR:' >&2
-	echo ">> $*" >&2
-	exit 1
-}
-
-if ! ${CC:-cc} --version | grep -q 'Free Software Foundation'; then
-	die '>> rumprun-posix currently requires CC=gcc'
-fi
-
-# figure out where gmake lies or if the system just lies
-if [ -z "${MAKE}" ]; then
-	MAKE=make
-	type gmake >/dev/null && MAKE=gmake
-fi
-${MAKE} --version | grep -q 'GNU Make'
-if [ $? -ne 0 ]; then
-	echo ">> ERROR: GNU Make required, \"${MAKE}\" is not"
-	echo ">> Please install GNU Make and/or set \${MAKE} to point to it"
-	exit 1
-fi
-
 # process options
 
 STDJ='-j4'
@@ -80,9 +56,23 @@ done
 export BUILDZFS
 export BUILDFIBER
 
-set -e
 [ ! -f ./buildrump.sh/subr.sh ] && git submodule update --init buildrump.sh
 . ./buildrump.sh/subr.sh
+
+if ! ${CC:-cc} --version | grep -q 'Free Software Foundation'; then
+	die 'rumprun-posix currently requires CC=gcc'
+fi
+
+# figure out where gmake lies or if the system just lies
+if [ -z "${MAKE}" ]; then
+	MAKE=make
+	type gmake >/dev/null && MAKE=gmake
+fi
+
+${MAKE} --version | grep -q 'GNU Make' \
+    || die GNU Make required, '$MAKE' "(${MAKE})" is not
+
+set -e
 
 # get sources
 if ${CHECKOUT}; then
