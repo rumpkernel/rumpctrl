@@ -12,6 +12,12 @@ BUILDZFS=false
 BUILDFIBER=false
 RUMPSRC=rumpsrc
 
+# figure out where gmake lies
+if [ -z "${MAKE}" ]; then
+	MAKE=make
+	type gmake >/dev/null && MAKE=gmake
+fi
+
 # XXX TODO set FLAGS from -F options here to pass to buildrump.sh
 
 while getopts '?Hqs:' opt; do
@@ -71,12 +77,6 @@ export RUMPSRC
 
 if ! ${CC:-cc} --version | grep -q 'Free Software Foundation'; then
 	die 'rumprun-posix currently requires CC=gcc'
-fi
-
-# figure out where gmake lies or if the system just lies
-if [ -z "${MAKE}" ]; then
-	MAKE=make
-	type gmake >/dev/null && MAKE=gmake
 fi
 
 ${MAKE} --version | grep -q 'GNU Make' \
