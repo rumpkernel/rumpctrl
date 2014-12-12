@@ -270,3 +270,4 @@ STUB(emul_uuidgen);
 STUB(emul_minherit);
 
 STUB_ABORT(emul_undelete);
+STUB_ABORT(emul_sigqueueinfo);

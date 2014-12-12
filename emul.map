@@ -16,3 +16,4 @@ __wait450	emul___wait450
 kill		emul_kill
 undelete	emul_undelete
 uuidgen		emul_uuidgen
+sigqueueinfo	emul_sigqueueinfo
