@@ -17,3 +17,5 @@ kill		emul_kill
 undelete	emul_undelete
 uuidgen		emul_uuidgen
 sigqueueinfo	emul_sigqueueinfo
+_lwp_kill	emul__lwp_kill
+_setcontext     emul__setcontext

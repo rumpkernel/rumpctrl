@@ -271,3 +271,5 @@ STUB(emul_minherit);
 
 STUB_ABORT(emul_undelete);
 STUB_ABORT(emul_sigqueueinfo);
+STUB_ABORT(emul__setcontext);
+STUB_ABORT(emul__lwp_kill);

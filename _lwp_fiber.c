@@ -335,11 +335,6 @@ _rtld_tls_free(struct tls_tcb *arg)
 void _lwpnullop(void);
 void _lwpnullop(void) { }
 
-void _lwpabort(void);
-void _lwpabort(void) {abort();}
-__strong_alias(_setcontext,_lwpabort);
-__strong_alias(_lwp_kill,_lwpabort);
-
 __strong_alias(___sigprocmask14,_lwpnullop);
 __strong_alias(___nanosleep50,_lwpnullop);
 __strong_alias(_write,_lwpnullop);
