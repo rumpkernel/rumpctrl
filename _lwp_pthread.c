@@ -106,15 +106,8 @@ lwpid2scd(lwpid_t lid)
 int
 _lwp_create(const ucontext_t *ucp, unsigned long flags, lwpid_t *lid)
 {
-	struct schedulable *scd = *(struct schedulable **)ucp;
-	static int nextlid = 2;
-	*lid = nextlid++;
 
-	scd->scd_state = LSRUN;
-	scd->scd_lwpid = *lid;
-	TAILQ_INSERT_TAIL(&scheds, scd, entries);
-
-	return 0;
+	return ENOSYS;
 }
 
 int
