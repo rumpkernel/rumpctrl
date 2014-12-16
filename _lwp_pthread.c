@@ -1,5 +1,9 @@
 /* 
  * Copyright (c) 2014 Antti Kantee
+ *
+ * This pthread version is not really expected to work.  It disallows
+ * creating threads with ENOSYS.  If you manage to enter the code from
+ * other places, well, good luck.
  */
 
 #include <sys/cdefs.h>
@@ -19,6 +23,7 @@
 #include <ucontext.h>
 
 #include "netbsd_init.h"
+#include "rumprunposix_makelwp.h"
 
 #if 0
 #define DPRINTF(x) printf x
@@ -26,22 +31,13 @@
 #define DPRINTF(x)
 #endif
 
-/*
- * We don't know the size of the host ucontext_t here,
- * so dig into the stetson for the answer.
- */
-#define UCTX_SIZE 1516
-
 struct schedulable {
 	struct tls_tcb scd_tls;
-
-	uint8_t scd_uctxstore[UCTX_SIZE];
 
 	pthread_t scd_thread;
 	int scd_lwpid;
 
 	int scd_state;
-
 	char *scd_name;
 
 	struct lwpctl scd_lwpctl;
@@ -73,22 +69,12 @@ _lwp_ctl(int ctl, struct lwpctl **data)
 	return 0;
 }
 
-void _lwp_rumprun_makecontext(ucontext_t *, void (*)(void *),
-    void *, void *, void *, size_t);
-void
-_lwp_rumprun_makecontext(ucontext_t *nbuctx, void (*start)(void *),
-    void *arg, void *private, void *stack_base, size_t stack_size)
+int
+rumprunposix_makelwp(void (*start)(void *), void *arg, void *private,
+	void *stack_base, size_t stack_size, unsigned long flag, lwpid_t *lid)
 {
-	struct schedulable *scd;
-	struct tls_tcb *tcb = private;
 
-	scd = private;
-	scd->scd_thread = tcb->tcb_pthread;
-	rumprun_ucontext(&scd->scd_uctxstore, sizeof(scd->scd_uctxstore),
-	    start, arg, stack_base, stack_size);
-
-	/* thread uctx -> schedulable mapping this way */
-	*(struct schedulable **)nbuctx = scd;
+	return ENOSYS;
 }
 
 static struct schedulable *
@@ -101,13 +87,6 @@ lwpid2scd(lwpid_t lid)
 			return scd;
 	}
 	return NULL;
-}
-
-int
-_lwp_create(const ucontext_t *ucp, unsigned long flags, lwpid_t *lid)
-{
-
-	return ENOSYS;
 }
 
 int
@@ -158,33 +137,9 @@ _lwp_rumprun_scheduler_init(void)
 static void
 _lwp_rumprun_scheduler(void)
 {
-	struct schedulable *prev, *scd;
 
-	TAILQ_FOREACH(scd, &scheds, entries) {
-		if (scd->scd_state == LSRUN)
-			break;
-	}
-
-	/* p-p-p-p-p-panic */
-	if (!scd) {
-		printf("nothing to schedule!\n");
-		abort();
-	}
-
-	prev = (struct schedulable *)curtcb;
-	curtcb = &scd->scd_tls;
-	TAILQ_REMOVE(&scheds, scd, entries);
-	TAILQ_INSERT_TAIL(&scheds, scd, entries);
-
-	if (__predict_true(prev->scd_state != LSZOMB))
-		prev->scd_lwpctl.lc_curcpu = LWPCTL_CPU_NONE;
-	scd->scd_lwpctl.lc_curcpu = 0;
-	scd->scd_lwpctl.lc_pctr++;
-
-	swapcontext((ucontext_t *)&prev->scd_uctxstore,
-	    (ucontext_t *)&scd->scd_uctxstore);
-
-	DPRINTF(("running %d\n", scd->scd_lwpid));
+	/* unreachable */
+	abort();
 }
 
 int

@@ -2,6 +2,9 @@
  * Copyright (c) 2014 Antti Kantee
  */
 
+/* XXX: silly */
+#define _lwp_park ___lwp_park60
+
 #include <sys/cdefs.h>
 
 #include <sys/param.h>
@@ -19,6 +22,7 @@
 #include <ucontext.h>
 
 #include "netbsd_init.h"
+#include "rumprunposix_makelwp.h"
 
 /* XXX */
 struct thread;
@@ -41,25 +45,12 @@ void exit_thread(void);
 #define DPRINTF(x)
 #endif
 
-/*
- * We don't know the size of the host ucontext_t here,
- * so dig into the stetson for the answer.
- */
-#define UCTX_SIZE 1516
-
 struct schedulable {
 	struct tls_tcb scd_tls;
 
 	struct thread *scd_thread;
 	int scd_lwpid;
-
 	char *scd_name;
-
-	void (*scd_start)(void *);
-	void *scd_arg;
-
-	void *scd_stack;
-	size_t scd_stack_size;
 
 	struct lwpctl scd_lwpctl;
 
@@ -89,21 +80,22 @@ _lwp_ctl(int ctl, struct lwpctl **data)
 	return 0;
 }
 
-void _lwp_rumprun_makecontext(ucontext_t *, void (*)(void *),
-    void *, void *, void *, size_t);
-void
-_lwp_rumprun_makecontext(ucontext_t *nbuctx, void (*start)(void *),
-    void *arg, void *private, void *stack_base, size_t stack_size)
+int
+rumprunposix_makelwp(void (*start)(void *), void *arg, void *private,
+	void *stack_base, size_t stack_size, unsigned long flag, lwpid_t *lid)
 {
 	struct schedulable *scd = private;
+	static int nextlid = 2;
+	*lid = nextlid++;
 
-	scd->scd_start = start;
-	scd->scd_arg = arg;
-	scd->scd_stack = stack_base;
-	scd->scd_stack_size = stack_size;
+	scd->scd_lwpid = *lid;
+	scd->scd_thread = create_thread("lwp", scd, start, arg,
+	    stack_base, stack_size);
+	if (scd->scd_thread == NULL)
+		return EBUSY; /* ??? */
+	TAILQ_INSERT_TAIL(&scheds, scd, entries);
 
-	/* thread uctx -> schedulable mapping this way */
-	*(struct schedulable **)nbuctx = scd;
+	return 0;
 }
 
 static struct schedulable *
@@ -116,23 +108,6 @@ lwpid2scd(lwpid_t lid)
 			return scd;
 	}
 	return NULL;
-}
-
-int
-_lwp_create(const ucontext_t *ucp, unsigned long flags, lwpid_t *lid)
-{
-	struct schedulable *scd = *(struct schedulable **)ucp;
-	static int nextlid = 2;
-	*lid = nextlid++;
-
-	scd->scd_lwpid = *lid;
-	scd->scd_thread = create_thread("lwp", scd,
-	    scd->scd_start, scd->scd_arg, scd->scd_stack, scd->scd_stack_size);
-	if (scd->scd_thread == NULL)
-		return EBUSY; /* ??? */
-	TAILQ_INSERT_TAIL(&scheds, scd, entries);
-
-	return 0;
 }
 
 int
@@ -203,7 +178,7 @@ _lwp_rumprun_scheduler_init(void)
 }
 
 int
-___lwp_park60(clockid_t clock_id, int flags, const struct timespec *ts,
+_lwp_park(clockid_t clock_id, int flags, const struct timespec *ts,
 	lwpid_t unpark, const void *hint, const void *unparkhint)
 {
 	struct schedulable *current = (struct schedulable *)curtcb;
@@ -235,7 +210,7 @@ ___lwp_park60(clockid_t clock_id, int flags, const struct timespec *ts,
 	return rv;
 }
 
-void
+int
 _lwp_exit(void)
 {
 	struct schedulable *scd = (struct schedulable *)curtcb;
@@ -243,24 +218,34 @@ _lwp_exit(void)
 	scd->scd_lwpctl.lc_curcpu = LWPCTL_CPU_EXITED;
 	TAILQ_REMOVE(&scheds, scd, entries);
 	exit_thread();
+
+	return 0;
 }
 
-void
+int
 _lwp_continue(lwpid_t lid)
 {
 	struct schedulable *scd;
 
-	if ((scd = lwpid2scd(lid)) != NULL)
-		wake(scd->scd_thread);
+	if ((scd = lwpid2scd(lid)) == NULL) {
+		return ESRCH;
+	}
+
+	wake(scd->scd_thread);
+	return 0;
 }
 
-void
+int
 _lwp_suspend(lwpid_t lid)
 {
 	struct schedulable *scd;
 
-	if ((scd = lwpid2scd(lid)) != NULL)
-		block(scd->scd_thread);
+	if ((scd = lwpid2scd(lid)) == NULL) {
+		return ESRCH;
+	}
+
+	block(scd->scd_thread);
+	return 0;
 }
 
 int
@@ -311,11 +296,12 @@ _lwp_self(void)
 	return current->scd_lwpid;
 }
 
-void
+int
 _sched_yield(void)
 {
 
 	schedule();
+	return 0;
 }
 
 struct tls_tcb *

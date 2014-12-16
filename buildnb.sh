@@ -118,9 +118,10 @@ ${BUILDRUMP} && ./buildrump.sh/buildrump.sh ${BUILD_QUIET} \
 # cycles with just "rumpmake"
 cat >> rumptools/mk.conf << EOF
 .if defined(LIB) && \${LIB} == "pthread"
+.PATH:	$(pwd)
 PTHREAD_CANCELSTUB=no
-CPPFLAGS+=      -D_PLATFORM_MAKECONTEXT=_lwp_rumprun_makecontext
-CPPFLAGS+=      -D_PLATFORM_GETTCB=_lwp_rumprun_gettcb
+PTHREAD_MAKELWP=pthread_makelwp_rumprunposix.c
+CPPFLAGS+=      -D_PTHREAD_GETTCB_EXT=_lwp_rumprun_gettcb
 .endif  # LIB == pthread
 EOF
 
