@@ -18,7 +18,7 @@ UNAME=$(uname -s)
 # -lrt not always needed
 [ ${UNAME} = Linux ] && DLFLAG="-ldl -lrt"
 
-${BUILDZFS} && ZFSLIBS='-lrumpfs_zfs -lrumpkern_solaris'
+[ -n "${BUILDZFS}" ] && ${BUILDZFS} && ZFSLIBS='-lrumpfs_zfs -lrumpkern_solaris'
 RUMPLIBS="-L${LIBRARY_PATH} -Wl,-R${LIBRARY_PATH} -Wl,--no-as-needed -lrumpvfs -lrumpfs_kernfs -lrumpfs_ffs ${ZFSLIBS} -lrumpdev_disk -lrumpdev -lrumpdev_rnd -lrumpnet -lrumpnet_net -lrumpnet_netinet -lrumpnet_netinet6 -lrumpuser -lrump"
 
 CC=${CC-cc}
