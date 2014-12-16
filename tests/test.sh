@@ -39,7 +39,6 @@ definetest_fiber ()
 	test=$1
 	shift
 	TESTS_FIBER="${TESTS_FIBER} ${test}"
-	[ $# -gt 0 ] && SOCKFILE_LIST="${SOCKFILE_LIST} $*"
 }
 
 runtest ()
