@@ -18,15 +18,16 @@ FSIMGSIZE=$(( 16*1024*1024 ))
 
 if [ "$1" = 'fiber' ]; then
 	FIBER=true
+
 else
 	FIBER=false
 	rump_server -lrumpvfs -lrumpfs_kernfs -lrumpfs_ffs -lrumpdev_disk -lrumpdev -lrumpnet -lrumpnet_net -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_shmif -d key=/fsimg,hostpath=${FSIMG},size=${FSIMGSIZE} -d key=/rfsimg,hostpath=${FSIMG},size=${FSIMGSIZE},type=chr -r 2m $SOCKFILE
 	SOCKFILE_LIST="${SOCKFILE}"
+
+	export RUMP_SERVER="$SOCKFILE"
+	. ./rumpremote.sh
 fi
 shift
-
-export RUMP_SERVER="$SOCKFILE"
-. ./rumpremote.sh
 
 TESTS=''
 definetest ()
@@ -294,13 +295,11 @@ else
 	for test in ${TESTS}; do
 		runtest ${test}
 	done
+	for serv in ${SOCKFILE_LIST}; do
+		RUMP_SERVER=${serv} halt
+	done
+	rumpremote_hostcmd rm ${FSIMG}
 fi
-
-# shutdown
-for serv in ${SOCKFILE_LIST}; do
-	RUMP_SERVER=${serv} halt
-done
-rumpremote_hostcmd rm ${FSIMG}
 
 # show if passed
 
