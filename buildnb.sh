@@ -61,6 +61,9 @@ for arg in "$@"; do
 	"fiber")
 		BUILDFIBER=true
 		;;
+	"pthread")
+		BUILDFIBER=false
+		;;
 	*)
 		RUMPLOC=${arg}
 		BUILDRUMP=false
