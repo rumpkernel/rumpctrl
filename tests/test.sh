@@ -11,17 +11,18 @@ SOCKFILE2="unix://csock2-$$"
 SOCKFILE_CGD="unix://csock2-cgd-$$"
 SOCKFILE_RAID="unix://csock-rf-$$"
 SOCKFILE_VND="unix://csock-vnd-$$"
-SOCKFILE_LIST="${SOCKFILE}"
 
 # create file system test image
 FSIMG=test.ffs.img
 FSIMGSIZE=$(( 16*1024*1024 ))
 
-# start global rump server
-rump_server -lrumpvfs -lrumpfs_kernfs -lrumpfs_ffs -lrumpdev_disk -lrumpdev -lrumpnet -lrumpnet_net -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_shmif -d key=/fsimg,hostpath=${FSIMG},size=${FSIMGSIZE} -d key=/rfsimg,hostpath=${FSIMG},size=${FSIMGSIZE},type=chr -r 2m $SOCKFILE
-
-FIBER=false
-[ "$1" = 'fiber' ] && FIBER=true
+if [ "$1" = 'fiber' ]; then
+	FIBER=true
+else
+	FIBER=false
+	rump_server -lrumpvfs -lrumpfs_kernfs -lrumpfs_ffs -lrumpdev_disk -lrumpdev -lrumpnet -lrumpnet_net -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_shmif -d key=/fsimg,hostpath=${FSIMG},size=${FSIMGSIZE} -d key=/rfsimg,hostpath=${FSIMG},size=${FSIMGSIZE},type=chr -r 2m $SOCKFILE
+	SOCKFILE_LIST="${SOCKFILE}"
+fi
 shift
 
 export RUMP_SERVER="$SOCKFILE"
