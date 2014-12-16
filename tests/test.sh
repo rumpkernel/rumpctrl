@@ -286,7 +286,7 @@ Test_zfs()
 definetest Test_zfs
 
 # actually run the tests
-${FIBER}; then
+if ${FIBER}; then
 	for test in ${TESTS_FIBER}; do
 		runtest ${test}
 	done
