@@ -6,8 +6,10 @@ before_install:
 env:
  - WITHZFS=false
  - WITHZFS=true
+ - THREADING=fiber
+ - THREADING=pthread
 
-script: ./buildnb.sh -qq $(${WITHZFS} && echo zfs) buildrump tests
+script: ./buildnb.sh -qq $(${WITHZFS} && echo zfs) ${THREADING} buildrump tests
 
 notifications:
   irc:
