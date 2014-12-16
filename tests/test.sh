@@ -33,6 +33,15 @@ definetest ()
 	[ $# -gt 0 ] && SOCKFILE_LIST="${SOCKFILE_LIST} $*"
 }
 
+definetest_fiber ()
+{
+
+	test=$1
+	shift
+	TESTS_FIBER="${TESTS_FIBER} ${test}"
+	[ $# -gt 0 ] && SOCKFILE_LIST="${SOCKFILE_LIST} $*"
+}
+
 runtest ()
 {
 
@@ -54,7 +63,7 @@ Test_pthreads()
 
 	./bin-rr/pthread_test >/dev/null
 }
-definetest Test_pthreads
+definetest_fiber Test_pthreads
 
 Test_ifconfig()
 {
@@ -272,9 +281,15 @@ Test_zfs()
 definetest Test_zfs
 
 # actually run the tests
-for test in ${TESTS}; do
-	runtest ${test}
-done
+if [ "$1" = "fiber" ]; then
+	for test in ${TESTS_FIBER}; do
+		runtest ${test}
+	done
+else
+	for test in ${TESTS}; do
+		runtest ${test}
+	done
+fi
 
 # shutdown
 for serv in ${SOCKFILE_LIST}; do

@@ -147,7 +147,14 @@ fi
 
 mkdir -p bin
 
-${MAKE} && if ${TESTS}; then tests/test.sh; fi
+${MAKE}
+if ${TESTS}; then
+	if ${BUILDFIBER}; then
+		tests/test.sh fiber
+	else
+		tests/test.sh pthread
+	fi
+fi
 
 echo
 echo ">> $0 ran successfully"
