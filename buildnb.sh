@@ -2,6 +2,12 @@
 
 # process options
 
+appendconfig ()
+{
+
+	echo $1=$(eval echo \${$1}) >> ./config.mk
+}
+
 STDJ='-j4'
 EXTRAFLAGS="${STDJ}"
 CHECKOUT=true
@@ -71,10 +77,6 @@ for arg in "$@"; do
 	esac
 done
 
-export BUILDZFS
-export BUILDFIBER
-export RUMPSRC
-
 [ ! -f ./buildrump.sh/subr.sh ] && git submodule update --init buildrump.sh
 . ./buildrump.sh/subr.sh
 
@@ -95,9 +97,16 @@ if ${CHECKOUT}; then
 fi
 ${JUSTCHECKOUT} && { echo ">> $0 done" ; exit 0; }
 
+rm -f ./config.mk
+
 ${BUILDZFS} && \
     ZFSLIBS="$(ls -d ${RUMPSRC}/external/cddl/osnet/lib/lib* | grep -v libdtrace)"
 LIBS="$(stdlibs ${RUMPSRC}) ${ZFSLIBS}"
+
+appendconfig BUILDZFS
+appendconfig ZFSLIBS
+appendconfig BUILDFIBER
+appendconfig RUMPSRC
 
 ${BUILDFIBER} && FIBERFLAGS="-V RUMPUSER_THREADS=fiber -V RUMP_CURLWP=hypercall"
 
@@ -127,6 +136,7 @@ EOF
 
 # set rumpmake
 RUMPMAKE=$(pwd)/rumptools/rumpmake
+appendconfig RUMPMAKE
 
 usermtree rump
 userincludes ${RUMPSRC} ${LIBS} ${RUMPSRC}/lib/librumpclient ${RUMPSRC}/external/bsd/libelf
@@ -140,16 +150,21 @@ if ${BUILDRUMP}; then
 fi
 
 if [ -n ${RUMPLOC} ]; then
-	export PATH=${RUMPLOC}/bin:${PATH}
-	export LIBRARY_PATH=${RUMPLOC}/lib
-	export LD_LIBRARY_PATH=${RUMPLOC}/lib
-	export RUMPRUN_CPPFLAGS=-I${RUMPLOC}/include
+	LIBRARY_PATH=${RUMPLOC}/lib
+	LD_LIBRARY_PATH=${RUMPLOC}/lib
+	RUMPRUN_CPPFLAGS=-I${RUMPLOC}/include
+
+	appendconfig LIBRARY_PATH
+	appendconfig LD_LIBRARY_PATH
+	appendconfig RUMPRUN_CPPFLAGS
 fi
 
 mkdir -p bin
 
 ${MAKE}
 if ${TESTS}; then
+	[ -n "${RUMPLOC}" ] || die need rump kernel for tests
+	export PATH=${RUMPLOC}/bin:${PATH}
 	if ${BUILDFIBER}; then
 		tests/test.sh fiber
 	else

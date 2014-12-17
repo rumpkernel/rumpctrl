@@ -1,13 +1,11 @@
+include config.mk
+
 OBJDIR=	obj-rr
 
 BINDIR=bin
 
 NBCFLAGS=${CFLAGS} -O2 -g -Wall
 HOSTCFLAGS=${CFLAGS} -O2 -g -Wall ${RUMPRUN_CPPFLAGS}
-
-RUMPMAKE:=$(shell echo `pwd`/rumptools/rumpmake)
-
-RUMPSRC?= rumpsrc
 
 NBUTILS+=		bin/cat
 NBUTILS+=		bin/chmod
@@ -184,7 +182,7 @@ clean: $(foreach util,${NBUTILS_BASE},clean_${util})
 		rm -f ${NBCC} rump/lib/rump-cc.specs
 
 cleanrump:	clean
-		rm -rf obj rump rumpobj rumptools rumpdyn rumpdynobj
+		rm -rf obj rump rumpobj rumptools rumpdyn rumpdynobj config.mk
 
 distcleanrump:	clean cleanrump
 		rm -rf ./${OBJDIR}

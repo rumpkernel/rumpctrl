@@ -2,6 +2,8 @@
 
 set -e
 
+. ./config.mk
+
 NAME=$1
 
 shift
