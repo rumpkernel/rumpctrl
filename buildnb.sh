@@ -5,7 +5,7 @@
 appendconfig ()
 {
 
-	echo $1=$(eval echo \${$1}) >> ./config.mk
+	echo $1=\"$(eval echo \${$1})\" >> ./config.mk
 }
 
 STDJ='-j4'
