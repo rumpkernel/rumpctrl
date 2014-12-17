@@ -105,7 +105,6 @@ ${BUILDZFS} && \
 LIBS="$(stdlibs ${RUMPSRC}) ${ZFSLIBS}"
 
 appendconfig BUILDZFS
-appendconfig ZFSLIBS
 appendconfig BUILDFIBER
 appendconfig RUMPSRC
 
