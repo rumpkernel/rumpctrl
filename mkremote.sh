@@ -2,7 +2,7 @@
 
 set -e
 
-. ./config.mk
+. ./config.sh
 
 NAME=$1
 

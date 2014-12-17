@@ -182,7 +182,8 @@ clean: $(foreach util,${NBUTILS_BASE},clean_${util})
 		rm -f ${NBCC} rump/lib/rump-cc.specs
 
 cleanrump:	clean
-		rm -rf obj rump rumpobj rumptools rumpdyn rumpdynobj config.mk
+		rm -rf obj rump rumpobj rumptools rumpdyn rumpdynobj
+		rm -f config.mk config.sh
 
 distcleanrump:	clean cleanrump
 		rm -rf ./${OBJDIR}

@@ -5,7 +5,8 @@
 appendconfig ()
 {
 
-	echo $1=\"$(eval echo \${$1})\" >> ./config.mk
+	echo $1=\"$(eval echo \${$1})\" >> ./config.sh
+	echo $1=$(eval echo \${$1}) >> ./config.mk
 }
 
 STDJ='-j4'
@@ -97,7 +98,7 @@ if ${CHECKOUT}; then
 fi
 ${JUSTCHECKOUT} && { echo ">> $0 done" ; exit 0; }
 
-rm -f ./config.mk
+rm -f ./config.mk ./config.sh
 
 ${BUILDZFS} && \
     ZFSLIBS="$(ls -d ${RUMPSRC}/external/cddl/osnet/lib/lib* | grep -v libdtrace)"
