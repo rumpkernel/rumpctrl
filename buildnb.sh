@@ -2,6 +2,8 @@
 
 # process options
 
+set -x
+
 appendconfig ()
 {
 
