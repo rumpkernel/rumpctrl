@@ -78,6 +78,10 @@ for arg in "$@"; do
 	esac
 done
 
+export BUILDZFS
+export BUILDFIBER
+export RUMPSRC
+
 [ ! -f ./buildrump.sh/subr.sh ] && git submodule update --init buildrump.sh
 . ./buildrump.sh/subr.sh
 
