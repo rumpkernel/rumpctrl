@@ -1,9 +1,5 @@
 #!/bin/sh
 
-# process options
-
-set -x
-
 appendconfig ()
 {
 
