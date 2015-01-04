@@ -86,6 +86,8 @@ ${OBJCOPY} --redefine-syms=@PATH@/errno.map ${TMPFILE4}
 ${OBJCOPY} -w --localize-symbol='*' ${TMPFILE4}
 ${OBJCOPY} -w --globalize-symbol='_netbsd_*' ${TMPFILE4}
 ${CC} ${LDFLAGS} ${TMPFILE4} @PATH@/emul.o @PATH@/rumpclient.o @PATH@/remoteinit.o ${RUMPCLIENT} -o ${outfile}
+
+rm ${TMPFILE1} ${TMPFILE2} ${TMPFILE3} ${TMPFILE4}
 }
 
 if ${LINKLIBC}
