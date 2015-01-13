@@ -112,7 +112,16 @@ ${BUILDFIBER} && FIBERFLAGS="-V RUMPUSER_THREADS=fiber -V RUMP_CURLWP=hypercall"
 ${BUILDRUMP} && ./buildrump.sh/buildrump.sh ${BUILD_QUIET} \
     ${EXTRAFLAGS} ${FLAGS} ${FIBERFLAGS} \
     -s ${RUMPSRC} -T rumptools -o rumpdynobj -d rumpdyn -V MKSTATICLIB=no \
-    $(${BUILDZFS} && echo -V MKZFS=yes) fullbuild
+    $(${BUILDZFS} && echo -V MKZFS=yes) tools
+
+# set rumpmake
+RUMPMAKE=$(pwd)/rumptools/rumpmake
+appendconfig RUMPMAKE
+
+${BUILDRUMP} && ./buildrump.sh/buildrump.sh ${BUILD_QUIET} \
+    ${EXTRAFLAGS} ${FLAGS} ${FIBERFLAGS} \
+    -s ${RUMPSRC} -T rumptools -o rumpdynobj -d rumpdyn -V MKSTATICLIB=no \
+    $(${BUILDZFS} && echo -V MKZFS=yes) build install
 
 # build tools (for building libs)
 ./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${EXTRAFLAGS} ${FLAGS} -s ${RUMPSRC} \
@@ -131,10 +140,6 @@ PTHREAD_MAKELWP=pthread_makelwp_rumprunposix.c
 CPPFLAGS+=      -D_PTHREAD_GETTCB_EXT=_lwp_rumprun_gettcb
 .endif  # LIB == pthread
 EOF
-
-# set rumpmake
-RUMPMAKE=$(pwd)/rumptools/rumpmake
-appendconfig RUMPMAKE
 
 usermtree rump
 userincludes ${RUMPSRC} ${LIBS} ${RUMPSRC}/lib/librumpclient ${RUMPSRC}/external/bsd/libelf
