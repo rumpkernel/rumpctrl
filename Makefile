@@ -3,6 +3,7 @@ include config.mk
 OBJDIR=	obj-rr
 
 BINDIR=bin
+BINDIRRR=bin-rr
 
 NBCFLAGS=${CFLAGS} -O2 -g -Wall
 HOSTCFLAGS=${CFLAGS} -O2 -g -Wall ${RUMPRUN_CPPFLAGS}
@@ -82,7 +83,7 @@ LWP=_lwp_pthread.c
 HALT=bin/halt
 endif
 
-all:		${NBUTILS_BASE} ${HALT} bin-rr/pthread_test rumpremote.sh
+all:		${NBUTILS_BASE} ${HALT} ${BINDIRRR}/pthread_test rumpremote.sh
 
 rumpremote.sh: rumpremote.sh.in
 		sed 's,XXXPATHXXX,$(PWD),' $< > $@
@@ -119,10 +120,10 @@ pthread_test.o:	pthread_test.c ${MAPS} ${NBCC}
 
 MAPS=rump.map namespace.map host.map netbsd.map readwrite.map emul.map weakasm.map
 
-bin/halt:	halt.o _lwp.o emul.o rumpclient.o readwrite.o remoteinit.o ${MAPS}
-		${NBCC} ${NBCFLAGS} -o bin/halt halt.o
+${BINDIR}/halt:	halt.o _lwp.o emul.o rumpclient.o readwrite.o remoteinit.o ${MAPS}
+		${NBCC} ${NBCFLAGS} -o ${BINDIR}/halt halt.o
 
-bin-rr/pthread_test: pthread_test.o _lwp.o emul.o netbsd_init.o readwrite.o stub.o rumpinit.o ${MAPS}
+${BINDIRRR}/pthread_test: pthread_test.o _lwp.o emul.o netbsd_init.o readwrite.o stub.o rumpinit.o ${MAPS}
 		./mkrun.sh pthread_test pthread_test.o rump/lib/libpthread.a
 
 rump.map:	${RUMPSRC}/sys/rump/rump.sysmap
@@ -143,16 +144,16 @@ rumpobj/${1}/${2}.ro:
 
 NBLIBS.${2}:= $(shell cd ${RUMPSRC}/${1} && ${RUMPMAKE} -V '$${LDADD}' | sed 's/-L\S*//g')
 LIBS.${2}=$${NBLIBS.${2}:-l%=rump/lib/lib%.a}
-bin/${2}: rumpobj/${1}/${2}.ro _lwp.o emul.o rumpclient.o readwrite.o remoteinit.o netbsd_init.o ${MAPS} $${LIBS.${2}}
-	${NBCC} ${NBCFLAGS} -o bin/${2} rumpobj/${1}/${2}.ro $${LIBS.${2}}
+${BINDIR}/${2}: rumpobj/${1}/${2}.ro _lwp.o emul.o rumpclient.o readwrite.o remoteinit.o netbsd_init.o ${MAPS} $${LIBS.${2}}
+	${NBCC} ${NBCFLAGS} -o ${BINDIR}/${2} rumpobj/${1}/${2}.ro $${LIBS.${2}}
 
-bin-rr/${2}: rumpobj/${1}/${2}.ro _lwp.o emul.o stub.o readwrite.o rumpinit.o netbsd_init.o ${MAPS} $${LIBS.${2}}
+${BINDIRRR}/${2}: rumpobj/${1}/${2}.ro _lwp.o emul.o stub.o readwrite.o rumpinit.o netbsd_init.o ${MAPS} $${LIBS.${2}}
 	./mkrun.sh ${2} rumpobj/${1}/${2}.ro $${LIBS.${2}}
 
 ifeq (${BUILDFIBER},true)
-${2}:	bin-rr/${2}
+${2}:	${BINDIRRR}/${2}
 else
-${2}:	bin/${2} bin-rr/${2}
+${2}:	${BINDIR}/${2} ${BINDIRRR}/${2}
 endif
 
 clean_${2}:
