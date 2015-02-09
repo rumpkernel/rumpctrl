@@ -185,7 +185,8 @@ Test_npf()
 	echo 'group default {
 		ruleset "test-set"
 		pass all
-	}' | dd of=/npf.conf 2> /dev/null
+	}
+	set bpf.jit off' | dd of=/npf.conf 2> /dev/null
 	npfctl reload /npf.conf
 	npfctl rule "test-set" add block proto icmp from 1.2.3.1 > /dev/null
 
