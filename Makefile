@@ -55,6 +55,7 @@ NBUTILS+=		usr.sbin/dumpfs
 NBUTILS+=		usr.sbin/ndp
 NBUTILS+=		usr.sbin/npf/npfctl
 NBUTILS+=		usr.sbin/pcictl
+NBUTILS+=		usr.sbin/rtadvd
 NBUTILS+=		usr.sbin/vnconfig
 NBUTILS+=		usr.sbin/wlanctl
 
