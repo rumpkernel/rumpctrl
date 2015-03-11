@@ -164,19 +164,16 @@ $(foreach util,${NBUTILS},$(eval $(call NBUTIL_templ,${util},$(notdir ${util})))
 
 INSTALL_PATH=${PWD}
 
-${OBJDIR}:
-		mkdir -p $@
-
 ${NBCC}:	cc.in rump/lib/rump-cc.specs rump/lib/ld
-		cat $< | sed "s|@PATH@|${INSTALL_PATH}|g" > $@
+		sed "s|@PATH@|${INSTALL_PATH}|g" $< > $@
 		chmod +x $@
 
-rump/lib/ld:	ld.in ${OBJDIR}
-		cat $< | sed "s|@PATH@|${PWD}|g" > $@
+rump/lib/ld:	ld.in
+		sed "s|@PATH@|${PWD}|g" $< > $@
 		chmod +x $@
 
 rump/lib/rump-cc.specs:	specs.in
-		cat $< | sed "s|@PATH@|${PWD}|g" | sed "s|@LDLIBS@|${COMPLIBS}|g" > $@
+		sed "s|@PATH@|${PWD}|g" $< | sed "s|@LDLIBS@|${COMPLIBS}|g" > $@
 
 clean: $(foreach util,${NBUTILS_BASE},clean_${util})
 		rm -f *.o *~ rump.map namespace.map fns.map all.map weakasm.map ${PROGS} ${OBJDIR}/* ${BINDIR}/* rumpremote.sh
