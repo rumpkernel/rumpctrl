@@ -126,7 +126,7 @@ ${BUILDRUMP} && ./buildrump.sh/buildrump.sh ${BUILD_QUIET} \
 # build tools (for building libs)
 ./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${EXTRAFLAGS} ${FLAGS} -s ${RUMPSRC} \
     -T rumptools -o rumpobj -F CFLAGS="-nostdinc -isystem ${PWD}/rump/include" \
-    -N -k -V MKPIC=no -V BUILDRUMP_SYSROOT=yes \
+    -k -V MKPIC=no -V BUILDRUMP_SYSROOT=yes \
     tools kernelheaders install
 
 # set some special variables currently required by libpthread.  Doing
