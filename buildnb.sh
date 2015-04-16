@@ -79,10 +79,6 @@ done
 [ ! -f ./buildrump.sh/subr.sh ] && git submodule update --init buildrump.sh
 . ./buildrump.sh/subr.sh
 
-if ! ${CC:-cc} --version | grep -q 'Free Software Foundation'; then
-	die 'rumprun-posix currently requires CC=gcc'
-fi
-
 ${MAKE} --version | grep -q 'GNU Make' \
     || die GNU Make required, '$MAKE' "(${MAKE})" is not
 
