@@ -15,6 +15,7 @@ BUILDRUMP=true
 TESTS=false
 BUILDZFS=false
 BUILDFIBER=false
+BUILDLOCAL=false
 RUMPSRC=rumpsrc
 
 # figure out where gmake lies
@@ -68,6 +69,9 @@ for arg in "$@"; do
 		;;
 	"pthread")
 		BUILDFIBER=false
+		;;
+	"local")
+		BUILDLOCAL=true
 		;;
 	*)
 		RUMPLOC=${arg}
@@ -157,6 +161,8 @@ if [ -n ${RUMPLOC} ]; then
 	appendconfig LD_LIBRARY_PATH
 	appendconfig RUMPRUN_CPPFLAGS
 fi
+
+appendconfig BUILDLOCAL
 
 mkdir -p bin
 

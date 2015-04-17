@@ -84,7 +84,11 @@ LWP=_lwp_pthread.c
 HALT=bin/halt
 endif
 
-all:		${NBUTILS_BASE} ${HALT} ${BINDIRRR}/pthread_test rumpremote.sh
+ifeq (${BUILDLOCAL},true)
+PTHREAD_TEST=	${BINDIRRR}/pthread_test
+endif
+
+all:		${NBUTILS_BASE} ${HALT} ${PTHREAD_TEST} rumpremote.sh
 
 rumpremote.sh: rumpremote.sh.in
 		sed 's,XXXPATHXXX,$(PWD),' $< > $@
@@ -154,7 +158,11 @@ ${BINDIRRR}/${2}: rumpobj/${1}/${2}.ro _lwp.o emul.o stub.o readwrite.o rumpinit
 ifeq (${BUILDFIBER},true)
 ${2}:	${BINDIRRR}/${2}
 else
+ifeq (${BUILDLOCAL},true)
 ${2}:	${BINDIR}/${2} ${BINDIRRR}/${2}
+else
+${2}:	${BINDIR}/${2}
+endif
 endif
 
 clean_${2}:
