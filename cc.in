@@ -5,9 +5,10 @@ case " $* " in
 esac
 if ! ${REALCC:-cc} --version | grep -q 'Free Software Foundation'; then
 	export PATH=@PATH@/rump/lib:$PATH
-	exec "${REALCC:-cc}" -nostdinc -D__NetBSD__ -U__FreeBSD__ -Ulinux \
-		-U__linux -U__linux__ -U__gnu_linux__ -isystem @PATH@/rump/include \
-		-fuse-ld=rump -nostdlib "$@"
+	exec "${REALCC:-cc}" \
+	     @BUILDRUMP_TOOL_CFLAGS@ \
+	     @BUILDRUMP_TOOL_CPPFLAGS@ \
+	     -fuse-ld=rump -nostdlib "$@"
 else
 	exec "${REALCC:-cc}" "$@" -specs "@PATH@/rump/lib/rump-cc.specs"
 fi

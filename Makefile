@@ -1,4 +1,5 @@
 include config.mk
+include rumptools/toolchain-conf.mk
 
 OBJDIR=	obj-rr
 
@@ -173,15 +174,19 @@ $(foreach util,${NBUTILS},$(eval $(call NBUTIL_templ,${util},$(notdir ${util})))
 INSTALL_PATH=${PWD}
 
 ${NBCC}:	cc.in rump/lib/rump-cc.specs rump/lib/ld.rump
-		sed "s|@PATH@|${INSTALL_PATH}|g" $< > $@
+		sed -e "s|@PATH@|${INSTALL_PATH}|g" \
+		    -e "s|@BUILDRUMP_TOOL_CPPFLAGS@|${BUILDRUMP_TOOL_CPPFLAGS}|g" \
+		    -e "s|@BUILDRUMP_TOOL_CFLAGS@|${BUILDRUMP_TOOL_CFLAGS}|g" $< > $@
 		chmod +x $@
 
 rump/lib/ld.rump:	ld.in
-		sed "s|@PATH@|${PWD}|g" $< > $@
+		sed "s|@PATH@|${INSTALL_PATH}|g" $< > $@
 		chmod +x $@
 
 rump/lib/rump-cc.specs:	specs.in
-		sed "s|@PATH@|${PWD}|g" $< | sed "s|@LDLIBS@|${COMPLIBS}|g" > $@
+		sed -e "s|@BUILDRUMP_TOOL_CPPFLAGS@|${BUILDRUMP_TOOL_CPPFLAGS}|g" \
+		    -e "s|@BUILDRUMP_TOOL_CFLAGS@|${BUILDRUMP_TOOL_CFLAGS}|g" \
+		    -e "s|@PATH@|${INSTALL_PATH}|g" $< > $@
 
 clean: $(foreach util,${NBUTILS_BASE},clean_${util})
 		rm -f *.o *~ rump.map namespace.map fns.map all.map weakasm.map ${PROGS} ${OBJDIR}/* ${BINDIR}/* rumpremote.sh
