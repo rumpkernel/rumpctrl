@@ -1,10 +1,10 @@
 %rename cpp_options old_cpp_options
 
 *cpp_options:
--nostdinc -D__NetBSD__ -U__FreeBSD__ -Ulinux -U__linux -U__linux__ -U__gnu_linux__ -isystem @PATH@/rump/include -isystem include%s %(old_cpp_options)
+@BUILDRUMP_TOOL_CFLAGS@ @BUILDRUMP_TOOL_CPPFLAGS@ -isystem include%s %(old_cpp_options)
 
 *cc1:
-%(cc1_cpu) -nostdinc -isystem @PATH@/rump/include -isystem include%s
+%(cc1_cpu) @BUILDRUMP_TOOL_CFLAGS@ @BUILDRUMP_TOOL_CPPFLAGS@
 
 *linker:
 @PATH@/rump/lib/ld.rump --stunt-intermediate %g.link1 %g.link2
