@@ -145,7 +145,7 @@ weakasm.map:	${RUMPSRC}/lib/libc/sys/Makefile.inc ${RUMPMAKE}
 define NBUTIL_templ
 rumpobj/${1}/${2}.ro:
 	( cd ${RUMPSRC}/${1} && ${RUMPMAKE} obj && \
-	    ${RUMPMAKE} LIBCRT0= BUILDRUMP_CFLAGS="-fPIC -std=gnu99 -D__NetBSD__ ${CPPFLAGS.${2}}" ${2}.ro )
+	    ${RUMPMAKE} LDFLAGS=-Wl,-r LIBCRT0= BUILDRUMP_CFLAGS="-fPIC -std=gnu99 -D__NetBSD__ ${CPPFLAGS.${2}}" ${2}.ro )
 
 NBLIBS.${2}:= $(shell cd ${RUMPSRC}/${1} && ${RUMPMAKE} -V '$${LDADD}' | sed 's/-L\S*//g')
 LIBS.${2}=$${NBLIBS.${2}:-l%=rump/lib/lib%.a}
