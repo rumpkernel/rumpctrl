@@ -25,12 +25,6 @@ matrix:
             - llvm-toolchain-precise-3.6
     - env: WITHZFS=false THREADING=pthread REALCC=clang-3.6
       addons: *clang36
-    - env: WITHZFS=true  THREADING='fiber local' REALCC=clang-3.6
-      addons: *clang36
-    - env: WITHZFS=true  THREADING='fiber local' REALCC=clang-3.6
-      addons: *clang36
-    - env: WITHZFS=true  THREADING=pthread REALCC=clang-3.6
-      addons: *clang36
 
 script:
    - CC=$REALCC ./buildnb.sh -qq $(${WITHZFS} && echo zfs) ${THREADING} buildrump tests
