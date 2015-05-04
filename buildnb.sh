@@ -16,7 +16,7 @@ TESTS=false
 BUILDZFS=false
 BUILDFIBER=false
 BUILDLOCAL=false
-RUMPSRC=rumpsrc
+RUMPSRC=src-netbsd
 
 # figure out where gmake lies
 if [ -z "${MAKE}" ]; then
