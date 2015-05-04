@@ -1,20 +1,11 @@
 [![Build Status](https://travis-ci.org/rumpkernel/rumprun-posix.png?branch=master)](https://travis-ci.org/rumpkernel/rumprun-posix)
 
-Rumprun-posix facilitates compiling and running programs against rump
-kernels on POSIX-like userspace platform.  Rumprun-posix is especially
-useful for the configuration of userspace rump kernels.  This repository
+Rumpctrl provides configuration, control and diagnostic utilities for
+rump kernels.  These utilities can be run on a POSIX-type
+userspace platform to remotely inspect and adjust the status of rump
+kernels via the _sysproxy_ remote system call facility.  This repository
 provides both the build framework and a selection of familiar utilities
 such as `ifconfig`, `mount`, `sysctl`, and more.
 
-Quickstart, run the following commands:
-
-````
-./buildnb.sh
-. ./rumpremote.sh
-rumpremote_listcmds
-````
-
-This will fetch and build dependencies and list bundled commands.
-
-See [the wiki](http://wiki.rumpkernel.org/Repo:-rumprun-posix) for more
+See [the wiki](http://wiki.rumpkernel.org/Repo:-rumpctrl) for more
 information and instructions.
