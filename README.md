@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/rumpkernel/rumprun-posix.png?branch=master)](https://travis-ci.org/rumpkernel/rumprun-posix)
+[![Build Status](https://travis-ci.org/rumpkernel/rumpctrl.png?branch=master)](https://travis-ci.org/rumpkernel/rumpctrl)
 
 Rumpctrl provides configuration, control and diagnostic utilities for
 rump kernels.  These utilities can be run on a POSIX-type
