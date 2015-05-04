@@ -1,12 +1,6 @@
-echo
-echo '>> rumpremote.sh is provided only for compatibility.'
-echo '>> it will be removed at a future date.'
-echo '>> use rumpctrl.sh!'
-echo
-
 rrCANDO=true
-[ -z "${RUMPREMOTE_LOADED}" ] \
-    || { echo "rumpremote env already loaded!"; rrCANDO=false; }
+[ -z "${RUMPCTRL_LOADED}" ] \
+    || { echo "rumpctrl env already loaded!"; rrCANDO=false; }
 
 # technically bash commands (PS1), but should mostly work with /bin/sh
 #[ "${SHELL}" != "${SHELL%bash}" ] \
@@ -15,7 +9,7 @@ rrCANDO=true
 # sed replacement is not run with /g ...
 [ "XXXPATHXXX" = "XXXPATHXXX" ] && { echo "not preprocessed"; rrCANDO=false; }
 
-rumpremote_hascmd ()
+rumpctrl_hascmd ()
 {
 	[ -z "${1}" ] && { echo '#f'; false; return; }
 	PATH=${RRPATH}/bin type $1 > /dev/null 2>&1
@@ -27,7 +21,7 @@ rumpremote_hascmd ()
 	fi
 }
 
-rumpremote_hostcmd ()
+rumpctrl_hostcmd ()
 {
 
 	PATH="${rrPATH}" "$@"
@@ -35,7 +29,7 @@ rumpremote_hostcmd ()
 
 if ${rrCANDO}; then
 	RRPATH=XXXPATHXXX
-	RUMPREMOTE_LOADED=yes
+	RUMPCTRL_LOADED=yes
 
 	# parse args to see if we should set RUMP_SERVER
 	# (yes, this is another bash'ism)
@@ -57,34 +51,34 @@ if ${rrCANDO}; then
 	# XXX: not restored
 	unalias -a
 
-	alias rumpremote_listcmds='for x in $(echo ${RRPATH}/bin/*);
+	alias rumpctrl_listcmds='for x in $(echo ${RRPATH}/bin/*);
 	    do echo ${x##*/};done | column'
-	alias cd='echo ERROR: cd not available in rumpremote mode'
+	alias cd='echo ERROR: cd not available in rumpctrl mode'
 
 	# save current values
 	rrPATH="${PATH}"
 	rrPS1="${PS1}"
 
 	# replace env variables
-	PS1='rumpremote (${RUMP_SERVER:-NULL})$ '
+	PS1='rumpctrl (${RUMP_SERVER:-NULL})$ '
 	export PS1
 
 	PATH="${RRPATH}/bin:${PATH}"
 	export PATH
 
-	alias rumpremote_unload='
+	alias rumpctrl_unload='
 		PS1="${rrPS1}"
 		PATH="${rrPATH}"
-		unset RUMPREMOTE_LOADED
+		unset RUMPCTRL_LOADED
 		unset rrPS1
 		unset rrPATH
-		unalias rumpremote_listcmds
-		unalias rumpremote_unload
+		unalias rumpctrl_listcmds
+		unalias rumpctrl_unload
 		unalias cd
-		unset -f rumpremote_hascmd
-		unset -f rumpremote_hostcmd
+		unset -f rumpctrl_hascmd
+		unset -f rumpctrl_hostcmd
 	'
-elif [ ! -z "${RUMPREMOTE_LOADED}" ]; then
-        unset -f rumpremote_hascmd
-        unset -f rumpremote_hostcmd
+elif [ ! -z "${RUMPCTRL_LOADED}" ]; then
+        unset -f rumpctrl_hascmd
+        unset -f rumpctrl_hostcmd
 fi

@@ -89,9 +89,12 @@ ifeq (${BUILDLOCAL},true)
 PTHREAD_TEST=	${BINDIRRR}/pthread_test
 endif
 
-all:		${NBUTILS_BASE} ${HALT} ${PTHREAD_TEST} rumpremote.sh
+all:		${NBUTILS_BASE} ${HALT} ${PTHREAD_TEST} rumpremote.sh rumpctrl.sh
 
 rumpremote.sh: rumpremote.sh.in
+		sed 's,XXXPATHXXX,$(PWD),' $< > $@
+
+rumpctrl.sh: rumpctrl.sh.in
 		sed 's,XXXPATHXXX,$(PWD),' $< > $@
 
 _lwp.o:		${LWP} ${NBCC}
@@ -189,7 +192,7 @@ rump/lib/rump-cc.specs:	specs.in
 		    -e "s|@PATH@|${INSTALL_PATH}|g" $< > $@
 
 clean: $(foreach util,${NBUTILS_BASE},clean_${util})
-		rm -f *.o *~ rump.map namespace.map fns.map all.map weakasm.map ${PROGS} ${OBJDIR}/* ${BINDIR}/* rumpremote.sh
+		rm -f *.o *~ rump.map namespace.map fns.map all.map weakasm.map ${PROGS} ${OBJDIR}/* ${BINDIR}/* rumpremote.sh rumpctrl.sh
 		rm -f test_disk-* test_busmem* disk1-* disk2-* csock-* csock1-* csock2-* raid.conf-*
 		rm -f ${NBCC} rump/lib/rump-cc.specs
 

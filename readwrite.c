@@ -3,11 +3,11 @@
 #include <unistd.h>
 
 /*
- * _Very_ cheap trick (for purposes of rumpremote): assume fd<=2 is
+ * _Very_ cheap trick (for purposes of remote clients): assume fd<=2 is
  * for stdio/stdout/stderr, so send it the console.  All other file
  * descriptors go to the rump kernel.  This of course should be
  * better tracked using something like rumphijack, but the cheap trick
- * allows to use most utils via rumpremote now.
+ * allows to use most utils via sysproxy now.
  */
 
 int rump___sysimpl_read(int, void *, size_t);

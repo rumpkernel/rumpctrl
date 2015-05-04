@@ -29,7 +29,7 @@ if ! ${FIBER}; then
 	rump_server -lrumpvfs -lrumpfs_kernfs -lrumpfs_ffs -lrumpdev_disk -lrumpdev -lrumpnet -lrumpnet_net -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_shmif -d key=/fsimg,hostpath=${FSIMG},size=${FSIMGSIZE} -d key=/rfsimg,hostpath=${FSIMG},size=${FSIMGSIZE},type=chr -r 2m $SOCKFILE
 	SOCKFILE_LIST="${SOCKFILE}"
 	export RUMP_SERVER="$SOCKFILE"
-	. ./rumpremote.sh
+	. ./rumpctrl.sh
 fi
 
 TESTS=''
@@ -147,7 +147,7 @@ Test_shmif()
 	ifconfig shmif0 \
 	   | grep 'shmif0: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST>'\
 	     > /dev/null
-	rumpremote_hostcmd rm $BM
+	rumpctrl_hostcmd rm $BM
 }
 definetest Test_shmif
 
@@ -197,7 +197,7 @@ Test_npf()
 
 	npfctl stop
 	ping -oq -w 2 1.2.3.1 | grep '1 packets received' > /dev/null
-	rumpremote_hostcmd rm $BM
+	rumpctrl_hostcmd rm $BM
 }
 definetest Test_npf ${SOCKFILE1} ${SOCKFILE2}
 
@@ -214,7 +214,7 @@ Test_cgd()
 	mkdir /mnt
 	mount_ffs /dev/cgd0a /mnt
 	mount | grep -q cgd0a
-	rumpremote_hostcmd rm $DISK
+	rumpctrl_hostcmd rm $DISK
 }
 definetest Test_cgd ${SOCKFILE_CGD}
 
@@ -258,7 +258,7 @@ fifo 100" > ${RC}
 
 	umount /mnt
 
-	rumpremote_hostcmd rm $D1 $D2 $RC
+	rumpctrl_hostcmd rm $D1 $D2 $RC
 }
 definetest Test_raidframe ${SOCKFILE_RAID}
 
@@ -302,7 +302,7 @@ else
 	for serv in ${SOCKFILE_LIST}; do
 		RUMP_SERVER=${serv} halt
 	done
-	rumpremote_hostcmd rm ${FSIMG}
+	rumpctrl_hostcmd rm ${FSIMG}
 fi
 
 # show if passed
