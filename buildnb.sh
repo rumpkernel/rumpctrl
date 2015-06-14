@@ -9,9 +9,6 @@ appendconfig ()
 
 STDJ='-j4'
 EXTRAFLAGS="${STDJ}"
-CHECKOUT=true
-JUSTCHECKOUT=false
-BUILDRUMP=true
 TESTS=false
 BUILDZFS=false
 BUILDFIBER=false
@@ -45,15 +42,6 @@ shift $((${OPTIND} - 1))
 
 for arg in "$@"; do
 	case ${arg} in
-	"justcheckout")
-		JUSTCHECKOUT=true
-		;;
-	"buildrump")
-		BUILDRUMP=true
-		;;
-	"nobuildrump")
-		BUILDRUMP=false
-		;;
 	"tests")
 		TESTS=true
 		;;
@@ -75,7 +63,6 @@ for arg in "$@"; do
 		;;
 	*)
 		RUMPLOC=${arg}
-		BUILDRUMP=false
 		;;
 	esac
 done
@@ -88,13 +75,27 @@ ${MAKE} --version | grep -q 'GNU Make' \
 
 set -e
 
-# get sources
-if ${CHECKOUT}; then
-	if git submodule status ${RUMPSRC} | grep -q '^-' ; then
-		git submodule update --init --recursive ${RUMPSRC}
-	fi
+# Check sources
+if git submodule status ${RUMPSRC} 2>/dev/null | grep -q '^-' \
+    || git submodule status buildrump.sh 2>/dev/null | grep -q '^-'
+then
+	echo '>>'
+	echo '>> submodules missing.  run "git submodule update --init"'
+	echo '>>'
+	exit 1
 fi
-${JUSTCHECKOUT} && { echo ">> $0 done" ; exit 0; }
+if git submodule status ${RUMPSRC} 2>/dev/null | grep -q '^+' \
+    || git submodule status buildrump.sh 2>/dev/null | grep -q '^+'
+	then
+	echo '>>'
+	echo '>> Your git submodules are out-of-date'
+	echo '>> Forgot to run "git submodule update" after pull?'
+	echo '>> (sleeping for 5s, press ctrl-C to abort)'
+	echo '>>'
+	echo -n '>>'
+	for x in 1 2 3 4 5; do echo -n ' !' ; sleep 1 ; done
+fi
+
 
 rm -f ./config.mk ./config.sh
 
@@ -109,7 +110,7 @@ appendconfig RUMPSRC
 ${BUILDFIBER} && FIBERFLAGS="-V RUMPUSER_THREADS=fiber -V RUMP_CURLWP=hypercall"
 
 # Build rump kernel if requested
-${BUILDRUMP} && ./buildrump.sh/buildrump.sh ${BUILD_QUIET} \
+./buildrump.sh/buildrump.sh ${BUILD_QUIET} \
     ${EXTRAFLAGS} ${FLAGS} ${FIBERFLAGS} \
     -s ${RUMPSRC} -T rumptools -o rumpdynobj -d rumpdyn -V MKSTATICLIB=no \
     $(${BUILDZFS} && echo -V MKZFS=yes) tools
@@ -118,7 +119,7 @@ ${BUILDRUMP} && ./buildrump.sh/buildrump.sh ${BUILD_QUIET} \
 RUMPMAKE=$(pwd)/rumptools/rumpmake
 appendconfig RUMPMAKE
 
-${BUILDRUMP} && ./buildrump.sh/buildrump.sh ${BUILD_QUIET} \
+./buildrump.sh/buildrump.sh ${BUILD_QUIET} \
     ${EXTRAFLAGS} ${FLAGS} ${FIBERFLAGS} \
     -s ${RUMPSRC} -T rumptools -o rumpdynobj -d rumpdyn -V MKSTATICLIB=no \
     $(${BUILDZFS} && echo -V MKZFS=yes) build install
@@ -148,10 +149,7 @@ for lib in ${LIBS}; do
 	makeuserlib ${lib}
 done
 
-if ${BUILDRUMP}; then
-	RUMPLOC=${PWD}/rumpdyn
-fi
-
+RUMPLOC=${PWD}/rumpdyn
 if [ -n ${RUMPLOC} ]; then
 	LIBRARY_PATH=${RUMPLOC}/lib
 	LD_LIBRARY_PATH=${RUMPLOC}/lib
