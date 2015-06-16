@@ -62,6 +62,7 @@ NBUTILS+=		usr.sbin/wlanctl
 
 #NBUTILS+=		usr.bin/kdump
 NBUTILS+=		usr.bin/ktrace
+NBUTILS+=		usr.bin/mixerctl
 
 NBUTILS+=		external/bsd/wpa/bin/wpa_passphrase
 NBUTILS+=		external/bsd/wpa/bin/wpa_supplicant
