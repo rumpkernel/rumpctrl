@@ -86,10 +86,6 @@ LWP=_lwp_pthread.c
 HALT=bin/halt
 endif
 
-ifeq (${BUILDLOCAL},true)
-PTHREAD_TEST=	${BINDIRRR}/pthread_test
-endif
-
 all:		${NBUTILS_BASE} ${HALT} ${PTHREAD_TEST} rumpremote.sh rumpctrl.sh
 
 rumpremote.sh: rumpremote.sh.in
@@ -133,9 +129,6 @@ MAPS=rump.map namespace.map host.map netbsd.map readwrite.map emul.map weakasm.m
 ${BINDIR}/halt:	halt.o _lwp.o emul.o rumpclient.o readwrite.o remoteinit.o ${MAPS}
 		${NBCC} ${NBCFLAGS} -o ${BINDIR}/halt halt.o
 
-${BINDIRRR}/pthread_test: pthread_test.o _lwp.o emul.o netbsd_init.o readwrite.o stub.o rumpinit.o ${MAPS}
-		./mkrun.sh pthread_test pthread_test.o rump/lib/libpthread.a
-
 rump.map:	${RUMPSRC}/sys/rump/rump.sysmap
 		awk '{printf("%s\t%s\n",$$3,$$4)}' $< > $@
 
@@ -157,17 +150,10 @@ LIBS.${2}=$${NBLIBS.${2}:-l%=rump/lib/lib%.a}
 ${BINDIR}/${2}: rumpobj/${1}/${2}.ro _lwp.o emul.o rumpclient.o readwrite.o remoteinit.o netbsd_init.o ${MAPS} $${LIBS.${2}}
 	${NBCC} ${NBCFLAGS} -o ${BINDIR}/${2} rumpobj/${1}/${2}.ro $${LIBS.${2}}
 
-${BINDIRRR}/${2}: rumpobj/${1}/${2}.ro _lwp.o emul.o stub.o readwrite.o rumpinit.o netbsd_init.o ${MAPS} $${LIBS.${2}}
-	./mkrun.sh ${2} rumpobj/${1}/${2}.ro $${LIBS.${2}}
-
 ifeq (${BUILDFIBER},true)
 ${2}:	${BINDIRRR}/${2}
 else
-ifeq (${BUILDLOCAL},true)
-${2}:	${BINDIR}/${2} ${BINDIRRR}/${2}
-else
 ${2}:	${BINDIR}/${2}
-endif
 endif
 
 clean_${2}:

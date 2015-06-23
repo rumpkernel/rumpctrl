@@ -12,7 +12,6 @@ EXTRAFLAGS="${STDJ}"
 TESTS=false
 BUILDZFS=false
 BUILDFIBER=false
-BUILDLOCAL=false
 RUMPSRC=src-netbsd
 
 # figure out where gmake lies
@@ -57,9 +56,6 @@ for arg in "$@"; do
 		;;
 	"pthread")
 		BUILDFIBER=false
-		;;
-	"local")
-		BUILDLOCAL=true
 		;;
 	*)
 		RUMPLOC=${arg}
@@ -175,8 +171,6 @@ userincludes ${RUMPSRC} ${LIBS} ${RUMPSRC}/external/bsd/libelf
 for lib in ${LIBS}; do
 	makeuserlib ${lib}
 done
-
-appendconfig BUILDLOCAL
 
 mkdir -p bin
 

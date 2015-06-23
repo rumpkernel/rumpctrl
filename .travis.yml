@@ -7,15 +7,11 @@ before_install:
 
 matrix:
   include:
-    - env: WITHZFS=false THREADING='fiber local' REALCC=gcc
-      compiler: gcc
     - env: WITHZFS=false THREADING=pthread REALCC=gcc
-      compiler: gcc
-    - env: WITHZFS=true  THREADING='fiber local' REALCC=gcc
       compiler: gcc
     - env: WITHZFS=true  THREADING=pthread REALCC=gcc
       compiler: gcc
-    - env: WITHZFS=false THREADING='fiber local' REALCC=clang-3.6
+    - env: WITHZFS=false THREADING=pthread REALCC=clang-3.6
       addons: &clang36
         apt:
           packages:
@@ -23,8 +19,6 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.6
-    - env: WITHZFS=false THREADING=pthread REALCC=clang-3.6
-      addons: *clang36
 
 script:
    - CC=$REALCC ./buildnb.sh -qq $(${WITHZFS} && echo zfs) ${THREADING} buildrump tests
