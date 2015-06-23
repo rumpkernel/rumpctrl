@@ -4,6 +4,9 @@
  * This pthread version is not really expected to work.  It disallows
  * creating threads with ENOSYS.  If you manage to enter the code from
  * other places, well, good luck.
+ *
+ * The main purpose of this code as of current is to make libpthread
+ * compile ... (and I'm not exactly sure why we bother)
  */
 
 #include <sys/cdefs.h>
