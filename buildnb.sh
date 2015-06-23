@@ -56,9 +56,6 @@ for arg in "$@"; do
 	esac
 done
 
-[ ! -f ./buildrump.sh/subr.sh ] && git submodule update --init buildrump.sh
-. ./buildrump.sh/subr.sh
-
 ${MAKE} --version | grep -q 'GNU Make' \
     || die GNU Make required, '$MAKE' "(${MAKE})" is not
 
@@ -84,7 +81,6 @@ if git submodule status ${RUMPSRC} 2>/dev/null | grep -q '^+' \
 	echo -n '>>'
 	for x in 1 2 3 4 5; do echo -n ' !' ; sleep 1 ; done
 fi
-
 
 rm -f ./config.mk ./config.sh
 
