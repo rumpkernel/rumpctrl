@@ -109,22 +109,20 @@ appendconfig RUMPSRC
 
 ${BUILDFIBER} && FIBERFLAGS="-V RUMPUSER_THREADS=fiber -V RUMP_CURLWP=hypercall"
 
-# Build rump kernel if requested
+#
+# We build tools twice: once to create a host version of librumpclient
+# and another time to build all of the other libs.  Technically,
+# the difference is just a bit of mk.conf, but it's a lot easier to
+# build twice than start poking in the general mk.conf file.
+#
+
+# host lib tools (for building librumpclient)
 ./buildrump.sh/buildrump.sh ${BUILD_QUIET} \
     ${EXTRAFLAGS} ${FLAGS} ${FIBERFLAGS} \
-    -s ${RUMPSRC} -T rumptools -o rumpdynobj -d rumpdyn -V MKSTATICLIB=no \
-    $(${BUILDZFS} && echo -V MKZFS=yes) tools
+    -s ${RUMPSRC} -T hosttools -o hostobj -d hostlib -V MKSTATICLIB=no \
+    tools
 
-# set rumpmake
-RUMPMAKE=$(pwd)/rumptools/rumpmake
-appendconfig RUMPMAKE
-
-./buildrump.sh/buildrump.sh ${BUILD_QUIET} \
-    ${EXTRAFLAGS} ${FLAGS} ${FIBERFLAGS} \
-    -s ${RUMPSRC} -T rumptools -o rumpdynobj -d rumpdyn -V MKSTATICLIB=no \
-    $(${BUILDZFS} && echo -V MKZFS=yes) build install
-
-# build tools (for building libs)
+# tools and headers for clientside libs
 ./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${EXTRAFLAGS} ${FLAGS} -s ${RUMPSRC} \
     -T rumptools -o rumpobj -F CFLAGS="-nostdinc -isystem ${PWD}/rump/include" \
     -k -V MKPIC=no -V BUILDRUMP_SYSROOT=yes \
@@ -142,23 +140,41 @@ CPPFLAGS+=      -D_PTHREAD_GETTCB_EXT=_lwp_rumprun_gettcb
 .endif  # LIB == pthread
 EOF
 
+#
+# Build host bits.  There's no real infra for this, so it's mostly
+# a matter of running rumpmake in the right places with the right args.
+#
+RUMPMAKE=$(pwd)/hosttools/rumpmake
+mkdir -p hostlib/include/rump
+mkdir -p hostlib/lib
+(
+	# librumpclient dependency
+	cd ${RUMPSRC}/lib/librumpuser
+	${RUMPMAKE} includes
+)
+(
+	# librumpclient dependency
+	cd ${RUMPSRC}/sys/rump/include
+	${RUMPMAKE} includes
+)
+(
+	cd ${RUMPSRC}/lib/librumpclient
+	${RUMPMAKE} includes \
+	    && ${RUMPMAKE} MKMAN=no dependall \
+	    && ${RUMPMAKE} MKMAN=no install
+)
+
+# set rumpmake
+RUMPMAKE=$(pwd)/rumptools/rumpmake
+appendconfig RUMPMAKE
+
 usermtree rump
-userincludes ${RUMPSRC} ${LIBS} ${RUMPSRC}/lib/librumpclient ${RUMPSRC}/external/bsd/libelf
+userincludes ${RUMPSRC} ${LIBS} ${RUMPSRC}/external/bsd/libelf
+( cd ${RUMPSRC}/lib/librumpclient && ${RUMPMAKE} includes )
 
 for lib in ${LIBS}; do
 	makeuserlib ${lib}
 done
-
-RUMPLOC=${PWD}/rumpdyn
-if [ -n ${RUMPLOC} ]; then
-	LIBRARY_PATH=${RUMPLOC}/lib
-	LD_LIBRARY_PATH=${RUMPLOC}/lib
-	RUMPRUN_CPPFLAGS=-I${RUMPLOC}/include
-
-	appendconfig LIBRARY_PATH
-	appendconfig LD_LIBRARY_PATH
-	appendconfig RUMPRUN_CPPFLAGS
-fi
 
 appendconfig BUILDLOCAL
 

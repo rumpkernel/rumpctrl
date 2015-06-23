@@ -7,7 +7,7 @@ BINDIR=bin
 BINDIRRR=bin-rr
 
 NBCFLAGS=${CFLAGS} -O2 -g -Wall
-HOSTCFLAGS=${CFLAGS} -O2 -g -Wall ${RUMPRUN_CPPFLAGS}
+HOSTCFLAGS=${CFLAGS} -O2 -g -Wall -Ihostlib/include
 
 NBUTILS+=		bin/cat
 NBUTILS+=		bin/chmod
@@ -198,7 +198,7 @@ clean: $(foreach util,${NBUTILS_BASE},clean_${util})
 		rm -f ${NBCC} rump/lib/rump-cc.specs
 
 cleanrump:	clean
-		rm -rf rump rumpobj rumptools rumpdyn rumpdynobj
+		rm -rf rump rumpobj rumptools hostlib hosttools hostobj
 		rm -f config.mk config.sh
 
 distcleanrump:	clean cleanrump
