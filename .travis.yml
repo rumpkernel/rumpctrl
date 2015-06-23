@@ -21,7 +21,7 @@ matrix:
             - llvm-toolchain-precise-3.6
 
 script:
-   - ( cd buildrump.sh && ./buildrump.sh -s ../src-netbsd -V MKSTATICLIB=no -q )
+   - ( cd buildrump.sh && ./buildrump.sh -s ../src-netbsd -V MKSTATICLIB=no -q fullbuild )
    - CC=$REALCC ./buildnb.sh -qq $(${WITHZFS} && echo zfs) ${THREADING} tests ./buildrump.sh/rump
 
 notifications:
