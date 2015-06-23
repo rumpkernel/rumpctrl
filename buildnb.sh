@@ -178,11 +178,7 @@ ${MAKE}
 if ${TESTS}; then
 	[ -n "${RUMPLOC}" ] || die need rump kernel for tests
 	export PATH=${RUMPLOC}/bin:${PATH}
-	if ${BUILDFIBER}; then
-		tests/test.sh fiber
-	else
-		tests/test.sh pthread
-	fi
+	tests/test.sh
 fi
 
 echo

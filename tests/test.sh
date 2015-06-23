@@ -16,21 +16,10 @@ SOCKFILE_VND="unix://csock-vnd-$$"
 FSIMG=test.ffs.img
 FSIMGSIZE=$(( 16*1024*1024 ))
 
-if [ "$1" = 'fiber' ]; then
-	FIBER=true
-else
-	FIBER=false
-
-fi
-shift
-
-# note: _must_ shift before this bit
-if ! ${FIBER}; then
-	rump_server -lrumpvfs -lrumpfs_kernfs -lrumpfs_ffs -lrumpdev_disk -lrumpdev -lrumpnet -lrumpnet_net -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_shmif -d key=/fsimg,hostpath=${FSIMG},size=${FSIMGSIZE} -d key=/rfsimg,hostpath=${FSIMG},size=${FSIMGSIZE},type=chr -r 2m $SOCKFILE
-	SOCKFILE_LIST="${SOCKFILE}"
-	export RUMP_SERVER="$SOCKFILE"
-	. ./rumpctrl.sh
-fi
+rump_server -lrumpvfs -lrumpfs_kernfs -lrumpfs_ffs -lrumpdev_disk -lrumpdev -lrumpnet -lrumpnet_net -lrumpnet_netinet -lrumpnet_netinet6 -lrumpnet_shmif -d key=/fsimg,hostpath=${FSIMG},size=${FSIMGSIZE} -d key=/rfsimg,hostpath=${FSIMG},size=${FSIMGSIZE},type=chr -r 2m $SOCKFILE
+SOCKFILE_LIST="${SOCKFILE}"
+export RUMP_SERVER="$SOCKFILE"
+. ./rumpctrl.sh
 
 TESTS=''
 definetest ()
@@ -40,15 +29,6 @@ definetest ()
 	shift
 	TESTS="${TESTS} ${test}"
 	[ $# -gt 0 ] && SOCKFILE_LIST="${SOCKFILE_LIST} $*"
-}
-
-TESTS_FIBER=''
-definetest_fiber ()
-{
-
-	test=$1
-	shift
-	TESTS_FIBER="${TESTS_FIBER} ${test}"
 }
 
 runtest ()
@@ -66,13 +46,6 @@ runtest ()
 }
 
 # tests
-
-Test_pthreads()
-{
-
-	./bin-rr/pthread_test >/dev/null
-}
-definetest_fiber Test_pthreads
 
 Test_ifconfig()
 {
@@ -291,19 +264,13 @@ Test_zfs()
 definetest Test_zfs
 
 # actually run the tests
-if ${FIBER}; then
-	for test in ${TESTS_FIBER}; do
-		runtest ${test}
-	done
-else
-	for test in ${TESTS}; do
-		runtest ${test}
-	done
-	for serv in ${SOCKFILE_LIST}; do
-		RUMP_SERVER=${serv} halt
-	done
-	rumpctrl_hostcmd rm ${FSIMG}
-fi
+for test in ${TESTS}; do
+	runtest ${test}
+done
+for serv in ${SOCKFILE_LIST}; do
+	RUMP_SERVER=${serv} halt
+done
+rumpctrl_hostcmd rm ${FSIMG}
 
 # show if passed
 
