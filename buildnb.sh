@@ -11,7 +11,6 @@ STDJ='-j4'
 EXTRAFLAGS="${STDJ}"
 TESTS=false
 BUILDZFS=false
-BUILDFIBER=false
 RUMPSRC=src-netbsd
 
 # figure out where gmake lies
@@ -50,12 +49,6 @@ for arg in "$@"; do
 		;;
 	"zfs")
 		BUILDZFS=true
-		;;
-	"fiber")
-		BUILDFIBER=true
-		;;
-	"pthread")
-		BUILDFIBER=false
 		;;
 	*)
 		RUMPLOC=${arg}
@@ -100,10 +93,7 @@ ${BUILDZFS} && \
 LIBS="$(stdlibs ${RUMPSRC}) ${ZFSLIBS}"
 
 appendconfig BUILDZFS
-appendconfig BUILDFIBER
 appendconfig RUMPSRC
-
-${BUILDFIBER} && FIBERFLAGS="-V RUMPUSER_THREADS=fiber -V RUMP_CURLWP=hypercall"
 
 #
 # We build tools twice: once to create a host version of librumpclient
@@ -113,8 +103,7 @@ ${BUILDFIBER} && FIBERFLAGS="-V RUMPUSER_THREADS=fiber -V RUMP_CURLWP=hypercall"
 #
 
 # host lib tools (for building librumpclient)
-./buildrump.sh/buildrump.sh ${BUILD_QUIET} \
-    ${EXTRAFLAGS} ${FLAGS} ${FIBERFLAGS} \
+./buildrump.sh/buildrump.sh ${BUILD_QUIET} ${EXTRAFLAGS} ${FLAGS} \
     -s ${RUMPSRC} -T hosttools -o hostobj -d hostlib -V MKSTATICLIB=no \
     tools
 

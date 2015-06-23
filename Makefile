@@ -79,14 +79,10 @@ NBUTILS_BASE= $(notdir ${NBUTILS})
 
 NBCC=./rump/bin/rump-cc
 
-ifeq (${BUILDFIBER},true)
-LWP=_lwp_fiber.c
-else
 LWP=_lwp_pthread.c
 HALT=bin/halt
-endif
 
-all:		${NBUTILS_BASE} ${HALT} ${PTHREAD_TEST} rumpremote.sh rumpctrl.sh
+all:		${NBUTILS_BASE} ${HALT} rumpremote.sh rumpctrl.sh
 
 rumpremote.sh: rumpremote.sh.in
 		sed 's,XXXPATHXXX,$(PWD),' $< > $@
@@ -150,11 +146,7 @@ LIBS.${2}=$${NBLIBS.${2}:-l%=rump/lib/lib%.a}
 ${BINDIR}/${2}: rumpobj/${1}/${2}.ro _lwp.o emul.o rumpclient.o readwrite.o remoteinit.o netbsd_init.o ${MAPS} $${LIBS.${2}}
 	${NBCC} ${NBCFLAGS} -o ${BINDIR}/${2} rumpobj/${1}/${2}.ro $${LIBS.${2}}
 
-ifeq (${BUILDFIBER},true)
-${2}:	${BINDIRRR}/${2}
-else
 ${2}:	${BINDIR}/${2}
-endif
 
 clean_${2}:
 	( [ ! -d ${RUMPSRC}/${1} ] || ( cd ${RUMPSRC}/${1} && ${RUMPMAKE} cleandir && rm -f ${2}.ro ) )
