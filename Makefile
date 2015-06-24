@@ -1,10 +1,7 @@
 include config.mk
 include rumptools/toolchain-conf.mk
 
-OBJDIR=	obj-rr
-
 BINDIR=bin
-BINDIRRR=bin-rr
 
 NBCFLAGS=${CFLAGS} -O2 -g -Wall
 HOSTCFLAGS=${CFLAGS} -O2 -g -Wall -Ihostlib/include
@@ -79,10 +76,7 @@ NBUTILS_BASE= $(notdir ${NBUTILS})
 
 NBCC=./rump/bin/rump-cc
 
-LWP=_lwp_pthread.c
-HALT=bin/halt
-
-all:		${NBUTILS_BASE} ${HALT} rumpremote.sh rumpctrl.sh
+all:		${NBUTILS_BASE} bin/halt rumpremote.sh rumpctrl.sh
 
 rumpremote.sh: rumpremote.sh.in
 		sed 's,XXXPATHXXX,$(PWD),' $< > $@
@@ -90,7 +84,7 @@ rumpremote.sh: rumpremote.sh.in
 rumpctrl.sh: rumpctrl.sh.in
 		sed 's,XXXPATHXXX,$(PWD),' $< > $@
 
-_lwp.o:		${LWP} ${NBCC}
+_lwp.o:		_lwp_pthread.c ${NBCC}
 		${NBCC} ${NBCFLAGS} -c $< -o $@
 
 emul.o:		emul.c
@@ -171,7 +165,7 @@ rump/lib/rump-cc.specs:	specs.in
 		    -e "s|@PATH@|${INSTALL_PATH}|g" $< > $@
 
 clean: $(foreach util,${NBUTILS_BASE},clean_${util})
-		rm -f *.o *~ rump.map namespace.map fns.map all.map weakasm.map ${PROGS} ${OBJDIR}/* ${BINDIR}/* rumpremote.sh rumpctrl.sh
+		rm -f *.o *~ rump.map namespace.map fns.map all.map weakasm.map ${PROGS} ${BINDIR}/* rumpremote.sh rumpctrl.sh
 		rm -f test_disk-* test_busmem* disk1-* disk2-* csock-* csock1-* csock2-* raid.conf-*
 		rm -f ${NBCC} rump/lib/rump-cc.specs
 
@@ -180,4 +174,3 @@ cleanrump:	clean
 		rm -f config.mk config.sh
 
 distcleanrump:	clean cleanrump
-		rm -rf ./${OBJDIR}
