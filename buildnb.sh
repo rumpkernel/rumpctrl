@@ -82,6 +82,7 @@ if git submodule status ${RUMPSRC} 2>/dev/null | grep -q '^+' \
 	for x in 1 2 3 4 5; do echo -n ' !' ; sleep 1 ; done
 fi
 
+. ./buildrump.sh/subr.sh
 rm -f ./config.mk ./config.sh
 
 ${BUILDZFS} && \
