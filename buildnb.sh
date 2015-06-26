@@ -16,8 +16,9 @@ RUMPSRC=src-netbsd
 # figure out where gmake lies
 if [ -z "${MAKE}" ]; then
 	MAKE=make
-	type gmake >/dev/null && MAKE=gmake
+	! type gmake >/dev/null 2>&1 || MAKE=gmake
 fi
+type ${MAKE} >/dev/null 2>&1 || die '"make" required but not found'
 
 # XXX TODO set FLAGS from -F options here to pass to buildrump.sh
 
