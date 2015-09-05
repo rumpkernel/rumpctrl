@@ -7,11 +7,12 @@ before_install:
 
 matrix:
   include:
-    - env: ZFS= REALCC=gcc
+    - env: ZFS= CC=gcc
       compiler: gcc
-    - env: ZFS=zfs  REALCC=gcc
+    - env: ZFS=zfs  CC=gcc
       compiler: gcc
-    - env: ZFS= REALCC=clang-3.6
+    - env: ZFS= CC=clang-3.6
+      compiler: clang-3.6
       addons: &clang36
         apt:
           packages:
@@ -22,7 +23,7 @@ matrix:
 
 script:
    - ( cd buildrump.sh && ./buildrump.sh -s ../src-netbsd -V MKSTATICLIB=no -qq fullbuild )
-   - CC=$REALCC ./buildnb.sh -qq ${ZFS} tests ./buildrump.sh/rump
+   - ./buildnb.sh -qq ${ZFS} tests ./buildrump.sh/rump
 
 notifications:
   irc:
