@@ -76,10 +76,7 @@ NBUTILS_BASE= $(notdir ${NBUTILS})
 
 NBCC=./rump/bin/rump-cc
 
-all:		${NBUTILS_BASE} bin/halt rumpremote.sh rumpctrl.sh
-
-rumpremote.sh: rumpremote.sh.in
-		sed 's,XXXPATHXXX,$(PWD),' $< > $@
+all:		${NBUTILS_BASE} bin/halt rumpctrl.sh
 
 rumpctrl.sh: rumpctrl.sh.in
 		sed 's,XXXPATHXXX,$(PWD),' $< > $@
@@ -156,7 +153,7 @@ rump/lib/rump-cc.specs:	specs.in
 		    -e "s|@PATH@|${INSTALL_PATH}|g" $< > $@
 
 clean: $(foreach util,${NBUTILS_BASE},clean_${util})
-		rm -f *.o *~ rump.map namespace.map fns.map all.map weakasm.map ${PROGS} ${BINDIR}/* rumpremote.sh rumpctrl.sh
+		rm -f *.o *~ rump.map namespace.map fns.map all.map weakasm.map ${PROGS} ${BINDIR}/* rumpctrl.sh
 		rm -f test_disk-* test_busmem* disk1-* disk2-* csock-* csock1-* csock2-* raid.conf-*
 		rm -f ${NBCC} rump/lib/rump-cc.specs
 
