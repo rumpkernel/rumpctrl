@@ -105,9 +105,6 @@ netbsd_init.o:	netbsd_init.c ${NBCC}
 halt.o:		halt.c ${NBCC}
 		${NBCC} ${NBCFLAGS} -c $< -o $@
 
-pthread_test.o:	pthread_test.c ${MAPS} ${NBCC}
-		${NBCC} ${NBCFLAGS} -c $< -o $@
-
 MAPS=rump.map namespace.map host.map netbsd.map readwrite.map emul.map weakasm.map
 
 ${BINDIR}/halt:	halt.o emul.o rumpclient.o readwrite.o remoteinit.o ${MAPS}
