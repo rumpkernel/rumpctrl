@@ -30,9 +30,6 @@ while [ $# != 0 ]; do
         	inter1="$1"; shift || noshift
         	inter2="$1"; shift || noshift
         	;;
-	-lc)
-		LINKLIBC=true
-		;;
 	-lgcc|-lgcc_s)
 		# added later
 		;;
@@ -55,9 +52,6 @@ while [ $# != 0 ]; do
 done
 
 if [ x"$outfile" = x ]; then outfile=a.out; fi
-
-mkremote()
-{
 
 # -lrt not always needed TODO work out at build time
 UNAME=$(uname -s)
@@ -88,13 +82,3 @@ ${OBJCOPY} -w --globalize-symbol='_netbsd_*' ${TMPFILE4}
 ${CC} ${LDFLAGS} ${TMPFILE4} @PATH@/emul.o @PATH@/rumpclient.o @PATH@/remoteinit.o ${RUMPCLIENT} -o ${outfile}
 
 rm ${TMPFILE1} ${TMPFILE2} ${TMPFILE3} ${TMPFILE4}
-}
-
-if ${LINKLIBC}
-then
-	mkremote
-else
-	${LD} ${ALLARGS}
-fi
-
-
