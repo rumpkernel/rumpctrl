@@ -93,9 +93,6 @@ readwrite.o:	readwrite.c
 remoteinit.o:	remoteinit.c
 		${CC} ${HOSTCFLAGS} -c $< -o $@
 
-rumpinit.o:	rumpinit.c
-		${CC} ${HOSTCFLAGS} -c $< -o $@
-
 netbsd_init.o:	netbsd_init.c ${NBCC}
 		${NBCC} ${NBCFLAGS} -c $< -o $@
 
