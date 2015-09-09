@@ -90,9 +90,6 @@ _lwp.o:		_lwp_pthread.c ${NBCC}
 emul.o:		emul.c
 		${CC} ${HOSTCFLAGS} -c $< -o $@
 
-stub.o:		stub.c
-		${CC} ${HOSTCFLAGS} -c $< -o $@
-
 rumpclient.o:	rumpclient.c
 		${CC} ${HOSTCFLAGS} -c $< -o $@
 
