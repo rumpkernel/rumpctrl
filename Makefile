@@ -84,9 +84,6 @@ rumpremote.sh: rumpremote.sh.in
 rumpctrl.sh: rumpctrl.sh.in
 		sed 's,XXXPATHXXX,$(PWD),' $< > $@
 
-_lwp.o:		_lwp_pthread.c ${NBCC}
-		${NBCC} ${NBCFLAGS} -c $< -o $@
-
 emul.o:		emul.c
 		${CC} ${HOSTCFLAGS} -c $< -o $@
 
@@ -113,7 +110,7 @@ pthread_test.o:	pthread_test.c ${MAPS} ${NBCC}
 
 MAPS=rump.map namespace.map host.map netbsd.map readwrite.map emul.map weakasm.map
 
-${BINDIR}/halt:	halt.o _lwp.o emul.o rumpclient.o readwrite.o remoteinit.o ${MAPS}
+${BINDIR}/halt:	halt.o emul.o rumpclient.o readwrite.o remoteinit.o ${MAPS}
 		${NBCC} ${NBCFLAGS} -o ${BINDIR}/halt halt.o
 
 rump.map:	${RUMPSRC}/sys/rump/rump.sysmap
@@ -134,7 +131,7 @@ rumpobj/${1}/${2}.ro:
 
 NBLIBS.${2}:= $(shell cd ${RUMPSRC}/${1} && ${RUMPMAKE} -V '$${LDADD}' | sed 's/-L\S*//g')
 LIBS.${2}=$${NBLIBS.${2}:-l%=rump/lib/lib%.a}
-${BINDIR}/${2}: rumpobj/${1}/${2}.ro _lwp.o emul.o rumpclient.o readwrite.o remoteinit.o netbsd_init.o ${MAPS} $${LIBS.${2}}
+${BINDIR}/${2}: rumpobj/${1}/${2}.ro emul.o rumpclient.o readwrite.o remoteinit.o netbsd_init.o ${MAPS} $${LIBS.${2}}
 	${NBCC} ${NBCFLAGS} -o ${BINDIR}/${2} rumpobj/${1}/${2}.ro $${LIBS.${2}}
 
 ${2}:	${BINDIR}/${2}

@@ -25,6 +25,4 @@ _netbsd_init(int stdouttty)
 
 	if (stdouttty)
 		setlinebuf(stdout);
-
-	_lwp_rumprun_scheduler_init();
 }

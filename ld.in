@@ -81,7 +81,7 @@ ${OBJCOPY} --redefine-syms=@PATH@/weakasm.map ${TMPFILE3}
 ${OBJCOPY} --redefine-syms=@PATH@/readwrite.map ${TMPFILE3}
 ${OBJCOPY} --redefine-syms=@PATH@/emul.map ${TMPFILE3}
 ${OBJCOPY} --redefine-syms=@PATH@/netbsd.map ${TMPFILE3}
-${CC} ${LDFLAGS} -Wl,-r -nostdlib -Wl,-dc ${TMPFILE3} @PATH@/_lwp.o @PATH@/readwrite.o -o ${TMPFILE4}  2>/dev/null
+${CC} ${LDFLAGS} -Wl,-r -nostdlib -Wl,-dc ${TMPFILE3} @PATH@/readwrite.o -o ${TMPFILE4}  2>/dev/null
 ${OBJCOPY} --redefine-syms=@PATH@/errno.map ${TMPFILE4}
 ${OBJCOPY} -w --localize-symbol='*' ${TMPFILE4}
 ${OBJCOPY} -w --globalize-symbol='_netbsd_*' ${TMPFILE4}

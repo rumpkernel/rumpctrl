@@ -269,6 +269,9 @@ STUB(emul_uuidgen);
 
 STUB(emul_minherit);
 
+STUB(emul__lwp_self);
+STUB(emul___libc_static_tls_setup);
+
 STUB_ABORT(emul_undelete);
 STUB_ABORT(emul_sigqueueinfo);
 STUB_ABORT(emul__setcontext);

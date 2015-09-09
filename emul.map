@@ -18,4 +18,6 @@ undelete	emul_undelete
 uuidgen		emul_uuidgen
 sigqueueinfo	emul_sigqueueinfo
 _lwp_kill	emul__lwp_kill
+_lwp_self	emul__lwp_self
 _setcontext     emul__setcontext
+__libc_static_tls_setup	emul___libc_static_tls_setup
