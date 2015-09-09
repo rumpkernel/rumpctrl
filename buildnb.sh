@@ -111,18 +111,6 @@ appendconfig RUMPSRC
     -k -V MKPIC=no -V BUILDRUMP_SYSROOT=yes \
     tools kernelheaders install
 
-# set some special variables currently required by libpthread.  Doing
-# it this way preserves the ability to compile libpthread during development
-# cycles with just "rumpmake"
-cat >> rumptools/mk.conf << EOF
-.if defined(LIB) && \${LIB} == "pthread"
-.PATH:	$(pwd)
-PTHREAD_CANCELSTUB=no
-PTHREAD_MAKELWP=pthread_makelwp_rumprunposix.c
-CPPFLAGS+=      -D_PTHREAD_GETTCB_EXT=_lwp_rumprun_gettcb
-.endif  # LIB == pthread
-EOF
-
 #
 # Build host bits.  There's no real infra for this, so it's mostly
 # a matter of running rumpmake in the right places with the right args.
@@ -156,6 +144,7 @@ userincludes ${RUMPSRC} ${LIBS} ${RUMPSRC}/external/bsd/libelf
 ( cd ${RUMPSRC}/lib/librumpclient && ${RUMPMAKE} includes )
 
 for lib in ${LIBS}; do
+	[ "${lib%libpthread}" = "${lib}" ] || continue
 	makeuserlib ${lib}
 done
 
