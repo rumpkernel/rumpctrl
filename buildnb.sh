@@ -49,7 +49,8 @@ for arg in "$@"; do
 		exit 0
 		;;
 	"zfs")
-		BUILDZFS=true
+		echo '>> zfs build not supported' 2>&1
+		exit 1
 		;;
 	*)
 		RUMPLOC=${arg}

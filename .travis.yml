@@ -9,8 +9,6 @@ matrix:
   include:
     - env: ZFS= CC=gcc
       compiler: gcc
-    - env: ZFS=zfs  CC=gcc
-      compiler: gcc
     - env: ZFS= CC=clang-3.6
       compiler: clang-3.6
       addons: &clang36
