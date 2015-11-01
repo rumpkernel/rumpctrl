@@ -141,7 +141,7 @@ RUMPMAKE=$(pwd)/rumptools/rumpmake
 appendconfig RUMPMAKE
 
 usermtree rump
-userincludes ${RUMPSRC} ${LIBS} ${RUMPSRC}/external/bsd/libelf
+userincludes ${RUMPSRC} ${LIBS}
 ( cd ${RUMPSRC}/lib/librumpclient && ${RUMPMAKE} includes )
 
 for lib in ${LIBS}; do
