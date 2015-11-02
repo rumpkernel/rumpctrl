@@ -118,7 +118,7 @@ Test_shmif()
 	ifconfig shmif0 linkstr $BM > /dev/null
 	ifconfig shmif0 inet 1.2.3.4 netmask 0xffffff00 > /dev/null
 	ifconfig shmif0 \
-	   | grep 'shmif0: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST>'\
+	   | grep 'shmif0: flags=0x8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST>'\
 	     > /dev/null
 	rumpctrl_hostcmd rm $BM
 }
