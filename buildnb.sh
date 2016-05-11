@@ -89,7 +89,10 @@ rm -f ./config.mk ./config.sh
 
 ${BUILDZFS} && \
     ZFSLIBS="$(ls -d ${RUMPSRC}/external/cddl/osnet/lib/lib* | grep -v libdtrace)"
-LIBS="$(stdlibs ${RUMPSRC}) ${ZFSLIBS}"
+OPENSSLLIBS="${RUMPSRC}/crypto/external/bsd/openssl/lib/libcrypto
+	${RUMPSRC}/crypto/external/bsd/openssl/lib/libdes
+	${RUMPSRC}/crypto/external/bsd/openssl/lib/libssl"
+LIBS="$(stdlibs ${RUMPSRC}) ${ZFSLIBS} ${OPENSSLLIBS}"
 
 appendconfig BUILDZFS
 appendconfig RUMPSRC
