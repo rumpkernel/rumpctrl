@@ -6,6 +6,10 @@ rrCANDO=true
 #[ "${SHELL}" != "${SHELL%bash}" ] \
 #    || { echo "environment requires bash"; rrCANDO=false; }
 
+# enable parameters expansion in the prompt
+[ "${SHELL}" = "${SHELL%/zsh}" ] \
+    || set -o PROMPT_SUBST
+
 # sed replacement is not run with /g ...
 [ "XXXPATHXXX" = "XXXPATHXXX" ] && { echo "not preprocessed"; rrCANDO=false; }
 
